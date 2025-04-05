@@ -1,6 +1,6 @@
 Package: joker
 Title: Parameter Estimation
-Version: 0.11.2
+Version: 0.12.1
 Authors@R: c(
     person("Ioannis", "Oikonomidis", , "goikon@math.uoa.gr",
            role = c("aut", "cre"),

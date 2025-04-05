@@ -1,20 +1,22 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# estim <img src=man/figures/logo.png align="right" height="139" alt="logo"/>
+# joker <img src=man/figures/logo.png align="right" height="139" alt="logo"/>
 
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/estim)](https://CRAN.R-project.org/package=estim)
-[![R-CMD-check](https://github.com/thechibo/estim/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thechibo/estim/actions/workflows/R-CMD-check.yaml)
+status](https://www.r-pkg.org/badges/version/joker)](https://CRAN.R-project.org/package=joker)
+[![R-CMD-check](https://github.com/thechibo/joker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thechibo/joker/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/thechibo/estim/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thechibo/estim?branch=main)
+coverage](https://codecov.io/gh/thechibo/joker/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thechibo/joker?branch=main)
+[![Codecov test
+coverage](https://codecov.io/gh/thechibo/joker/graph/badge.svg)](https://app.codecov.io/gh/thechibo/joker)
 <!-- badges: end -->
 
 ## Introduction
 
-The `estim` R package develops an S4 distribution system and performs
+The `joker` R package develops an S4 distribution system and performs
 parameter estimation in common distribution families, making
 well-established and state-of-the-art methods more accessible.
 
@@ -48,31 +50,31 @@ well-established and state-of-the-art methods more accessible.
 
 ## Installation
 
-You can install the release version of `estim` from CRAN by running the
+You can install the release version of `joker` from CRAN by running the
 following line of code:
 
 ``` r
- install.packages("estim")
+ install.packages("joker")
 ```
 
-You can install the development version of `estim` from github by
+You can install the development version of `joker` from github by
 running the following line of code:
 
 ``` r
- devtools::install_github("thechibo/estim")
+ devtools::install_github("thechibo/joker")
 ```
 
-More details can be found in the [estim Github
-repository](https://github.com/thechibo/estim "estim Github repository").
+More details can be found in the [joker Github
+repository](https://github.com/thechibo/joker "joker Github repository").
 
 ## Documentation
 
 Detailed documentation, along with reproducible examples, can be found
-in the package vignette `vignette(topic = "estim", package = "estim")`.
+in the package vignette `vignette(topic = "joker", package = "joker")`.
 
 ## Team
 
-The `estim` package is developed in the [Mathematics
+The `joker` package is developed in the [Mathematics
 Department](https://en.math.uoa.gr/ "Mathematics Department Homepage")
 of the [University of
 Athens](https://en.uoa.gr/ "University of Athens Homepage"). The package

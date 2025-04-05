@@ -1,3 +1,7 @@
+# joker 0.12.1
+
+* Updated readme and github actions.
+
 # joker 0.12.0
 
 * Changed package named to joker since estim was an archived R package and search results got confused.
