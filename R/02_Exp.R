@@ -40,7 +40,7 @@ setClass("Exp",
 #' The probability density function (PDF) of the Exponential distribution is
 #' given by: \deqn{ f(x; \lambda) = \lambda e^{-\lambda x}, \quad x \geq 0 .}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dexp()], [pexp()], [qexp()], [rexp()]

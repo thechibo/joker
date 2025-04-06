@@ -42,7 +42,7 @@ setClass("Pois",
 #' \deqn{ P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k \in
 #' \mathbb{N}_0. }
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dpois()], [ppois()], [qpois()],

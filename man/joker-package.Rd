@@ -4,7 +4,7 @@
 \name{joker-package}
 \alias{joker}
 \alias{joker-package}
-\title{joker: Parameter Estimation}
+\title{joker: Probability Distributions and Parameter Estimation}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
@@ -13,7 +13,7 @@ Implements an S4 distribution system and estimation methods for parameters of co
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://thechibo.github.io/estim}
+  \item \url{https://thechibo.github.io/joker}
   \item Report bugs at \url{https://github.com/thechibo/estim/issues}
 }
 

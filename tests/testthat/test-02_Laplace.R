@@ -30,6 +30,11 @@ test_that("Laplace dpqr work", {
   expect_true(is.function(p(D)))
   expect_true(is.function(qn(D)))
   expect_true(is.function(r(D)))
+  expect_true(is.numeric(d(D, x, log = TRUE)))
+  expect_true(is.numeric(p(D, x, log.p = TRUE)))
+  expect_true(is.numeric(p(D, x, lower.tail = FALSE)))
+  expect_true(is.numeric(q(D, log(0.8), log.p = TRUE)))
+  expect_true(is.numeric(q(D, 0.8, lower.tail = FALSE)))
 
   # Values
   expect_identical(p(D)(mu), 0.5)
@@ -111,6 +116,9 @@ test_that("Laplace estim works", {
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.02)
 
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+
 })
 
 test_that("Laplace avar works", {
@@ -138,6 +146,9 @@ test_that("Laplace avar works", {
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.05)
   d <- test_avar("me", D, n = 2e4, m = 2e3)
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.05)
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

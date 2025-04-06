@@ -42,7 +42,7 @@ setClass("Chisq",
 #' given by: \deqn{ f(x; k) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2 - 1} e^{-x/2},
 #' \quad x > 0.}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dchisq()], [pchisq()], [qchisq()],

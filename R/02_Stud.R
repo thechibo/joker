@@ -41,7 +41,7 @@ setClass("Stud",
 #' \Gamma\left(\frac{\nu}{2}\right)}\left(1 + \frac{x^2}{\nu}\right)^{-\frac{\nu
 #' + 1}{2}} .}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dt()], [pt()], [qt()], [rt()]

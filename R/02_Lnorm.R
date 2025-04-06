@@ -42,7 +42,7 @@ setClass("Lnorm",
 #' \deqn{ f(x; \mu, \sigma) = \frac{1}{x \sigma \sqrt{2\pi}} e^{-\frac{(\log x -
 #' \mu)^2}{2 \sigma^2}}, \quad x > 0 .}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dlnorm()], [plnorm()], [qlnorm()],

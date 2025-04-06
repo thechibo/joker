@@ -130,5 +130,5 @@ avar_same(D)
 v(D, type = "mle")
 }
 \seealso{
-\link{Distributions}, \link{moments}, \link{estimation}
+\link{distributions}, \link{moments}, \link{estimation}
 }

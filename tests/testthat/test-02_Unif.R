@@ -123,6 +123,9 @@ test_that("Unif estim works", {
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.01)
 
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+
 })
 
 test_that("Unif small metrics work", {

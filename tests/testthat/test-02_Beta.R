@@ -155,6 +155,10 @@ test_that("Beta estim works", {
   d <- test_consistency("same", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.02)
 
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+  expect_error(e(D, x, type = "mle", par0 = "xxx"))
+
 })
 
 test_that("Beta avar works", {
@@ -186,7 +190,10 @@ test_that("Beta avar works", {
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.05)
 
   # Test progress bar
-  expect_no_error(test_avar("mle", D))
+  expect_no_error(test_avar("mle", D, bar = TRUE))
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

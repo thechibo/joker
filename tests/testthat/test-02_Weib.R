@@ -43,7 +43,8 @@ test_that("Weib dpqr work", {
   # 2-Way Calls
   expect_identical(d(D)(0.4), dweibull(0.4, shape = a, scale = b))
   expect_identical(p(D)(0.4), pweibull(0.4, shape = a, scale = b))
-  expect_equal(qn(D)(0.4), qweibull(0.4, shape = a, scale = b), tolerance = 1e-8)
+  expect_equal(qn(D)(0.4), qweibull(0.4, shape = a, scale = b),
+               tolerance = 1e-8)
   expect_identical(d(D)(0.4), d(D, 0.4))
   expect_identical(p(D)(0.4), p(D, 0.4))
   expect_identical(qn(D)(0.4), qn(D, 0.4))
@@ -67,6 +68,9 @@ test_that("Weib moments work", {
   expect_true(is.numeric(skew(D)))
   expect_true(is.numeric(kurt(D)))
   expect_true(is.numeric(entro(D)))
+
+  # Values
+  expect_identical(mode(Weib(0.6, 5)), 0)
 
 })
 
@@ -139,6 +143,12 @@ test_that("Weib estim works", {
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.05)
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.05)
+
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+  expect_error(e(D, x, type = "mle", par0 = "xxx"))
+  expect_error(e(D, x, type = "me", par0 = "xxx"))
+  expect_warning(e(D, x, type = "me", lower = 0.01))
 
 })
 

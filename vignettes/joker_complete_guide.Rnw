@@ -38,13 +38,13 @@ library("joker")
 %% - \title{} in title case
 %% - \Plaintitle{} without LaTeX markup (if any)
 %% - \Shorttitle{} with LaTeX markup (if any), used as running title
-\title{The \pkg{joker} Package: Object-Oriented Distributions and Parameter Estimation in \proglang{R}}
-\Plaintitle{The xbar Package: Object-Oriented Distributions and Parameter Estimation in R}
+\title{The \pkg{joker} Package: Object-Oriented Distribution System and Parameter Estimation in \proglang{R}}
+\Plaintitle{The joker Package: Object-Oriented Distribution System and Parameter Estimation in R}
 \Shorttitle{The \pkg{joker} R Package}
 
 %% - \Abstract{} almost as usual
 \Abstract{
-The \pkg{joker} package provides a comprehensive set of features for probabilities and mathematical statistics. It extends the range of available distribution families and facilitates the computation of key parametric quantities, such as moments and information-theoretic measures. The main focus of the package is parameter estimation through maximum likelihood and moment-based methods under an intuitive and efficient framework. All package features are available both in a \pkg{stats}-like syntax for entry-level users, and in an S4 object-oriented programming system for more experienced ones. The common \code{d}, \code{p}, \code{q}, \code{r} function family of each distribution, e.g. \fct{dnorm}, \fct{pnorm}, \fct{qnorm}, \fct{rnorm}, is enriched with the \code{ll} counterpart, e.g. \fct{llnorm}, that calculates the log-likelihood, the \code{e} counterpart, e.g. \fct{enorm}, that performs parameter estimation, and the \code{v} counterpart, e.g. \fct{vnorm}, that calculates the asymptotic variance-covariance matrix of an estimator. Furthermore, an S4-class distribution system is developed, so that these functions can be used generically. Moments and other parametric functions (mean, median, mode, variance, standard deviation, skewness, kurtosis, entropy, and Fisher information) are also included in the package. New distribution families, such as Dirichlet and multivariate gamma, not included in the \pkg{stats} package are made available. Parameter estimation is performed analytically if possible, while numerical optimization of the MLE (whenever required, e.g. the beta and gamma distribution families) is performed with computational efficiency, taking advantage of the score equation system to reduce the dimensionality of the optimization problem. Finally, the package includes functions to compute and plot the asymptotic variance and common finite-sample metrics (bias, variance, and root mean square error) of estimators, allowing their study and comparison. Overall, \pkg{joker} addresses several limitations in the state of the art \proglang{R} packages in an attempt to provide some of the most fundamental methods of statistics in a unified package.
+The \pkg{joker} package provides a comprehensive set of features for probabilities and mathematical statistics. It extends the range of available distribution families and facilitates the computation of key parametric quantities, such as moments and information-theoretic measures. The main focus of the package is parameter estimation through maximum likelihood and moment-based methods under an intuitive and efficient framework. All package features are available both in a \pkg{stats}-like syntax for entry-level users, and in an \code{S4} object-oriented programming system for more experienced ones. The common \code{d}, \code{p}, \code{q}, \code{r} function family of each distribution, e.g. \fct{dnorm}, \fct{pnorm}, \fct{qnorm}, \fct{rnorm}, is enriched with the \code{ll} counterpart, e.g. \fct{llnorm}, that calculates the log-likelihood, the \code{e} counterpart, e.g. \fct{enorm}, that performs parameter estimation, and the \code{v} counterpart, e.g. \fct{vnorm}, that calculates the asymptotic variance-covariance matrix of an estimator. Furthermore, an S4-class distribution system is developed, so that these functions can be used generically. Moments and other parametric functions (mean, median, mode, variance, standard deviation, skewness, kurtosis, entropy, and Fisher information) are also included in the package. New distribution families, such as Dirichlet and multivariate gamma, not included in the \pkg{stats} package are made available. Parameter estimation is performed analytically if possible, while numerical optimization of the MLE (whenever required, e.g. the beta and gamma distribution families) is performed with computational efficiency, taking advantage of the score equation system to reduce the dimensionality of the optimization problem. Finally, the package includes functions to compute and plot the asymptotic variance and common finite-sample metrics (bias, variance, and root mean square error) of estimators, allowing their study and comparison. Overall, \pkg{joker} addresses several limitations in the state of the art \proglang{R} packages in an attempt to provide some of the most fundamental methods of statistics in a unified package.
 }
 
 %% - \Keywords{} with LaTeX markup, at least one required
@@ -71,7 +71,7 @@ The \pkg{joker} package provides a comprehensive set of features for probabiliti
 
 \section[Introduction]{Introduction} \label{s:intro}
 
-Package \pkg{joker} is designed to cover a broad collection of distribution families, extending the functionalities of the \pkg{stats} package to support new families, parametric quantity computation and parameter estimation. All package features are available both in a \pkg{stats}-like syntax for entry-level users, and in an S4 object-oriented programming system for more experienced ones. This section introduces the state-of-the-art \proglang{R} packages in this direction, highlighting both the advantages and the shortcomings of each package.
+Package \pkg{joker} is designed to cover a broad collection of distribution families, extending the functionalities of the \pkg{stats} package to support new families, parametric quantity computation and parameter estimation. All package features are available both in a \pkg{stats}-like syntax for entry-level users, and in an \code{S4} object-oriented programming system for more experienced ones. This section introduces the state-of-the-art \proglang{R} packages in this direction, highlighting both the advantages and the shortcomings of each package.
 
 \subsection[Literature Review]{Literature Review}\label{ss:review}
 
@@ -113,9 +113,9 @@ Such implementations can be found in popular, important \proglang{R} packages, l
 
 \subsubsection[The distr package ecosystem]{The distr package ecosystem}\label{ss:distr}
 
-The \proglang{R} package most similar to \pkg{joker} is the \pkg{distr} package, which started as an S4 distribution system \citep{distr2006, distr2014}. Since then, a few other complementary packages have been developed to offer new capabilities, including \pkg{distrEx} for moment computation and \pkg{distrMod} for parameter estimation. This package ecosystem is similar to \pkg{joker} in a number of ways, therefore their differences-and the thereof necessity for a new package-are explained in detail.
+The \proglang{R} package most similar to \pkg{joker} is the \pkg{distr} package, which started as an \code{S4} distribution system \citep{distr2006, distr2014}. Since then, a few other complementary packages have been developed to offer new capabilities, including \pkg{distrEx} for moment computation and \pkg{distrMod} for parameter estimation. This package ecosystem is similar to \pkg{joker} in a number of ways, therefore their differences-and the thereof necessity for a new package-are explained in detail.
 
-The \pkg{distr} framework does not strictly adhere to S4 conventions, as the \fct{d}-\fct{p}-\fct{q}-\fct{r} function family is generated \emph{alongside} the random variable object. This design can lead to bugs upon modifying an object's parameter slots, as illustrated by the following example. Given a distribution object \code{D} from the $N(10, 1)$ distribution, a user wants to alter its mean to $-10$. This can be done in two different ways, using the \pkg{distr} function \code{mean<-} and accessing the parameter slot directly. In the second way, the \fct{r} function is not affected, since it was already created along with \code{D}.
+The \pkg{distr} framework does not strictly adhere to \code{S4} conventions, as the \fct{d}-\fct{p}-\fct{q}-\fct{r} function family is generated \emph{alongside} the random variable object. This design can lead to bugs upon modifying an object's parameter slots, as illustrated by the following example. Given a distribution object \code{D} from the $N(10, 1)$ distribution, a user wants to alter its mean to $-10$. This can be done in two different ways, using the \pkg{distr} function \code{mean<-} and accessing the parameter slot directly. In the second way, the \fct{r} function is not affected, since it was already created along with \code{D}.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -137,7 +137,7 @@ mean(x) # 9.962192
 \begin{leftbar}
 \textbf{Note}
 
-\pkg{joker} actually started as a short extension of the \pkg{distr} package ecosystem. The initial purpose was to code the score-adjusted moment estimators (SAME) developed by the authors in *cite* and study their properties. However, upon examining the S4 implementation, realizing the extra complexity accompanying the definition of new distribution families, and eventually falling in the aforementioned bug, it was decided that it was preferable to create a new S4 system that could accommodate the needs of the research team.
+\pkg{joker} actually started as a short extension of the \pkg{distr} package ecosystem. The initial purpose was to code the score-adjusted moment estimators (SAME) developed by the authors in *cite* and study their properties. However, upon examining the \code{S4} implementation, realizing the extra complexity accompanying the definition of new distribution families, and eventually falling in the aforementioned bug, it was decided that it was preferable to create a new \code{S4} system that could accommodate the needs of the research team.
 \end{leftbar}
 
 \subsubsection[The distr6 package]{The distr6 package}\label{ss:distr6}
@@ -158,7 +158,7 @@ devtools::install_github("xoopR/distr6")
 \end{CodeInput}
 \end{CodeChunk}
 
-It is important to underline that the \code{R6} system handles memory more efficiently in comparison with S3 and S4, avoiding the creation of object copies, as detailed in *citation*. However, many \proglang{R} users are not familiarized with the R6 system, since the majority of \proglang{R} functions are implemented in the \code{S3} system. This is the main reason the S4 system was chosen for the development of \pkg{joker}. The \pkg{distr6} package indeed includes a great number of distribution families. Unfortunately, it does not cover parameter estimation, which is the main reason behind the development of the \pkg{joker} package.
+It is important to underline that the \code{R6} system handles memory more efficiently in comparison with S3 and S4, avoiding the creation of object copies, as detailed in *citation*. However, many \proglang{R} users are not familiarized with the R6 system, since the majority of \proglang{R} functions are implemented in the \code{S3} system. This is the main reason the \code{S4} system was chosen for the development of \pkg{joker}. The \pkg{distr6} package indeed includes a great number of distribution families. Unfortunately, it does not cover parameter estimation, which is the main reason behind the development of the \pkg{joker} package.
 
 \subsubsection[Parameter Estimation in R packages]{Parameter Estimation in R packages}\label{ss:par-est}
 
@@ -172,11 +172,11 @@ Parameter estimation in the iid (independent and identically distributed) framew
 
 The \pkg{joker} package provides a comprehensive set of features for mathematical and asymptotic statistics. It extends the range of available distribution families and facilitates the computation of key parametric quantities, such as moments and information-theoretic measures. The main focus of the package is parameter estimation through maximum likelihood and moment-based methods under an intuitive and efficient framework. Its goal is to encapsulate the distribution richness of the \pkg{distr6} package and enhance the capabilities of the \pkg{distr} package ecosystem in a simple framework. All package features are available both in a \pkg{stats}-like syntax for the entry-level users, and in a OOP system for more experienced ones. Overall, \pkg{joker} addresses several limitations in the state of the art \proglang{R} packages in an attempt to provide the most fundamental methods of statistics in a unified package. The remainder of this paper introduces the main functionalities of the package.
 
-\section[The joker S4 Distribution System]{The joker S4 Distribution System} \label{s:distr}
+\section[The joker \code{S4} Distribution System]{The joker \code{S4} Distribution System} \label{s:distr}
 
 \subsection[Probability Distributions]{Probability Distributions} \label{s:dpqr}
 
-In the \pkg{joker} OOP system each distribution has a respective S4 class, all of which are subclasses of the \code{Distribution} S4 class. Table \ref{tab:overview} shows the distributions available in the package, along with their class names.
+In the \pkg{joker} OOP system each distribution has a respective \code{S4} class, all of which are subclasses of the \code{Distribution} \code{S4} class. Table \ref{tab:overview} shows the distributions available in the package, along with their class names.
 
 \begin{table}[t!]
 \centering
@@ -200,8 +200,9 @@ Geometric               & \code{Geom}       & Weibull                 & \code{We
 Defining an object from the desired distribution class is straightforward, as seen in the following example. The parameter names, which are generally identical to the ones defined in the \pkg{stats} package, can be omitted.
 
 <<distr>>=
-D <- Beta(shape1 = 1, shape2 = 2)
-D <- Beta(1, 2)
+shape1 <- 1
+shape2 <- 2
+D <- Beta(shape1, shape2)
 @
 
 Having defined the distribution object \code{D}, the \fct{d}-\fct{p}-\fct{q}-\fct{r} functions can be used, as shown in the following example, comparing against the \pkg{stats} syntax.
@@ -219,7 +220,7 @@ Alternatively, if only the distribution argument is supplied, the methods behave
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> F <- p(D) ; F(0.5)
+R> F1 <- p(D) ; F1(0.5)
 \end{CodeInput}
 \end{CodeChunk}
 
@@ -284,7 +285,7 @@ x <- r(D, 100)
 
 The \pkg{joker} package covers three major estimation methods: maximum likelihood estimation (MLE), moment estimation (ME), and score-adjusted estimation (SAME).
 
-In order to perform parameter estimation, a new \fct{e<name>} member is added to the \fct{d}-\fct{p}-\fct{q}-\fct{r} family, following the standard \pkg{stats} name convention. These \fct{e<name>} functions take two arguments, the observations \code{x} (an atomic vector for univariate or a matrix for multivariate distibutions) and the \code{type} of estimation method to use (a character with possible values \code{"mle"}, \code{"me"}, and \code{"same"}.)
+In order to perform parameter estimation, a new \fct{e<name>} member is added to the \fct{d}-\fct{p}-\fct{q}-\fct{r} family, following the standard \pkg{stats} name convention. These \fct{e<name>} functions take two arguments, the observations \code{x} (an atomic vector for univariate or a matrix for multivariate distibutions) and the \code{type} of estimation method to use (a character with possible values \code{"mle"}, \code{"me"}, and \code{"same"}).
 
 <<e>>=
 ebeta(x, type = "mle")
@@ -292,7 +293,7 @@ ebeta(x, type = "me")
 ebeta(x, type = "same")
 @
 
-Point estimation functions are available in two versions, the distribution specific one, e.g. \fct{ebeta}, and the S4 generic ones, namely \fct{mle}, \fct{me}, and \fct{same}. A general function called \fct{e} is also implemented, covering all distributions and estimators.
+Point estimation functions are available in two versions, the distribution specific one, e.g. \fct{ebeta}, and the \code{S4} generic ones, namely \fct{mle}, \fct{me}, and \fct{same}. A general function called \fct{e} is also implemented, covering all distributions and estimators.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -306,7 +307,7 @@ R> e(D, x, type = "mle")
 \begin{leftbar}
 \textbf{Technical Detail}
 
-It is important to note that the S4 methods also accept a character for the distribution. The name should be the same as the S4 distribution generator, case ignored (i.e. "Beta", "beta", or "bEtA").
+It is important to note that the \code{S4} methods also accept a character for the distribution. The name should be the same as the \code{S4} distribution generator, case ignored (i.e. \code{"Beta"}, \code{"beta"}, or \code{"bEtA"}).
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -320,7 +321,7 @@ R> e("Beta", x, type = "mle")
 
 \subsection[Log-likelihood]{Log-likelihood}\label{ss:ll}
 
-Log-likelihood functions are also available in two versions, the distribution specific one, e.g. \fct{llbeta}, and the \fct{ll} S4 generic one.
+Log-likelihood functions are also available in two versions, the distribution specific one, e.g. \fct{llbeta}, and the \fct{ll} \code{S4} generic one.
 
 <<ll>>=
 llbeta(x, shape1, shape2)
@@ -387,7 +388,7 @@ In \pkg{joker}, the resulting function that is inserted in the optimization algo
 
 \subsection[Asymptotic Variance - Covariance Matrix]{Asymptotic Variance - Covariance Matrix} \label{s:avar}
 
-The asymptotic variance (or variance - covariance matrix for multidimensional parameters) of the estimators are also covered in the package. As with point estimation, the implementation is twofold, distribution specific (\fct{vbeta}) and S4 generic. In the first case, the \code{type} argument can be used to specify the estimator type. The general function \fct{avar} covers all distributions and estimators.
+The asymptotic variance (or variance - covariance matrix for multidimensional parameters) of the estimators are also covered in the package. As with point estimation, the implementation is twofold, distribution specific (\fct{vbeta}) and \code{S4} generic. In the first case, the \code{type} argument can be used to specify the estimator type. The general function \fct{v} covers all distributions and estimators.
 
 <<v>>=
 vbeta(shape1, shape2, type = "mle")
@@ -400,13 +401,13 @@ vbeta(shape1, shape2, type = "same")
 R> avar_mle(D)
 R> avar_me(D)
 R> avar_same(D)
-R> avar(D, type = "mle")
+R> v(D, type = "mle")
 \end{CodeInput}
 \end{CodeChunk}
 
 \section[Estimation Metrics and Comparison]{Estimation Metrics and Comparison}
 
-The different estimators of a parameter can be compared based on both finite sample and asymptotic properties. The package includes two functions named \fct{small\_metrics} and \fct{large\_metrics}, where small and large refers to the ``small sample" and ``large sample" terms that are often used for the two cases. The former estimates the bias, variance and root mean square error (RMSE) of the estimator with Monte Carlo simulations, while the latter calculates the asymptotic variance - covariance matrix (as derived by the \code{avar} functions). The resulting data frames can be plotted with the functions \fct{plot\_small\_metrics} and \fct{plot\_large\_metrics}, respectively.
+The different estimators of a parameter can be compared based on both finite sample and asymptotic properties. The package includes two functions named \fct{small\_metrics} and \fct{large\_metrics}, where small and large refers to the ``small sample" and ``large sample" terms that are often used for the two cases. The former estimates the bias, variance and root mean square error (RMSE) of the estimator with Monte Carlo simulations, while the latter calculates the asymptotic variance - covariance matrix (as derived by the \code{avar} functions). The resulting data frames can be plotted with the \fct{plot} function.
 
 To illustrate the function's design, consider the following example from the beta distribution: We are interested to calculate the metrics (bias, variance, and RMSE) of the $\alpha$ parameter estimators (MLE, ME, and SAME), for sample sizes 20 and 50. Specifically, we want to illustrate how these metrics change for $\alpha\in[1,5]$, and $\beta=2$ (constant). The following code can do that:
 
@@ -506,15 +507,15 @@ head(x@df)
 
 \subsection[Testing]{Testing}
 
-The R package is rigorously tested to ensure reliability, correctness, and stability. More than 1,000 automated tests have been implemented using the **testthat** package, a widely used framework for unit testing in R. These tests cover a broad range of functionalities, including edge cases, error handling, and performance checks, to verify that every function behaves as expected under various conditions. Continuous testing helps detect potential regressions early, maintaining the integrity of the package as it evolves. By leveraging **testthat**, we ensure that all updates and modifications uphold the expected behavior and performance standards.
+The R package is rigorously tested to ensure reliability, correctness, and stability. More than 1,000 automated tests have been implemented using the \pkg{testthat} package, a widely used framework for unit testing in R. These tests cover a broad range of functionalities, including edge cases, error handling, and performance checks, to verify that every function behaves as expected under various conditions. Continuous testing helps detect potential regressions early, maintaining the integrity of the package as it evolves. By leveraging \pkg{testthat}, we ensure that all updates and modifications uphold the expected behavior and performance standards.
 
 \section[Defining New Classes and Methods]{Defining New Classes and Methods} \label{s:new}
 
-Of course, it is possible to be interested in a distribution family not included in the package. It is straightforward for users to define their own S4 class and methods. Since this paper is addressed to both novice and experienced \proglang{R} users, the beta distribution paradigm is explained in detail below:
+Of course, it is possible to be interested in a distribution family not included in the package. It is straightforward for users to define their own \code{S4} class and methods. Since this paper is addressed to both novice and experienced \proglang{R} users, the beta distribution paradigm is explained in detail below:
 
 \subsection[Defining the Class]{Defining the Class}
 
-The \fct{setClass} function defines a new S4 class, i.e. the distribution of interest. The \code{slots} argument defines the parameters and their respective class (usually numeric, but it can also be a matrix in distributions like the multivariate normal and the Wishart). The optional argument \code{prototype} can be used to define the default parameter values in case they are not specified by the user.
+The \fct{setClass} function defines a new \code{S4} class, i.e. the distribution of interest. The \code{slots} argument defines the parameters and their respective class (usually numeric, but it can also be a matrix in distributions like the multivariate normal and the Wishart). The optional argument \code{prototype} can be used to define the default parameter values in case they are not specified by the user.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -566,7 +567,7 @@ setValidity("Beta", function(object) {
 
 \subsection[Defining the Class Methods]{Defining the Class Methods}
 
-Now that everything is set, it is time to define methods for the new class. Creating functions and S4 methods in \proglang{R} are two very similar processes, except the latter wraps the function in \fct{setMethod} and specifies a signature class, as shown above. The package source code can be used to easily define all methods of interest for the new distribution class.
+Now that everything is set, it is time to define methods for the new class. Creating functions and \code{S4} methods in \proglang{R} are two very similar processes, except the latter wraps the function in \fct{setMethod} and specifies a signature class, as shown above. The package source code can be used to easily define all methods of interest for the new distribution class.
 
 \begin{CodeChunk}
 \begin{CodeInput}

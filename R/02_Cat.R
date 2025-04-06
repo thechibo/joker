@@ -51,7 +51,7 @@ setClass("Cat",
 #' therefore the Fisher information matrix and the asymptotic variance -
 #' covariance matrix of the estimators is of dimension `(k-1)x(k-1)`.
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' [dmultinom()], [rmultinom()]

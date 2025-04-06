@@ -135,6 +135,10 @@ test_that("Dir estim works", {
   d <- test_consistency("same", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.02)
 
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+  expect_error(e(D, x, type = "mle", par0 = "xxx"))
+
 })
 
 test_that("Dir avar works", {
@@ -161,6 +165,9 @@ test_that("Dir avar works", {
   expect_equal(unname(avar_mle(D1)), unname(avar_mle(D2)), tolerance = 1e-4)
   expect_equal(unname(avar_me(D1)), unname(avar_me(D2)), tolerance = 1e-4)
   expect_equal(unname(avar_same(D1)), unname(avar_same(D2)), tolerance = 1e-4)
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

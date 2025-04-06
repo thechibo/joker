@@ -127,6 +127,9 @@ test_that("Nbinom estim works", {
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.02)
 
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+
 })
 
 test_that("Nbinom avar works", {
@@ -154,6 +157,9 @@ test_that("Nbinom avar works", {
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.1)
   d <- test_avar("me", D)
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.1)
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

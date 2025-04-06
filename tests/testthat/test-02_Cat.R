@@ -26,6 +26,8 @@ test_that("Cat dpqr work", {
   # Types
   expect_true(is.function(d(D)))
   expect_true(is.function(r(D)))
+  expect_true(is.numeric(d(D, x, log = TRUE)))
+  expect_true(is.numeric(r(D, 1:10)))
 
   # Values
   expect_identical(d(D)(c(1, 0, 0, 0)), c(p[1], 0, 0, 0))
@@ -105,6 +107,7 @@ test_that("Cat estim works", {
 
   # Error
   expect_error(mle(D, x, dim = 3))
+  expect_error(e(D, x, type = "xxx"))
 
 })
 
@@ -133,6 +136,9 @@ test_that("Cat avar works", {
   expect_equal(d$avar_true, d$avar_est[1:(k-1), 1:(k-1)], tolerance = 0.05)
   d <- test_avar("me", D)
   expect_equal(d$avar_true, d$avar_est[1:(k-1), 1:(k-1)], tolerance = 0.05)
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

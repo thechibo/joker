@@ -4,10 +4,10 @@
 \alias{estimation}
 \alias{e}
 \alias{mle}
-\alias{mle,character,ANY-method}
 \alias{me}
-\alias{me,character,ANY-method}
 \alias{same}
+\alias{mle,character,ANY-method}
+\alias{me,character,ANY-method}
 \alias{same,character,ANY-method}
 \title{Parameter Estimation}
 \usage{

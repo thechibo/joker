@@ -3,11 +3,11 @@
   "@type": "SoftwareSourceCode",
   "identifier": "joker",
   "description": "Implements an S4 distribution system and estimation methods for parameters of common distribution families. The common d, p, q, r function family for each distribution is enriched with the ll, e, and v counterparts, computing the log-likelihood, performing estimation, and calculating the asymptotic variance - covariance matrix, respectively. Parameter estimation is performed analytically whenever possible.",
-  "name": "joker: Parameter Estimation",
-  "codeRepository": "https://thechibo.github.io/estim",
+  "name": "joker: Probability Distributions and Parameter Estimation",
+  "codeRepository": "https://thechibo.github.io/joker",
   "issueTracker": "https://github.com/thechibo/estim/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -176,5 +176,5 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1096.911KB"
+  "fileSize": "1117.334KB"
 }

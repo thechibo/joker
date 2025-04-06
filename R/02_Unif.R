@@ -41,7 +41,7 @@ setClass("Unif",
 #' The probability density function (PDF) of the Uniform distribution is:
 #' \deqn{ f(x; a, b) = \frac{1}{b - a}, \quad a \le x \le b .}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dunif()], [punif()], [qunif()],

@@ -57,7 +57,7 @@ setClass("Beta",
 #' or a character specifying the closed-form estimator to be used as
 #' initialization for the algorithm (`"me"` or `"same"` - the default value).
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @references
 #'

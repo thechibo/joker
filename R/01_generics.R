@@ -3,7 +3,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @title Distribution S4 Classes
-#' @name Distributions
+#' @name distributions
 #' @aliases d p q r
 #'
 #' @description
@@ -73,27 +73,27 @@ setClass("Distribution")
 ## d, p, q, r             ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#' @describeIn Distributions density function
+#' @describeIn distributions density function
 setGeneric("d", function(distr, x, ...) {
   standardGeneric("d")
 })
 
-#' @describeIn Distributions cumulative distribution function
+#' @describeIn distributions cumulative distribution function
 setGeneric("p", function(distr, q, ...) {
   standardGeneric("p")
 })
 
-#' @describeIn Distributions generalized inverse distribution function
+#' @describeIn distributions generalized inverse distribution function
 setGeneric("qn", function(distr, p, ...)
   standardGeneric("qn"))
 
-#' @describeIn Distributions random sample generator function
+#' @describeIn distributions random sample generator function
 setGeneric("r", function(distr, n, ...) {
   standardGeneric("r")
 })
 
 #' @title Distribution Functionals
-#' @name DistrFunctionals
+#' @name functionals
 #'
 #' @param distr a `Distribution` object.
 #' @param x,q,p,n missing. Arguments not supplied.
@@ -109,28 +109,28 @@ setGeneric("r", function(distr, n, ...) {
 #' functions return the density, cumulative probability, quantile, random sample
 #' generator, and log-likelihood functions, respectively.
 #'
-#' @inherit Distributions description seealso examples
+#' @inherit distributions description seealso examples
 NULL
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("d", signature = c(distr = "Distribution", x = "missing"),
           function(distr, x, ...) {
             function(x) {d(distr, x, ...)}
           })
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("p", signature = c(distr = "Distribution", q = "missing"),
           function(distr, q, ...) {
             function(q) {p(distr, q, ...)}
           })
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("qn", signature = c(distr = "Distribution", p = "missing"),
           function(distr, p, ...) {
             function(p) {qn(distr, p, ...)}
           })
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("r", signature = c(distr = "Distribution", n = "missing"),
           function(distr, n, ...) {
             function(n) {r(distr, n, ...)}
@@ -175,9 +175,9 @@ setMethod("r", signature = c(distr = "Distribution", n = "missing"),
 #'
 #' @export
 #'
-#' @seealso [Distributions], [loglikelihood], [estimation]
+#' @seealso [distributions], [loglikelihood], [estimation]
 #'
-#' @inherit Distributions examples
+#' @inherit distributions examples
 moments <- function(x) {
   mom <- get_moment_methods(x)
   y <- lapply(mom, FUN = function(m) { do.call(m, list(x = x)) })
@@ -281,13 +281,13 @@ setGeneric("finf", function(x, ...) {
 #'
 #' @export
 #'
-#' @seealso [Distributions], [moments], [estimation]
+#' @seealso [distributions], [moments], [estimation]
 #'
-#' @inherit Distributions examples
+#' @inherit distributions examples
 setGeneric("ll", signature = c("distr", "x"),
            function(distr, x, ...) { standardGeneric("ll") })
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("ll",
           signature  = c(distr = "Distribution", x = "missing"),
           definition = function(distr, x, ...) {
@@ -312,6 +312,7 @@ setGeneric("dlloptim", signature = c("par", "tx", "distr"),
 
 #' @title Parameter Estimation
 #' @name estimation
+#' @aliases e mle me same
 #'
 #' @description
 #' This set of functions estimates the parameters of a random sample according
@@ -373,7 +374,7 @@ setGeneric("dlloptim", signature = c("par", "tx", "distr"),
 #'
 #' @seealso [mle], [me], [same]
 #'
-#' @inherit Distributions examples
+#' @inherit distributions examples
 e <- function(distr, x, type = "mle", ...) {
   abbr <- get_class_abbr(distr)
   if (abbr %in% c("binom", "nbinom")) {
@@ -390,7 +391,7 @@ e <- function(distr, x, type = "mle", ...) {
 setGeneric("mle", signature = c("distr", "x"),
            function(distr, x, ...) { standardGeneric("mle") })
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("mle",
           signature  = c(distr = "Distribution", x = "missing"),
           definition = function(distr, x, ...) {
@@ -410,7 +411,7 @@ setMethod("mle",
 setGeneric("me", signature = c("distr", "x"),
            function(distr, x, ...) { standardGeneric("me") })
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("me",
           signature  = c(distr = "Distribution", x = "missing"),
           definition = function(distr, x, ...) {
@@ -430,7 +431,7 @@ setMethod("me",
 setGeneric("same", signature = c("distr", "x"),
            function(distr, x, ...) { standardGeneric("same") })
 
-#' @rdname DistrFunctionals
+#' @rdname functionals
 setMethod("same",
           signature  = c(distr = "Distribution", x = "missing"),
           definition = function(distr, x, ...) {
@@ -450,6 +451,7 @@ setMethod("same",
 
 #' @title Estimator Variance
 #' @name variance
+#' @aliases v avar_mle avar_me avar_same
 #'
 #' @description
 #' These functions calculate the variance (or variance - covariance matrix in
@@ -480,6 +482,7 @@ setGeneric("avar_mle", signature = c("distr"),
 setGeneric("avar_me", signature = c("distr"),
            function(distr, ...) { standardGeneric("avar_me") })
 
-#' @describeIn variance Asymptotic Variance of the Score-Adjusted Moment Estimator
+#' @describeIn variance Asymptotic Variance of the Score-Adjusted Moment
+#' Estimator
 setGeneric("avar_same", signature = c("distr"),
            function(distr, ...) { standardGeneric("avar_same") })

@@ -68,7 +68,7 @@ setClass("Weib",
 #' for small values of `k`, hence the `0.5` lower bound. Specifying a lower
 #' bound below `0.5` will result in a warning and be ignored.
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @importFrom stats uniroot
 #'

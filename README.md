@@ -9,9 +9,8 @@
 status](https://www.r-pkg.org/badges/version/joker)](https://CRAN.R-project.org/package=joker)
 [![R-CMD-check](https://github.com/thechibo/joker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thechibo/joker/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/thechibo/joker/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thechibo/joker?branch=main)
-[![Codecov test
 coverage](https://codecov.io/gh/thechibo/joker/graph/badge.svg)](https://app.codecov.io/gh/thechibo/joker)
+<!--![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/joker)-->
 <!-- badges: end -->
 
 ## Introduction

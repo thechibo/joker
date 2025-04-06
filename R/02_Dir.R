@@ -45,7 +45,7 @@ setClass("Dir",
 #' \Gamma(\alpha_i)}{\Gamma\left(\sum_{i=1}^k \alpha_i\right)} }
 #' and \eqn{\sum_{i=1}^k x_i = 1}, \eqn{x_i > 0}.
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @references
 #'
@@ -343,6 +343,13 @@ setMethod("mle",
                                 method = "L-BFGS-B",
                                 lower = 1e-5,
                                 upper = Inf) {
+
+  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+    par0 <- sum(edir(x, type = par0)$shape)
+  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
+    stop("par0 must either be a character ('me' or 'same')",
+         "or a numeric within the lower and upper bounds")
+  }
 
   tx  <- colMeans(log(x))
 

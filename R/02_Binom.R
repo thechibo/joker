@@ -42,7 +42,7 @@ setClass("Binom",
 #' by: \deqn{ f(x; n, p) = \binom{n}{x} p^x (1 - p)^{n - x}, \quad N \in
 #' \mathbb{N}, \quad p \in (0, 1),} with \eqn{x \in \{0, 1, \dots, N\}}.
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dbinom()], [pbinom()], [qbinom()],

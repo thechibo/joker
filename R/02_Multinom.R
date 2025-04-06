@@ -39,7 +39,7 @@ setClass("Multinom",
 #' \prod_{i=1}^k p_i^{x_i}, }
 #' subject to \eqn{ \sum_{i=1}^{k} x_i = n }.
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dmultinom()], [rmultinom()]

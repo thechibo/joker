@@ -145,6 +145,10 @@ test_that("Multigam estim works", {
   d <- test_consistency("same", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.05)
 
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+  expect_error(e(D, x, type = "mle", par0 = "xxx"))
+
 })
 
 test_that("Multigam avar works", {
@@ -174,6 +178,9 @@ test_that("Multigam avar works", {
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.05)
   d <- test_avar("same", D)
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.07)
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

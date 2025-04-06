@@ -55,7 +55,7 @@ setClass("Cauchy",
 #' \emph{moment} estimator; it utilizes the sample median instead of the sample
 #' mean.
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dcauchy()], [pcauchy()], [qcauchy()],

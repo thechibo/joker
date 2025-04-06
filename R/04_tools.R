@@ -342,30 +342,3 @@ fd <- function(x) {
   }
 }
 
-gendir <- function(x) {
-  z <- fd(x)
-  if (is.matrix(x)) {
-    return(z / x[, ncol(x)])
-  } else if (is.vector(x)) {
-    return(z / x[length(x)])
-  } else {
-    stop("x must be an atomic vector or a matrix.")
-  }
-}
-
-## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Generalized Gamma      ----
-## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-stacy_to_prentice <- function(a, b, k) {
-  c("mu" = log(a) + digamma(k) / b,
-    "sigma" = 1 / (b * sqrt(k)),
-    "Q" = 1 / sqrt(k))
-}
-
-prentice_to_stacy <- function(mu, sigma, q) {
-  k <- 1 / q ^ 2
-  b <- q / sigma
-  a <- exp(mu - digamma(k) / b)
-  c("a" = a, "b" = b, "k" = k)
-}

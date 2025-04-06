@@ -133,6 +133,10 @@ test_that("Cauchy estim works", {
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.03)
 
+  # Errors
+  expect_error(e(D, x, type = "xxx"))
+  expect_error(e(D, x, type = "mle", par0 = "xxx"))
+
 })
 
 test_that("Cauchy avar works", {
@@ -146,6 +150,9 @@ test_that("Cauchy avar works", {
   x <- r(D)(n)
 
   expect_true(is.matrix(vcauchy(m, g)))
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

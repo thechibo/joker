@@ -1,0 +1,60 @@
+url: https://thechibo.github.io/joker/
+destination: docs
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+navbar:
+  title: "joker"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Articles"
+      href: articles/joker.html
+    - text: "Reference"
+      href: reference/index.html
+    - text: "GitHub"
+      href: https://github.com/thechibo/joker
+
+reference:
+  - title: "Core Functionalities"
+    contents:
+      - distributions
+      - functionals
+      - estimation
+      - variance
+      - loglikelihood
+      - moments
+      - calculus
+  - title: "Distributions"
+    contents:
+      - Bern
+      - Beta
+      - Binom
+      - Cat
+      - Cauchy
+      - Chisq
+      - Dir
+      - Exp
+      - Fisher
+      - Gam
+      - Geom
+      - Laplace
+      - Lnorm
+      - Multigam
+      - Multinom
+      - Nbinom
+      - Norm
+      - Pois
+      - Stud
+      - Unif
+      - Weib
+  - title: "Metrics"
+    contents:
+      - SmallMetrics
+      - LargeMetrics
+      - plot
+  - title: "Tools"
+    contents:
+      - idigamma

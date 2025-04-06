@@ -1,3 +1,12 @@
+# joker 0.13.1
+
+* Changed vignette from Rnw format to Rmd.
+* Added pkgdown.
+* Fixed a bug in README (double covr sticker).
+* Added tests and improved covr.
+* Changed package title.
+* Fixed wrong URL in description
+
 # joker 0.13.0
 
 * Added log, log.p, and lower.tail arguments to dpqr functions. Changed their arguments to much the `stats` package syntax.

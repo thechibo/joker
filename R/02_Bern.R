@@ -41,7 +41,7 @@ setClass("Bern",
 #' by: \deqn{ f(x; p) = p^x (1 - p)^{1 - x}, \quad p \in (0, 1), \quad x \in
 #' \{0, 1\}.}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dbinom()], [pbinom()], [qbinom()],

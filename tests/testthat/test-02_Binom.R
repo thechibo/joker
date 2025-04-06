@@ -124,6 +124,7 @@ test_that("Binom estim works", {
 
   # Errors
   expect_error(mle(Binom(1, 0.5), c(3, 5, 4)))
+  expect_error(e(D, x, type = "xxx"))
 
 })
 
@@ -152,6 +153,9 @@ test_that("Binom avar works", {
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.1)
   d <- test_avar("me", D)
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.1)
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

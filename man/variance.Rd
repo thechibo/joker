@@ -37,7 +37,8 @@ distributions and the true parameter values.
 
 \item \code{avar_me()}: Asymptotic Variance of the Moment Estimator
 
-\item \code{avar_same()}: Asymptotic Variance of the Score-Adjusted Moment Estimator
+\item \code{avar_same()}: Asymptotic Variance of the Score-Adjusted Moment
+Estimator
 
 }}
 \examples{

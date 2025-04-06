@@ -118,6 +118,9 @@ test_that("Bern estim works", {
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.01)
 
+  # Errors
+  expect_error(e(D, type = "xxx"))
+
 })
 
 test_that("Bern avar works", {
@@ -144,6 +147,9 @@ test_that("Bern avar works", {
   expect_equal(d$avar_true, d$avar_est["prob"], tolerance = 0.01)
   d <- test_avar("me", D)
   expect_equal(d$avar_true, d$avar_est["prob"], tolerance = 0.01)
+
+  # Errors
+  expect_error(v(D, type = "xxx"))
 
 })
 

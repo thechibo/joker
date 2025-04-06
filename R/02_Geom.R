@@ -40,7 +40,7 @@ setClass("Geom",
 #' The probability mass function (PMF) of the Geometric distribution is:
 #' \deqn{ P(X = k) = (1 - p)^k p, \quad k \in \mathbb{N}_0.}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dgeom()], [pgeom()], [qgeom()],

@@ -40,7 +40,7 @@ setClass("Fisher",
 #' d_2}\right)^{d_1} \left(\frac{d_2}{d_1 x + d_2}\right)^{d_2}}}{x B(d_1/2,
 #' d_2/2)}, \quad x > 0 .}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [df()], [pf()], [qf()], [rf()]

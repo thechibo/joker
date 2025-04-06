@@ -41,7 +41,7 @@ setClass("Laplace",
 #' The probability density function (PDF) of the Laplace distribution is:
 #' \deqn{ f(x; \mu, b) = \frac{1}{2b} \exp\left(-\frac{|x - \mu|}{b}\right) .}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @export
 #'

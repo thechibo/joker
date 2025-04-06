@@ -41,7 +41,7 @@ setClass("Norm",
 #' \deqn{ f(x; \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}
 #' \left(\frac{x - \mu}{\sigma}\right)^2} .}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @seealso
 #' Functions from the `stats` package: [dnorm()], [pnorm()], [qnorm()],

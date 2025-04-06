@@ -44,7 +44,7 @@ setClass("Nbinom",
 #' \deqn{ P(X = k) = \binom{k + r - 1}{k} (1 - p)^k p^r, \quad k \in
 #' \mathbb{N}_0.}
 #'
-#' @inherit Distributions return
+#' @inherit distributions return
 #'
 #' @importFrom stats integrate
 #'

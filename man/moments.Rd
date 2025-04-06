@@ -157,5 +157,5 @@ avar_same(D)
 v(D, type = "mle")
 }
 \seealso{
-\link{Distributions}, \link{loglikelihood}, \link{estimation}
+\link{distributions}, \link{loglikelihood}, \link{estimation}
 }
