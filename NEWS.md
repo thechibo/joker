@@ -1,3 +1,9 @@
+# joker 0.13.2
+
+* Fixed bug in Dir `mle()`.
+* Fixed bug in Laplace test.
+* Removed sweave vignette.
+
 # joker 0.13.1
 
 * Changed vignette from Rnw format to Rmd.

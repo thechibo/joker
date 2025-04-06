@@ -14,7 +14,7 @@ Implements an S4 distribution system and estimation methods for parameters of co
 Useful links:
 \itemize{
   \item \url{https://thechibo.github.io/joker}
-  \item Report bugs at \url{https://github.com/thechibo/estim/issues}
+  \item Report bugs at \url{https://github.com/thechibo/joker/issues}
 }
 
 }

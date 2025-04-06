@@ -33,8 +33,8 @@ test_that("Laplace dpqr work", {
   expect_true(is.numeric(d(D, x, log = TRUE)))
   expect_true(is.numeric(p(D, x, log.p = TRUE)))
   expect_true(is.numeric(p(D, x, lower.tail = FALSE)))
-  expect_true(is.numeric(q(D, log(0.8), log.p = TRUE)))
-  expect_true(is.numeric(q(D, 0.8, lower.tail = FALSE)))
+  expect_true(is.numeric(qn(D, log(0.8), log.p = TRUE)))
+  expect_true(is.numeric(qn(D, 0.8, lower.tail = FALSE)))
 
   # Values
   expect_identical(p(D)(mu), 0.5)

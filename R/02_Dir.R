@@ -345,7 +345,7 @@ setMethod("mle",
                                 upper = Inf) {
 
   if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
-    par0 <- sum(edir(x, type = par0)$shape)
+    par0 <- sum(edir(x, type = par0)$alpha)
   } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
     stop("par0 must either be a character ('me' or 'same')",
          "or a numeric within the lower and upper bounds")
@@ -353,7 +353,7 @@ setMethod("mle",
 
   tx  <- colMeans(log(x))
 
-  par <- optim(par = sum(unlist(do.call(par0, list(distr = distr, x = x)))),
+  par <- optim(par = par0,
                fn = lloptim,
                gr = dlloptim,
                tx = tx,

@@ -4,8 +4,8 @@ author: "Ioannis Oikonomidis"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{An Introduction to joker}
-  %\VignetteEngine{rmarkdown::html_vignette}
+  %\VignetteIndexEntry{joker}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
