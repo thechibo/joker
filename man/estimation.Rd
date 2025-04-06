@@ -26,11 +26,12 @@ same(distr, x, ...)
 \S4method{same}{character,ANY}(distr, x, ...)
 }
 \arguments{
-\item{distr}{A \code{Distribution} object or a \code{character}. The distribution family assumed.}
+\item{distr}{A \code{Distribution} object or a \code{character}. The distribution
+family assumed.}
 
 \item{x}{numeric. A sample under estimation.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{type}{character, case ignored. The estimator type.}
 
 \item{...}{extra arguments.}
 }
@@ -77,17 +78,15 @@ covering all distributions and estimators.
 # Create the distribution
 a <- 3 ; b <- 5
 D <- Beta(a, b)
-x <- c(0.3, 0.8, 0.5)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 0.8, 0.5)) # density function
+p(D, c(0.3, 0.8, 0.5)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -127,7 +126,7 @@ e(D, x, type = "mle")
 mle("beta", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vbeta(a, b, type = "mle")
@@ -138,7 +137,7 @@ avar_mle(D)
 avar_me(D)
 avar_same(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \references{
 General Textbooks

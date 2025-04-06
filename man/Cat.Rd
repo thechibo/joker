@@ -23,11 +23,11 @@
 \usage{
 Cat(prob = c(0.5, 0.5))
 
-dcat(x, prob)
+dcat(x, prob, log = FALSE)
 
 rcat(n, prob)
 
-\S4method{d}{Cat,numeric}(distr, x)
+\S4method{d}{Cat,numeric}(distr, x, log = FALSE)
 
 \S4method{r}{Cat,numeric}(distr, n)
 
@@ -58,20 +58,26 @@ vcat(prob, type = "mle")
 \S4method{avar_me}{Cat}(distr)
 }
 \arguments{
-\item{prob}{numeric. The distribution parameter, a probability vector.}
+\item{prob}{numeric. Probability vector of success for each category.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Cat}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Cat} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Cat} instead.}
+\item{log}{logical. Should the logarithm of the probability be
+returned?}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{distr}{an object of class \code{Cat}.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 
-\item{dim}{numeric. The parameter dimension. See details.}
+\item{dim}{numeric. The probability vector dimension. See Details.}
 }
 \value{
 Each type of function returns a different type of object:
@@ -122,15 +128,13 @@ covariance matrix of the estimators is of dimension \verb{(k-1)x(k-1)}.
 # Create the distribution
 p <- c(0.1, 0.2, 0.7)
 D <- Cat(p)
-x <- 2
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-x <- r(D, n) # random generator function
+d(D, 2) # density function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -166,7 +170,7 @@ e(D, x, type = "mle")
 mle("cat", dim = 3, x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vcat(p, type = "mle")
@@ -175,7 +179,7 @@ vcat(p, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
 \code{\link[=dmultinom]{dmultinom()}}, \code{\link[=rmultinom]{rmultinom()}}

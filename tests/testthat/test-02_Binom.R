@@ -122,6 +122,9 @@ test_that("Binom estim works", {
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.02)
 
+  # Errors
+  expect_error(mle(Binom(1, 0.5), c(3, 5, 4)))
+
 })
 
 test_that("Binom avar works", {
@@ -139,8 +142,8 @@ test_that("Binom avar works", {
   expect_true(is.numeric(vbinom(N, p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vbinom(N, p, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vbinom(N, p, type = "me"), avar(D, type = "me"))
+  expect_identical(vbinom(N, p, type = "mle"), v(D, type = "mle"))
+  expect_identical(vbinom(N, p, type = "me"), v(D, type = "me"))
   expect_identical(vbinom(N, p, type = "mle"), avar_mle(D))
   expect_identical(vbinom(N, p, type = "me"), avar_me(D))
 

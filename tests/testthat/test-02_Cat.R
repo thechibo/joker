@@ -35,6 +35,11 @@ test_that("Cat dpqr work", {
   expect_identical(d(D)(1), dcat(1, p))
   expect_identical(d(D)(1), d(D, 1))
 
+  # Errors
+  expect_error(dcat(1, c(0.5, 0.4, 0.3, 0.7)))
+  expect_error(dcat(1, c(0.5, 0.6, -0.1)))
+  expect_warning(dcat(0.5, p))
+
 })
 
 test_that("Cat moments work", {
@@ -49,8 +54,10 @@ test_that("Cat moments work", {
   expect_true(is.numeric(mode(D)))
   expect_true(is.numeric(var(D)))
   expect_true(is.numeric(finf(D)))
+  expect_true(is.numeric(finf(Cat(c(0.4, 0.6)))))
 
   # Values
+  expect_identical(mean(D), p)
   expect_identical(mean(D), p)
 
 })
@@ -96,6 +103,9 @@ test_that("Cat estim works", {
   d <- test_consistency("mle", D)
   expect_equal(d$prm_true, d$prm_est, tolerance = 0.02)
 
+  # Error
+  expect_error(mle(D, x, dim = 3))
+
 })
 
 test_that("Cat avar works", {
@@ -113,8 +123,8 @@ test_that("Cat avar works", {
   expect_true(is.numeric(vcat(p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vcat(p, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vcat(p, type = "me"), avar(D, type = "me"))
+  expect_identical(vcat(p, type = "mle"), v(D, type = "mle"))
+  expect_identical(vcat(p, type = "me"), v(D, type = "me"))
   expect_identical(vcat(p, type = "mle"), avar_mle(D))
   expect_identical(vcat(p, type = "me"), avar_me(D))
 

@@ -20,13 +20,21 @@ setClass("Unif",
 #' equally probable. It is defined by two parameters: the lower bound \eqn{a}
 #' and the upper bound \eqn{b}, with \eqn{a < b}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Unif` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Unif` instead.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Unif`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Unif`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
 #' @param min,max numeric. The distribution parameters.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
@@ -36,7 +44,8 @@ setClass("Unif",
 #' @inherit Distributions return
 #'
 #' @seealso
-#' Functions from the `stats` package: [dunif()], [punif()], [qunif()], [runif()]
+#' Functions from the `stats` package: [dunif()], [punif()], [qunif()],
+#' [runif()]
 #'
 #' @export
 #'
@@ -48,17 +57,15 @@ setClass("Unif",
 #' # Create the distribution
 #' a <- 3 ; b <- 5
 #' D <- Unif(a, b)
-#' x <- c(0.3, 0.8, 0.5)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, x) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 0.8, 0.5)) # density function
+#' p(D, c(0.3, 0.8, 0.5)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -116,20 +123,22 @@ setValidity("Unif", function(object) {
 
 #' @rdname Unif
 setMethod("d", signature = c(distr = "Unif", x = "numeric"),
-          function(distr, x) {
-            dunif(x, min = distr@min, max = distr@max)
+          function(distr, x, log = FALSE) {
+            dunif(x, min = distr@min, max = distr@max, log = log)
           })
 
 #' @rdname Unif
-setMethod("p", signature = c(distr = "Unif", x = "numeric"),
-          function(distr, x) {
-            punif(x, min = distr@min, max = distr@max)
+setMethod("p", signature = c(distr = "Unif", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            punif(q, min = distr@min, max = distr@max,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Unif
-setMethod("qn", signature = c(distr = "Unif", x = "numeric"),
-          function(distr, x) {
-            qunif(x, min = distr@min, max = distr@max)
+setMethod("qn", signature = c(distr = "Unif", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qunif(p, min = distr@min, max = distr@max,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Unif
@@ -249,9 +258,13 @@ setMethod("ll",
 #' @rdname Unif
 #' @export
 eunif <- function(x, type = "mle", ...) {
-
-  e(Unif(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Unif(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Unif

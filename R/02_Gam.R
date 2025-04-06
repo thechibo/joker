@@ -18,25 +18,50 @@ setClass("Gam",
 #' The Gamma distribution is an absolute continuous probability distribution
 #' with two parameters: shape \eqn{\alpha > 0} and scale \eqn{\beta > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Gamma` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Gamma` instead.
-#' @param shape,scale numeric. The distribution parameters (positive real
-#' numbers).
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Gam`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Gam`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param shape,scale numeric. The non-negative distribution parameters.
 #' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
-#' optimization.
+#' optimization. See Details.
 #'
 #' @details
 #' The probability density function (PDF) of the Gamma distribution is given by:
-#' \deqn{ f(x; \alpha, \beta) = \frac{\beta^{-\alpha} x^{\alpha-1} e^{-x/\beta}}{\Gamma(\alpha)}, \quad x > 0. }
+#' \deqn{ f(x; \alpha, \beta) = \frac{\beta^{-\alpha} x^{\alpha-1}
+#' e^{-x/\beta}}{\Gamma(\alpha)}, \quad x > 0. }
+#'
+#' The MLE of the gamma distribution parameters is not available in closed form
+#' and has to be approximated numerically. This is done with `optim()`. The
+#' optimization can be performed on the shape parameter
+#' \eqn{\alpha\in(0,+\infty)}. The default method used is the L-BFGS-B method
+#' with lower bound `1e-5` and upper bound `Inf`. The `par0` argument can either
+#' be a numeric (satisfying `lower <= par0 <= upper`) or a character specifying
+#' the closed-form estimator to be used as initialization for the algorithm
+#' (`"me"` or `"same"` - the default value).
 #'
 #' @inherit Distributions return
 #'
 #' @references
+#'
+#' - Wiens, D. P., Cheng, J., & Beaulieu, N. C. (2003). A class of method of
+#' moments estimators for the two-parameter gamma family. Pakistan Journal of
+#' Statistics, 19(1), 129-141.
+#'
+#' - Ye, Z. S., & Chen, N. (2017). Closed-form estimators for the gamma
+#' distribution derived from likelihood equations. The American Statistician,
+#' 71(2), 177-181.
 #'
 #' - Tamae, H., Irie, K. & Kubokawa, T. (2020), A score-adjusted approach to
 #' closed-form estimators for the gamma and beta distributions, Japanese Journal
@@ -46,7 +71,8 @@ setClass("Gam",
 #' arXiv preprint arXiv:2205.10799.
 #'
 #' @seealso
-#' Functions from the `stats` package: [dgamma()], [pgamma()], [qgamma()], [rgamma()]
+#' Functions from the `stats` package: [dgamma()], [pgamma()], [qgamma()],
+#' [rgamma()]
 #'
 #' @export
 #'
@@ -58,17 +84,15 @@ setClass("Gam",
 #' # Create the distribution
 #' a <- 3 ; b <- 5
 #' D <- Gam(a, b)
-#' x <- c(0.3, 2, 10)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 2, 10)) # density function
+#' p(D, c(0.3, 2, 10)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -110,7 +134,7 @@ setClass("Gam",
 #' mle("gam", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vgamma(a, b, type = "mle")
@@ -121,7 +145,7 @@ setClass("Gam",
 #' avar_me(D)
 #' avar_same(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Gam <- function(shape = 1, scale = 1) {
   new("Gam", shape = shape, scale = scale)
 }
@@ -148,20 +172,22 @@ setValidity("Gam", function(object) {
 
 #' @rdname Gam
 setMethod("d", signature = c(distr = "Gam", x = "numeric"),
-          function(distr, x) {
-            dgamma(x, shape = distr@shape, scale = distr@scale)
+          function(distr, x, log = FALSE) {
+            dgamma(x, shape = distr@shape, scale = distr@scale, log = log)
           })
 
 #' @rdname Gam
-setMethod("p", signature = c(distr = "Gam", x = "numeric"),
-          function(distr, x) {
-            pgamma(x, shape = distr@shape, scale = distr@scale)
+setMethod("p", signature = c(distr = "Gam", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pgamma(q, shape = distr@shape, scale = distr@scale,
+                   lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Gam
-setMethod("qn", signature = c(distr = "Gam", x = "numeric"),
-          function(distr, x) {
-            qgamma(x, shape = distr@shape, scale = distr@scale)
+setMethod("qn", signature = c(distr = "Gam", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qgamma(p, shape = distr@shape, scale = distr@scale,
+                   lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Gam
@@ -320,9 +346,13 @@ setMethod("dlloptim",
 #' @rdname Gam
 #' @export
 egamma <- function(x, type = "mle", ...) {
-
-  e(Gam(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Gam(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Gam
@@ -334,9 +364,16 @@ setMethod("mle",
                                 lower = 1e-5,
                                 upper = Inf) {
 
+  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+    par0 <- egamma(x, type = par0)$shape
+  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
+    stop("par0 must either be a character ('me' or 'same')",
+         "or a numeric within the lower and upper bounds")
+  }
+
   tx <- c(log(mean(x)), mean(log(x)))
 
-  par <- optim(par = do.call(par0, list(distr = distr, x = x))$shape,
+  par <- optim(par = par0,
                fn = lloptim,
                gr = dlloptim,
                tx = tx,
@@ -378,15 +415,20 @@ setMethod("same",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Gam
 #' @export
 vgamma <- function(shape, scale, type = "mle") {
-
-  avar(Gam(shape = shape, scale = scale), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  distr <- Gam(shape, scale)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Gam

@@ -69,6 +69,9 @@ test_that("Gam moments work", {
   expect_true(is.numeric(entro(D)))
   expect_true(is.numeric(finf(D)))
 
+  # Values
+  expect_identical(mode(Gam(0.5, 1)), 0)
+
 })
 
 test_that("Gam likelihood works", {
@@ -159,9 +162,9 @@ test_that("Gam avar works", {
   expect_true(is.numeric(vgamma(a, b, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vgamma(a, b, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vgamma(a, b, type = "me"), avar(D, type = "me"))
-  expect_identical(vgamma(a, b, type = "same"), avar(D, type = "same"))
+  expect_identical(vgamma(a, b, type = "mle"), v(D, type = "mle"))
+  expect_identical(vgamma(a, b, type = "me"), v(D, type = "me"))
+  expect_identical(vgamma(a, b, type = "same"), v(D, type = "same"))
   expect_identical(vgamma(a, b, type = "mle"), avar_mle(D))
   expect_identical(vgamma(a, b, type = "me"), avar_me(D))
   expect_identical(vgamma(a, b, type = "same"), avar_same(D))

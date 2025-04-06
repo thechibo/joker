@@ -20,11 +20,11 @@
 \usage{
 Fisher(df1 = 1, df2 = 1)
 
-\S4method{d}{Fisher,numeric}(distr, x)
+\S4method{d}{Fisher,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Fisher,numeric}(distr, x)
+\S4method{p}{Fisher,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Fisher,numeric}(distr, x)
+\S4method{qn}{Fisher,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Fisher,numeric}(distr, n)
 
@@ -49,14 +49,26 @@ llf(x, df1, df2)
 \S4method{ll}{Fisher,numeric}(distr, x)
 }
 \arguments{
-\item{df1, df2}{numeric. The distribution parameters.}
+\item{df1, df2}{numeric. The distribution degrees of freedom parameters.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Fisher} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Fisher} instead.}
+\item{distr}{an object of class \code{Fisher}.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Fisher}. For the
+log-likelihood functions, \code{x} is the sample of observations.}
+
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
 }
 \value{
 Each type of function returns a different type of object:
@@ -84,7 +96,9 @@ in hypothesis testing. It is defined by two degrees of freedom parameters
 }
 \details{
 The probability density function (PDF) of the F-distribution is given by:
-\deqn{ f(x; d_1, d_2) = \frac{\sqrt{\left(\frac{d_1 x}{d_1 x + d_2}\right)^{d_1} \left(\frac{d_2}{d_1 x + d_2}\right)^{d_2}}}{x B(d_1/2, d_2/2)}, \quad x > 0 .}
+\deqn{ f(x; d_1, d_2) = \frac{\sqrt{\left(\frac{d_1 x}{d_1 x +
+d_2}\right)^{d_1} \left(\frac{d_2}{d_1 x + d_2}\right)^{d_2}}}{x B(d_1/2,
+d_2/2)}, \quad x > 0 .}
 }
 \examples{
 # -----------------------------------------------------
@@ -94,17 +108,15 @@ The probability density function (PDF) of the F-distribution is given by:
 # Create the distribution
 df1 <- 14 ; df2 <- 20
 D <- Fisher(df1, df2)
-x <- c(0.3, 2, 10)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 2, 10)) # density function
+p(D, c(0.3, 2, 10)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself

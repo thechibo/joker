@@ -3,7 +3,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## General                ----
+## Messages               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 loading_bar <- function(total) {
@@ -11,16 +11,9 @@ loading_bar <- function(total) {
   progress::progress_bar$new(format = frm, total = total, clear = FALSE)
 }
 
-seqcol <- function(x) {
-  seq_along(x[1, ])
-}
-
-seqrow <- function(x) {
-  seq_along(x[ , 1])
-}
-
-is_pos <- function(x) {
-  all(is.finite(x)) && all(x > 0)
+error_est_type <- function(type, types) {
+  stop("type must be one of: ", paste(types, collapse = " "),
+       ". Instead got: ", type)
 }
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,6 +32,20 @@ get_moment_methods <- function(x) {
   meth <- df_meth[df_meth$from == "joker", ]$generic
 
   mom[mom %in% meth]
+
+}
+
+# Turn the S4 class in the name used in the d<name> notation.
+get_class_abbr <- function(distr) {
+
+  y <- tolower(class(distr)[1])
+
+  switch(y,
+         "gam" = "gamma",
+         "stud" = "t",
+         "fisher" = "f",
+         "weib" = "weibull",
+         y)
 
 }
 
@@ -148,6 +155,14 @@ set2of3 <- function(x, i) {
   x[, i, ]
 }
 
+seqcol <- function(x) {
+  seq_along(x[1, ])
+}
+
+seqrow <- function(x) {
+  seq_along(x[ , 1])
+}
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Statistics             ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,34 +189,25 @@ colVar <- function(x) {
 ## Gamma Function         ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#' @title Polygamma Functions
+#' @title Inverse Digamma Function
 #'
 #' @description
-#' This set of functions revolve around the polygamma functions, i.e. the
-#' derivatives of the gamma function.
+#' The inverse of the digamma function, i.e. the derivative of the log-gamma
+#' function.
 #'
-#' @param x,y numeric. The points to evaluate the function.
-#' @param p integer. The p-variate Gamma function.
-#' @param log logical. Should the logarithm of the result be returned?
+#' @param x numeric. The point to evaluate the function.
 #' @param ... extra arguments passed to `optim()`.
-#'
-#' @describeIn idigamma inverse digamma function.
 #'
 #' @return numeric. The evaluated function.
 #'
 #' @export
 #'
 #' @details
-#' These functions are needed for the beta and gamma distribution families (and
-#' their multivariate analogs, e.g. the Dirichlet). They appear in the
-#' estimation and the asymptotic variance-covariance matrix of the MLE and the
-#' SAME.
-#'
 #' The `idigamma()` function implements the inverse of the digamma function
-#' \eqn{\psi}. It is a numerical approximation based on the L-BFGS-U
-#' quasi-Newton algorithm. Specifically, `idigamma()` makes a call to `optim()`
-#' in order to to solve the equation \eqn{\psi(x) = y}; more accurately, to find
-#' the minimum of \eqn{f(x) = \log\Gamma(x) - xy}, whose derivative is
+#' \eqn{\psi}. It is a numerical approximation based on the Brent optimization
+#' algorithm. Specifically, `idigamma()` makes a call to `optim()` in order to
+#' solve the equation \eqn{\psi(x) = y}; more accurately, to find the minimum of
+#' \eqn{f(x) = \log\Gamma(x) - xy}, whose derivative is
 #' \eqn{f'(x) = \psi(x) - y}. The optimization is restricted within the tight
 #' bounds derived by Batir (2017). The function is vectorized.
 #'
@@ -215,9 +221,8 @@ colVar <- function(x) {
 #'
 #' @examples
 #' idigamma(2)
-#' Ddigamma(2, 3)
-#' Dtrigamma(2, 3)
-#' gammap(1:3, 3)
+#'
+#' @seealso [optim()]
 idigamma <- function(x, ...) {
 
   unlist(lapply(x, FUN = function(x) {
@@ -229,38 +234,11 @@ idigamma <- function(x, ...) {
     # Quasi-Newton optimization
     optim(par = (l + u) / 2,
           fn = function(y) {lgamma(y) - x * y},
-          gr = function(y) {digamma(y) - x},
+          #gr = function(y) {digamma(y) - x},
           method = "Brent",
           lower = l,
           upper = u, ...)$par
   }))
-
-}
-
-#' @describeIn idigamma digamma difference function.
-#' @export
-Ddigamma <- function(x, y) {
-  digamma(x) - digamma(y)
-}
-
-#' @describeIn idigamma trigamma difference function.
-#' @export
-Dtrigamma <- function(x, y) {
-  trigamma(x) - trigamma(y)
-}
-
-#' @describeIn idigamma p-variate gamma function
-#' @export
-gammap <- function(x, p, log = FALSE) {
-
-  g <- x
-
-  for (i in seq_along(x)) {
-    g[i] <- (p * (p - 1) / 4) * log(pi)  + sum(lgamma(x[i] + (1 - 1:p) / 2))
-  }
-
-  if (!log) { g <- exp(g) }
-  g
 
 }
 
@@ -319,6 +297,10 @@ is_pd <- function(x) {
 
   pd
 
+}
+
+is_pos <- function(x) {
+  all(is.finite(x)) && all(x > 0)
 }
 
 is_integer <- function(x) {

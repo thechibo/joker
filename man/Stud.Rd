@@ -20,11 +20,11 @@
 \usage{
 Stud(df = 1)
 
-\S4method{d}{Stud,numeric}(distr, x)
+\S4method{d}{Stud,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Stud,numeric}(distr, x)
+\S4method{p}{Stud,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Stud,numeric}(distr, x)
+\S4method{qn}{Stud,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Stud,numeric}(distr, n)
 
@@ -49,14 +49,27 @@ llt(x, df)
 \S4method{ll}{Stud,numeric}(distr, x)
 }
 \arguments{
-\item{df}{numeric. The distribution parameter.}
+\item{df}{numeric. The distribution degrees of freedom parameter.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Stud} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Stud} instead.}
+\item{distr}{an object of class \code{Stud}.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Stud}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
+
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
 }
 \value{
 Each type of function returns a different type of object:
@@ -84,7 +97,9 @@ small sample sizes. It is defined by one parameter: the degrees of freedom
 }
 \details{
 The probability density function (PDF) of the Student's t-distribution is:
-\deqn{ f(x; \nu) = \frac{\Gamma\left(\frac{\nu + 1}{2}\right)}{\sqrt{\nu\pi}\ \Gamma\left(\frac{\nu}{2}\right)}\left(1 + \frac{x^2}{\nu}\right)^{-\frac{\nu + 1}{2}} .}
+\deqn{ f(x; \nu) = \frac{\Gamma\left(\frac{\nu + 1}{2}\right)}{\sqrt{\nu\pi}\
+\Gamma\left(\frac{\nu}{2}\right)}\left(1 + \frac{x^2}{\nu}\right)^{-\frac{\nu
++ 1}{2}} .}
 }
 \examples{
 # -----------------------------------------------------
@@ -94,17 +109,15 @@ The probability density function (PDF) of the Student's t-distribution is:
 # Create the distribution
 df <- 12
 D <- Stud(df)
-x <- c(-3, 0, 3)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(-3, 0, 3)) # density function
+p(D, c(-3, 0, 3)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 d1 <- d(D) ; d1(x) # d1 is a function itself

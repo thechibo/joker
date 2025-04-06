@@ -14,9 +14,9 @@
 \usage{
 \S4method{d}{Distribution,missing}(distr, x, ...)
 
-\S4method{p}{Distribution,missing}(distr, x, ...)
+\S4method{p}{Distribution,missing}(distr, q, ...)
 
-\S4method{qn}{Distribution,missing}(distr, x, ...)
+\S4method{qn}{Distribution,missing}(distr, p, ...)
 
 \S4method{r}{Distribution,missing}(distr, n, ...)
 
@@ -31,7 +31,7 @@
 \arguments{
 \item{distr}{a \code{Distribution} object.}
 
-\item{x, n}{missing. Arguments not supplied.}
+\item{x, q, p, n}{missing. Arguments not supplied.}
 
 \item{...}{extra arguments.}
 }
@@ -45,9 +45,9 @@ A collection of S4 classes that provide a flexible and structured way to work
 with probability distributions.
 }
 \details{
-When \code{x} or \code{n} are missing, the methods return a function that takes as
-input the missing argument, allowing the user to work with the function
-object itself. See examples.
+When \code{x}, \code{q}, \code{p}, or \code{n} are missing, the methods return a function that
+takes as input the missing argument, allowing the user to work with the
+function object itself. See examples.
 }
 \examples{
 # -----------------------------------------------------
@@ -57,17 +57,15 @@ object itself. See examples.
 # Create the distribution
 a <- 3 ; b <- 5
 D <- Beta(a, b)
-x <- c(0.3, 0.8, 0.5)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 0.8, 0.5)) # density function
+p(D, c(0.3, 0.8, 0.5)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -107,7 +105,7 @@ e(D, x, type = "mle")
 mle("beta", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vbeta(a, b, type = "mle")
@@ -118,7 +116,7 @@ avar_mle(D)
 avar_me(D)
 avar_same(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
 \link{moments}, \link{loglikelihood}, \link{estimation}, \link{Bern},

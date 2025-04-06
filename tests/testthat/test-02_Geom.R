@@ -122,8 +122,8 @@ test_that("Geom avar works", {
   expect_true(is.numeric(vgeom(p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vgeom(p, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vgeom(p, type = "me"), avar(D, type = "me"))
+  expect_identical(vgeom(p, type = "mle"), v(D, type = "mle"))
+  expect_identical(vgeom(p, type = "me"), v(D, type = "me"))
   expect_identical(vgeom(p, type = "mle"), avar_mle(D))
   expect_identical(vgeom(p, type = "me"), avar_me(D))
 

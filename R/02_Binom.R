@@ -16,17 +16,25 @@ setClass("Binom",
 #'
 #' @description
 #' The binomial distribution is a discrete probability distribution which models
-#' the probability of having x successes in n independent Binomoulli trials with
+#' the probability of having x successes in n independent Bernoulli trials with
 #' success probability p.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Binom` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Binom` instead.
-#' @param size,prob numeric. The distribution parameters, `size` must be a
-#' positive integer and `prob` must be within the (0, 1) interval.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Binom`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Binom`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param size number of trials (zero or more).
+#' @param prob numeric. Probability of success on each trial.
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
@@ -37,7 +45,8 @@ setClass("Binom",
 #' @inherit Distributions return
 #'
 #' @seealso
-#' Functions from the `stats` package: [dbinom()], [pbinom()], [qbinom()], [rbinom()]
+#' Functions from the `stats` package: [dbinom()], [pbinom()], [qbinom()],
+#' [rbinom()]
 #'
 #' @export
 #'
@@ -49,17 +58,15 @@ setClass("Binom",
 #' # Create the distribution
 #' N <- 10 ; p <- 0.7
 #' D <- Binom(N, p)
-#' x <- 0:N
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, 0:N) # density function
+#' p(D, 0:N) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -95,7 +102,7 @@ setClass("Binom",
 #' e(D, x, type = "mle")
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vbinom(N, p, type = "mle")
@@ -104,7 +111,7 @@ setClass("Binom",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Binom <- function(size = 1, prob = 0.5) {
   new("Binom", size = size, prob = prob)
 }
@@ -131,20 +138,22 @@ setValidity("Binom", function(object) {
 
 #' @rdname Binom
 setMethod("d", signature = c(distr = "Binom", x = "numeric"),
-          function(distr, x) {
-            dbinom(x, size = distr@size, prob = distr@prob)
+          function(distr, x, log = FALSE) {
+            dbinom(x, size = distr@size, prob = distr@prob, log = log)
           })
 
 #' @rdname Binom
-setMethod("p", signature = c(distr = "Binom", x = "numeric"),
-          function(distr, x) {
-            pbinom(x, size = distr@size, prob = distr@prob)
+setMethod("p", signature = c(distr = "Binom", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pbinom(q, size = distr@size, prob = distr@prob,
+                   lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Binom
-setMethod("qn", signature = c(distr = "Binom", x = "numeric"),
-          function(distr, x) {
-            qbinom(x, size = distr@size, prob = distr@prob)
+setMethod("qn", signature = c(distr = "Binom", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qbinom(p, size = distr@size, prob = distr@prob,
+                   lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Binom
@@ -259,9 +268,13 @@ setMethod("ll",
 #' @rdname Binom
 #' @export
 ebinom <- function(x, size, type = "mle", ...) {
-
-  e(Binom(size = size), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Binom(size), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Binom
@@ -290,15 +303,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Binom
 #' @export
 vbinom <- function(size, prob, type = "mle") {
-
-  avar(Binom(size = size, prob = prob), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Binom(size, prob)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Binom

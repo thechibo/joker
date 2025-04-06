@@ -20,16 +20,25 @@ setClass("Fisher",
 #' in hypothesis testing. It is defined by two degrees of freedom parameters
 #' \eqn{d_1 > 0} and \eqn{d_2 > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Fisher` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Fisher` instead.
-#' @param df1,df2 numeric. The distribution parameters.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Fisher`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Fisher`. For the
+#' log-likelihood functions, `x` is the sample of observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param df1,df2 numeric. The distribution degrees of freedom parameters.
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #'
 #' @details
 #' The probability density function (PDF) of the F-distribution is given by:
-#' \deqn{ f(x; d_1, d_2) = \frac{\sqrt{\left(\frac{d_1 x}{d_1 x + d_2}\right)^{d_1} \left(\frac{d_2}{d_1 x + d_2}\right)^{d_2}}}{x B(d_1/2, d_2/2)}, \quad x > 0 .}
+#' \deqn{ f(x; d_1, d_2) = \frac{\sqrt{\left(\frac{d_1 x}{d_1 x +
+#' d_2}\right)^{d_1} \left(\frac{d_2}{d_1 x + d_2}\right)^{d_2}}}{x B(d_1/2,
+#' d_2/2)}, \quad x > 0 .}
 #'
 #' @inherit Distributions return
 #'
@@ -46,17 +55,15 @@ setClass("Fisher",
 #' # Create the distribution
 #' df1 <- 14 ; df2 <- 20
 #' D <- Fisher(df1, df2)
-#' x <- c(0.3, 2, 10)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 2, 10)) # density function
+#' p(D, c(0.3, 2, 10)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -111,20 +118,22 @@ setValidity("Fisher", function(object) {
 
 #' @rdname Fisher
 setMethod("d", signature = c(distr = "Fisher", x = "numeric"),
-          function(distr, x) {
-            df(x, df1 = distr@df1, df2 = distr@df2, ncp = 0)
+          function(distr, x, log = FALSE) {
+            df(x, df1 = distr@df1, df2 = distr@df2, ncp = 0, log = log)
           })
 
 #' @rdname Fisher
-setMethod("p", signature = c(distr = "Fisher", x = "numeric"),
-          function(distr, x) {
-            pf(x, df1 = distr@df1, df2 = distr@df2, ncp = 0)
+setMethod("p", signature = c(distr = "Fisher", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pf(q, df1 = distr@df1, df2 = distr@df2, ncp = 0,
+               lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Fisher
-setMethod("qn", signature = c(distr = "Fisher", x = "numeric"),
-          function(distr, x) {
-            qf(x, df1 = distr@df1, df2 = distr@df2, ncp = 0)
+setMethod("qn", signature = c(distr = "Fisher", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qf(p, df1 = distr@df1, df2 = distr@df2, ncp = 0,
+               lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Fisher

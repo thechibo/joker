@@ -25,11 +25,11 @@
 \usage{
 Binom(size = 1, prob = 0.5)
 
-\S4method{d}{Binom,numeric}(distr, x)
+\S4method{d}{Binom,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Binom,numeric}(distr, x)
+\S4method{p}{Binom,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Binom,numeric}(distr, x)
+\S4method{qn}{Binom,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Binom,numeric}(distr, n)
 
@@ -64,17 +64,31 @@ vbinom(size, prob, type = "mle")
 \S4method{avar_me}{Binom}(distr)
 }
 \arguments{
-\item{size, prob}{numeric. The distribution parameters, \code{size} must be a
-positive integer and \code{prob} must be within the (0, 1) interval.}
+\item{size}{number of trials (zero or more).}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Binom} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Binom} instead.}
+\item{prob}{numeric. Probability of success on each trial.}
 
-\item{n}{numeric. The sample size.}
+\item{distr}{an object of class \code{Binom}.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Binom}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
+
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -98,7 +112,7 @@ estimator.
 }
 \description{
 The binomial distribution is a discrete probability distribution which models
-the probability of having x successes in n independent Binomoulli trials with
+the probability of having x successes in n independent Bernoulli trials with
 success probability p.
 }
 \details{
@@ -114,17 +128,15 @@ by: \deqn{ f(x; n, p) = \binom{n}{x} p^x (1 - p)^{n - x}, \quad N \in
 # Create the distribution
 N <- 10 ; p <- 0.7
 D <- Binom(N, p)
-x <- 0:N
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, 0:N) # density function
+p(D, 0:N) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -160,7 +172,7 @@ me(D, x)
 e(D, x, type = "mle")
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vbinom(N, p, type = "mle")
@@ -169,8 +181,9 @@ vbinom(N, p, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
-Functions from the \code{stats} package: \code{\link[=dbinom]{dbinom()}}, \code{\link[=pbinom]{pbinom()}}, \code{\link[=qbinom]{qbinom()}}, \code{\link[=rbinom]{rbinom()}}
+Functions from the \code{stats} package: \code{\link[=dbinom]{dbinom()}}, \code{\link[=pbinom]{pbinom()}}, \code{\link[=qbinom]{qbinom()}},
+\code{\link[=rbinom]{rbinom()}}
 }

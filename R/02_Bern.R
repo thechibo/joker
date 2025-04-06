@@ -19,26 +19,33 @@ setClass("Bern",
 #' the value 1 with probability \eqn{p} and the value 0 with probability
 #' \eqn{1 - p}, where \eqn{0 \leq p \leq 1}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Bern` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Bern` instead.
-#' @param prob numeric. The distribution parameter, within the (0, 1) interval.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
-#' @param log,log.p logical. Should the logarithm of the probability be returned?
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Bern`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Bern`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param prob numeric. Probability of success.
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
 #' The probability mass function (PMF) of the Bernoulli distribution is given
-#' by: \deqn{ f(x; p) = p^x (1 - p)^{1 - x}, \quad p \in (0, 1), \quad x \in \{0, 1\}.}
+#' by: \deqn{ f(x; p) = p^x (1 - p)^{1 - x}, \quad p \in (0, 1), \quad x \in
+#' \{0, 1\}.}
 #'
 #' @inherit Distributions return
 #'
 #' @seealso
-#' Functions from the `stats` package: [dbinom()], [pbinom()], [qbinom()], [rbinom()]
+#' Functions from the `stats` package: [dbinom()], [pbinom()], [qbinom()],
+#' [rbinom()]
 #'
 #' @export
 #'
@@ -50,17 +57,15 @@ setClass("Bern",
 #' # Create the distribution
 #' p <- 0.7
 #' D <- Bern(p)
-#' x <- c(0, 1)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0, 1)) # density function
+#' p(D, c(0, 1)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -100,7 +105,7 @@ setClass("Bern",
 #' mle("bern", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vbern(p, type = "mle")
@@ -109,7 +114,7 @@ setClass("Bern",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Bern <- function(prob = 0.5) {
   new("Bern", prob = prob)
 }
@@ -136,14 +141,14 @@ dbern <- function(x, prob, log = FALSE) {
 
 #' @rdname Bern
 #' @export
-pbern <- function(x, prob, lower.tail = TRUE, log.p = FALSE) {
-  pbinom(x, size = 1, prob, lower.tail, log.p)
+pbern <- function(q, prob, lower.tail = TRUE, log.p = FALSE) {
+  pbinom(q, size = 1, prob, lower.tail, log.p)
 }
 
 #' @rdname Bern
 #' @export
-qbern <- function(x, prob, lower.tail = TRUE, log.p = FALSE) {
-  qbinom(x, size = 1, prob, lower.tail, log.p)
+qbern <- function(p, prob, lower.tail = TRUE, log.p = FALSE) {
+  qbinom(p, size = 1, prob, lower.tail, log.p)
 }
 
 #' @rdname Bern
@@ -154,20 +159,20 @@ rbern <- function(n, prob) {
 
 #' @rdname Bern
 setMethod("d", signature = c(distr = "Bern", x = "numeric"),
-          function(distr, x) {
-            dbinom(x, size = 1, prob = distr@prob)
+          function(distr, x, log = FALSE) {
+            dbinom(x, size = 1, prob = distr@prob, log)
           })
 
 #' @rdname Bern
-setMethod("p", signature = c(distr = "Bern", x = "numeric"),
-          function(distr, x) {
-            pbinom(x, size = 1, prob = distr@prob)
+setMethod("p", signature = c(distr = "Bern", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pbinom(q, size = 1, prob = distr@prob, lower.tail, log.p)
           })
 
 #' @rdname Bern
-setMethod("qn", signature = c(distr = "Bern", x = "numeric"),
-          function(distr, x) {
-            qbinom(x, size = 1, prob = distr@prob)
+setMethod("qn", signature = c(distr = "Bern", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qbinom(p, size = 1, prob = distr@prob, lower.tail, log.p)
           })
 
 #' @rdname Bern
@@ -312,9 +317,13 @@ setMethod("ll",
 #' @rdname Bern
 #' @export
 ebern <- function(x, type = "mle", ...) {
-
-  e(Bern(), x = x, type = type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Bern(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Bern
@@ -336,15 +345,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Bern
 #' @export
 vbern <- function(prob, type = "mle") {
-
-  avar(Bern(prob), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Bern(prob)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Bern

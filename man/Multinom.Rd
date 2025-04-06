@@ -3,7 +3,6 @@
 \name{Multinom}
 \alias{Multinom}
 \alias{d,Multinom,numeric-method}
-\alias{d,Multinom,matrix-method}
 \alias{r,Multinom,numeric-method}
 \alias{mean,Multinom-method}
 \alias{mode,Multinom-method}
@@ -22,9 +21,7 @@
 \usage{
 Multinom(size = 1, prob = c(0.5, 0.5))
 
-\S4method{d}{Multinom,numeric}(distr, x)
-
-\S4method{d}{Multinom,matrix}(distr, x)
+\S4method{d}{Multinom,numeric}(distr, x, log = FALSE)
 
 \S4method{r}{Multinom,numeric}(distr, n)
 
@@ -55,17 +52,24 @@ vmultinom(size, prob, type = "mle")
 \S4method{avar_me}{Multinom}(distr)
 }
 \arguments{
-\item{size, prob}{numeric. The distribution parameters, \code{size} must be a
-positive integer and \code{prob} must be a probability vector.}
+\item{size}{number of trials (zero or more).}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Multinom} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Multinom} instead.}
+\item{prob}{numeric. Probability of success on each trial.}
 
-\item{n}{numeric. The sample size.}
+\item{distr}{an object of class \code{Multinom}.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Multinom}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
+
+\item{log}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -88,13 +92,14 @@ estimator.
 }
 }
 \description{
-The multinomial distribution is a discrete probability distribution which models
-the probability of having x successes in n independent categorical trials
-with success probability vector p.
+The multinomial distribution is a discrete probability distribution which
+models the probability of having x successes in n independent categorical
+trials with success probability vector p.
 }
 \details{
 The probability mass function (PMF) of the Multinomial distribution is:
-\deqn{ P(X_1 = x_1, ..., X_k = x_k) = \frac{n!}{x_1! x_2! ... x_k!} \prod_{i=1}^k p_i^{x_i}, }
+\deqn{ P(X_1 = x_1, ..., X_k = x_k) = \frac{n!}{x_1! x_2! ... x_k!}
+\prod_{i=1}^k p_i^{x_i}, }
 subject to \eqn{ \sum_{i=1}^{k} x_i = n }.
 }
 \examples{
@@ -105,19 +110,17 @@ subject to \eqn{ \sum_{i=1}^{k} x_i = n }.
 # Create the distribution
 N <- 10 ; p <- c(0.1, 0.2, 0.7)
 D <- Multinom(N, p)
-x <- c(2, 3, 5)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
+d(D, c(2, 3, 5)) # density function
 
 # alternative way to use the function
-df <- d(D) ; df(x) # df is a function itself
+df <- d(D) ; df(c(2, 3, 5)) # df is a function itself
 
-x <- r(D, n) # random generator function
+x <- r(D, 100) # random generator function
 
 # ------------------
 # Moments
@@ -150,7 +153,7 @@ e(D, x, type = "mle")
 mle("multinom", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vmultinom(N, p, type = "mle")
@@ -159,7 +162,7 @@ vmultinom(N, p, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
 Functions from the \code{stats} package: \code{\link[=dmultinom]{dmultinom()}}, \code{\link[=rmultinom]{rmultinom()}}

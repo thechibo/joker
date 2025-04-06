@@ -36,6 +36,7 @@ test_that("Laplace dpqr work", {
   expect_identical(p(D)(Inf), 1)
   expect_identical(qn(D)(1), Inf)
   expect_identical(qn(D)(0.5), mu)
+  expect_identical(qn(D)(0), -Inf)
 
   # 2-Way Calls
   expect_identical(d(D)(1), dlaplace(1, mu, sigma))
@@ -127,8 +128,8 @@ test_that("Laplace avar works", {
   expect_true(is.numeric(vlaplace(mu, sigma, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vlaplace(mu, sigma, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vlaplace(mu, sigma, type = "me"), avar(D, type = "me"))
+  expect_identical(vlaplace(mu, sigma, type = "mle"), v(D, type = "mle"))
+  expect_identical(vlaplace(mu, sigma, type = "me"), v(D, type = "me"))
   expect_identical(vlaplace(mu, sigma, type = "mle"), avar_mle(D))
   expect_identical(vlaplace(mu, sigma, type = "me"), avar_me(D))
 

@@ -14,25 +14,20 @@
 \alias{skew,Weib-method}
 \alias{kurt,Weib-method}
 \alias{entro,Weib-method}
-\alias{llweib}
+\alias{llweibull}
 \alias{ll,Weib,numeric-method}
-\alias{eweib}
+\alias{eweibull}
 \alias{mle,Weib,numeric-method}
 \alias{me,Weib,numeric-method}
-\alias{same,Weib,numeric-method}
-\alias{vweib}
-\alias{avar_mle,Weib-method}
-\alias{avar_me,Weib-method}
-\alias{avar_same,Weib-method}
 \title{Weibull Distribution}
 \usage{
 Weib(shape = 1, scale = 1)
 
-\S4method{d}{Weib,numeric}(distr, x)
+\S4method{d}{Weib,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Weib,numeric}(distr, x)
+\S4method{p}{Weib,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Weib,numeric}(distr, x)
+\S4method{qn}{Weib,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Weib,numeric}(distr, n)
 
@@ -52,41 +47,45 @@ Weib(shape = 1, scale = 1)
 
 \S4method{entro}{Weib}(x)
 
-llweib(x, shape, scale)
+llweibull(x, shape, scale)
 
 \S4method{ll}{Weib,numeric}(distr, x)
 
-eweib(x, type = "mle", ...)
+eweibull(x, type = "mle", ...)
 
-\S4method{mle}{Weib,numeric}(distr, x, par0 = "same", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
+\S4method{mle}{Weib,numeric}(distr, x, par0 = "lme", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
 
-\S4method{me}{Weib,numeric}(distr, x)
-
-\S4method{same}{Weib,numeric}(distr, x)
-
-vweib(shape, scale, type = "mle")
-
-\S4method{avar_mle}{Weib}(distr)
-
-\S4method{avar_me}{Weib}(distr)
-
-\S4method{avar_same}{Weib}(distr)
+\S4method{me}{Weib,numeric}(distr, x, par0 = "lme", lower = 0.5, upper = Inf)
 }
 \arguments{
-\item{shape, scale}{numeric. The distribution parameters.}
+\item{shape, scale}{numeric. The non-negative distribution parameters.}
 
 \item{distr}{an object of class \code{Weib}.}
 
-\item{x}{an object of class \code{Weib}. If the function also has a \code{distr}
-argument, \code{x} is a numeric vector, a sample of observations.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Weib}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{n}{numeric. The sample size.}
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle, me or lme).}
 
 \item{...}{extra arguments.}
 
-\item{par0, method, lower, upper}{arguments passed to optim.}
+\item{par0, method, lower, upper}{arguments passed to optim for the mle and me
+optimization. See Details.}
 }
 \value{
 Each type of function returns a different type of object:
@@ -107,5 +106,101 @@ estimator.
 }
 }
 \description{
-Weibull Distribution
+The Weibull distribution is an absolute continuous probability distribution,
+parameterized by a shape parameter \eqn{k > 0} and a scale parameter
+\eqn{\lambda > 0}.
+}
+\details{
+The probability density function (PDF) of the Weibull distribution is:
+\deqn{ f(x; k, \lambda) = \frac{k}{\lambda}\left(\frac{x}{\lambda}
+\right)^{k - 1} \exp\left[-\left(\frac{x}{\lambda}\right)^k\right],
+\quad x \geq 0 .}
+
+For the parameter estimation, both the MLE and the ME cannot be explicitly
+derived. However, the L-moment estimator (\code{type = "lme"}) is available, and
+is used as initialization for the numerical approximation of the MLE and the
+ME.
+
+The MLE and ME of the Weibull distribution parameters is not available in
+closed form and has to be approximated numerically. The optimization can be
+performed on the shape parameter \eqn{k\in(0,+\infty)}.
+
+For the MLE, this is done with \code{optim()}. The default method used is the
+L-BFGS-B method with lower bound \code{1e-5} and upper bound \code{Inf}. The \code{par0}
+argument can either be a numeric (satisfying \verb{lower <= par0 <= upper}) or a
+character specifying the closed-form estimator to be used as initialization
+for the algorithm (\code{"lme"} - the default value).
+
+For the ME, this is done with \code{uniroot()}. Again, the \code{par0} argument can
+either be a numeric (satisfying \verb{lower <= par0 <= upper}) or a character
+specifying the closed-form estimator to be used as initialization for the
+algorithm (\code{"mle"} or \code{"lme"} - the default value). The lower and upper
+bounds are set by default to \code{0.5} and \code{Inf}, respectively. Note that the
+ME equations involve the \eqn{\Gamma(1 + 1 \ k)}, which can become unreliable
+for small values of \code{k}, hence the \code{0.5} lower bound. Specifying a lower
+bound below \code{0.5} will result in a warning and be ignored.
+}
+\examples{
+# -----------------------------------------------------
+# Weibull Distribution Example
+# -----------------------------------------------------
+
+# Create the distribution
+a <- 3 ; b <- 5
+D <- Weib(a, b)
+
+# ------------------
+# dpqr Functions
+# ------------------
+
+d(D, c(0.3, 2, 10)) # density function
+p(D, c(0.3, 2, 10)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
+
+# alternative way to use the function
+df <- d(D) ; df(x) # df is a function itself
+
+# ------------------
+# Moments
+# ------------------
+
+mean(D) # Expectation
+median(D) # Median
+mode(D) # Mode
+var(D) # Variance
+sd(D) # Standard Deviation
+skew(D) # Skewness
+kurt(D) # Excess Kurtosis
+entro(D) # Entropy
+
+# List of all available moments
+mom <- moments(D)
+mom$mean # expectation
+
+# ------------------
+# Point Estimation
+# ------------------
+
+ll(D, x)
+llweibull(x, a, b)
+
+eweibull(x, type = "mle")
+eweibull(x, type = "me")
+eweibull(x, type = "lme")
+
+mle(D, x)
+me(D, x)
+e(D, x, type = "mle")
+
+mle("weib", x) # the distr argument can be a character
+}
+\references{
+Kim, H. M., Jang, Y. H., Arnold, B. C., & Zhao, J. (2024).
+New efficient estimators for the Weibull distribution. Communications in
+Statistics-Theory and Methods, 53(13), 4576-4601.
+}
+\seealso{
+Functions from the \code{stats} package: \code{\link[=dweibull]{dweibull()}}, \code{\link[=pweibull]{pweibull()}}, \code{\link[=qweibull]{qweibull()}},
+\code{\link[=rweibull]{rweibull()}}
 }

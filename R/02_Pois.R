@@ -20,23 +20,33 @@ setClass("Pois",
 #' that the events occur with a constant rate \eqn{\lambda > 0} and
 #' independently of the time since the last event.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Pois` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Pois` instead.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Pois`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Pois`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
 #' @param lambda numeric. The distribution parameter.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
 #'The probability mass function (PMF) of the Poisson distribution is:
-#' \deqn{ P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k \in \mathbb{N}_0. }
+#' \deqn{ P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k \in
+#' \mathbb{N}_0. }
 #'
 #' @inherit Distributions return
 #'
 #' @seealso
-#' Functions from the `stats` package: [dpois()], [ppois()], [qpois()], [rpois()]
+#' Functions from the `stats` package: [dpois()], [ppois()], [qpois()],
+#' [rpois()]
 #'
 #' @export
 #'
@@ -48,17 +58,15 @@ setClass("Pois",
 #' # Create the distribution
 #' lambda <- 5
 #' D <- Pois(lambda)
-#' x <- 0:10
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, 0:10) # density function
+#' p(D, 0:10) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -98,7 +106,7 @@ setClass("Pois",
 #' mle("pois", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vpois(lambda, type = "mle")
@@ -107,7 +115,7 @@ setClass("Pois",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Pois <- function(lambda = 1) {
   new("Pois", lambda = lambda)
 }
@@ -128,20 +136,22 @@ setValidity("Pois", function(object) {
 
 #' @rdname Pois
 setMethod("d", signature = c(distr = "Pois", x = "numeric"),
-          function(distr, x) {
-            dpois(x, lambda = distr@lambda)
+          function(distr, x, log = FALSE) {
+            dpois(x, lambda = distr@lambda, log = log)
           })
 
 #' @rdname Pois
-setMethod("p", signature = c(distr = "Pois", x = "numeric"),
-          function(distr, x) {
-            ppois(x, lambda = distr@lambda)
+setMethod("p", signature = c(distr = "Pois", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            ppois(q, lambda = distr@lambda,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Pois
-setMethod("qn", signature = c(distr = "Pois", x = "numeric"),
-          function(distr, x) {
-            qpois(x, lambda = distr@lambda)
+setMethod("qn", signature = c(distr = "Pois", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qpois(p, lambda = distr@lambda,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Pois
@@ -270,9 +280,13 @@ setMethod("ll",
 #' @rdname Pois
 #' @export
 epois <- function(x, type = "mle", ...) {
-
-  e(Pois(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Pois(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Pois
@@ -294,15 +308,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Pois
 #' @export
 vpois <- function(lambda, type = "mle") {
-
-  avar(Pois(lambda = lambda), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Pois(lambda)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Pois

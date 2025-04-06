@@ -30,6 +30,7 @@ test_that("Multinom dpqr work", {
   # Types
   expect_true(is.function(d(D)))
   expect_true(is.function(r(D)))
+  expect_true(is.numeric(d(D, x[, 1])))
 
   # Values
   expect_equal(d(D)(c(N, 0, 0)), p[1] ^ N, tolerance = 0.01)
@@ -57,9 +58,11 @@ test_that("Multinom moments work", {
 
   # Types
   expect_true(is.numeric(mean(D)))
+  expect_true(is.numeric(mode(D)))
   expect_true(is.numeric(var(D)))
   expect_true(is.numeric(entro(D)))
   expect_true(is.numeric(finf(D)))
+  expect_true(is.numeric(finf(Multinom(N, c(0.6, 0.4)))))
 
   # Values
   expect_identical(mean(D), N * p)
@@ -84,6 +87,10 @@ test_that("Multinom likelihood works", {
   expect_identical(llmultinom(x, N, p), ll(D, x))
   expect_identical(ll(D)(x), ll(D, x))
 
+  # Error
+  x[1, 1] <- x[1, 1] - 1
+  expect_error(ll(D, x))
+
 })
 
 test_that("Multinom estim works", {
@@ -103,6 +110,10 @@ test_that("Multinom estim works", {
   # 2-Way Calls
   expect_identical(emultinom(x, type = "mle"), e(D, x, type = "mle"))
   expect_identical(emultinom(x, type = "me"), e(D, x, type = "me"))
+
+  # Error
+  x[1, 1] <- x[1, 1] - 1
+  expect_error(mle(D, x))
 
   # Simulations
   d <- test_consistency("me", D)
@@ -128,8 +139,8 @@ test_that("Multinom avar works", {
   expect_true(is.numeric(vmultinom(N, p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vmultinom(N, p, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vmultinom(N, p, type = "me"), avar(D, type = "me"))
+  expect_identical(vmultinom(N, p, type = "mle"), v(D, type = "mle"))
+  expect_identical(vmultinom(N, p, type = "me"), v(D, type = "me"))
   expect_identical(vmultinom(N, p, type = "mle"), avar_mle(D))
   expect_identical(vmultinom(N, p, type = "me"), avar_me(D))
 

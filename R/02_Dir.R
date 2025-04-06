@@ -20,14 +20,17 @@ setClass("Dir",
 #' parameterized by a vector \eqn{\boldsymbol{\alpha} =
 #' (\alpha_1, \alpha_2, ..., \alpha_k)} with \eqn{\alpha_i > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Dir` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Dir` instead.
-#' @param alpha numeric. The distribution parameter vector.
-#' @param log logical. Should the logarithm of the density be returned?
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Dir`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Dir`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param alpha numeric. The non-negative distribution parameter vector.
 #' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param log logical. Should the logarithm of the probability be
+#' returned?
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
 #' optimization.
@@ -35,9 +38,11 @@ setClass("Dir",
 #' @details
 #' The probability density function (PDF) of the Dirichlet distribution is given
 #' by:
-#' \deqn{ f(x_1, ..., x_k; \alpha_1, ..., \alpha_k) = \frac{1}{B(\boldsymbol{\alpha})} \prod_{i=1}^k x_i^{\alpha_i - 1}, }
+#' \deqn{ f(x_1, ..., x_k; \alpha_1, ..., \alpha_k) =
+#' \frac{1}{B(\boldsymbol{\alpha})} \prod_{i=1}^k x_i^{\alpha_i - 1}, }
 #' where \eqn{B(\boldsymbol{\alpha})} is the multivariate Beta function:
-#' \deqn{ B(\boldsymbol{\alpha}) = \frac{\prod_{i=1}^k \Gamma(\alpha_i)}{\Gamma\left(\sum_{i=1}^k \alpha_i\right)} }
+#' \deqn{ B(\boldsymbol{\alpha}) = \frac{\prod_{i=1}^k
+#' \Gamma(\alpha_i)}{\Gamma\left(\sum_{i=1}^k \alpha_i\right)} }
 #' and \eqn{\sum_{i=1}^k x_i = 1}, \eqn{x_i > 0}.
 #'
 #' @inherit Distributions return
@@ -58,15 +63,13 @@ setClass("Dir",
 #' # Create the distribution
 #' a <- c(0.5, 2, 5)
 #' D <- Dir(a)
-#' x <- c(0.3, 0.2, 0.5)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 0.2, 0.5)) # density function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -90,10 +93,10 @@ setClass("Dir",
 #' # ------------------
 #'
 #' ll(D, x)
-#' lldirichlet(x, a)
+#' lldir(x, a)
 #'
-#' edirichlet(x, type = "mle")
-#' edirichlet(x, type = "me")
+#' edir(x, type = "mle")
+#' edir(x, type = "me")
 #'
 #' mle(D, x)
 #' me(D, x)
@@ -102,16 +105,16 @@ setClass("Dir",
 #' mle("dir", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
-#' vdirichlet(a, type = "mle")
-#' vdirichlet(a, type = "me")
+#' vdir(a, type = "mle")
+#' vdir(a, type = "me")
 #'
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Dir <- function(alpha = c(1, 1)) {
   new("Dir", alpha = alpha)
 }
@@ -181,8 +184,8 @@ rdir <- function(n, alpha) {
 
 #' @rdname Dir
 setMethod("d", signature = c(distr = "Dir", x = "numeric"),
-          function(distr, x) {
-            ddir(x, alpha = distr@alpha)
+          function(distr, x, log = FALSE) {
+            ddir(x, alpha = distr@alpha, log = log)
           })
 
 #' @rdname Dir
@@ -273,7 +276,7 @@ setMethod("finf",
 
 #' @rdname Dir
 #' @export
-lldirichlet <- function(x, alpha) {
+lldir <- function(x, alpha) {
   ll(distr = Dir(alpha), x)
 }
 
@@ -322,10 +325,14 @@ setMethod("dlloptim",
 
 #' @rdname Dir
 #' @export
-edirichlet <- function(x, type = "mle", ...) {
-
-  e(Dir(), x, type, ...)
-
+edir <- function(x, type = "mle", ...) {
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Dir(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Dir
@@ -380,25 +387,21 @@ setMethod("same",
 
 })
 
-me1dir <- function(x) {
-
-  m  <- colMeans(x)
-  m2 <- colMeans(x ^ 2)
-
-  list(alpha = m * (m - m2) / (m2 - m ^ 2))
-
-}
-
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Dir
 #' @export
-vdirichlet <- function(alpha, type = "mle") {
-
-  avar(Dir(alpha = alpha), type = type)
-
+vdir <- function(alpha, type = "mle") {
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  distr <- Dir(alpha)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Dir
@@ -481,28 +484,3 @@ setMethod("avar_same",
   D
 
 })
-
-avar_me1dir <- function(distr) {
-
-  a <- distr@alpha
-  k <- length(a)
-  a0 <- sum(a)
-  b <- a0 - a
-
-  matai <- Matrix(a, k, 1) %*% Matrix(1, 1, k)
-  mataj <- Matrix(1, k, 1) %*% Matrix(a, 1, k)
-
-  com <- (Matrix((a + 1) / b, k, 1) %*% Matrix((a + 1) / b, 1, k)) *
-    (diag(a0, k, k) - matai) * mataj * a0 / (a0 + 2)
-
-  A <- diag(1 / (a + 1)) * 2 * (a0 + 1) ^ 2 / (a0 + 3)
-  B <- (2 * a0 ^ 2 + a0 + 1) / ((a0 + 1) * (a0 + 3))
-
-  D <- com * (A - B)
-
-  D <- as.matrix(nearPD(D))
-  rownames(D) <- paste0("alpha", seq_along(a))
-  colnames(D) <- paste0("alpha", seq_along(a))
-  D
-
-}

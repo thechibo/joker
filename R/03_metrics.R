@@ -69,7 +69,7 @@ setValidity("SmallMetrics", function(object) {
 #' holding the values it takes.
 #'
 #' In case the parameter of interest is a vector, a third element named "pos"
-#' can be specified to indicate the exact paramater that changes. In the example
+#' can be specified to indicate the exact parameter that changes. In the example
 #' shown below, the evaluation will be performed for the Dirichlet distributions
 #' with shape parameters `(0.5, 1)`, `(0.6, 1)`, ..., `(2, 1)`. Notice that the
 #' initial shape parameter value (`1`) is not utilized in the function.
@@ -283,7 +283,8 @@ LargeMetrics <- function(D, est, df) {
 }
 
 setValidity("LargeMetrics", function(object) {
-  if(!all(names(object@df) %in% c("Row", "Col", "Parameter", "Estimator", "Value"))) {
+  if(!all(names(object@df) %in% c("Row", "Col", "Parameter",
+                                  "Estimator", "Value"))) {
     stop("df must have columns 'Row', 'Col', 'Parameter, 'Estimator', 'Value'")
   }
   if(!("data.frame" %in% class(object@df))) {

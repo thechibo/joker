@@ -28,9 +28,9 @@ dmultigam(x, shape, scale, log = FALSE)
 
 rmultigam(n, shape, scale)
 
-\S4method{d}{Multigam,numeric}(distr, x)
+\S4method{d}{Multigam,numeric}(distr, x, log = FALSE)
 
-\S4method{d}{Multigam,matrix}(distr, x)
+\S4method{d}{Multigam,matrix}(distr, x, log = FALSE)
 
 \S4method{r}{Multigam,numeric}(distr, n)
 
@@ -61,23 +61,27 @@ vmultigam(shape, scale, type = "mle")
 \S4method{avar_same}{Multigam}(distr)
 }
 \arguments{
-\item{shape, scale}{numeric. The distribution parameters.}
+\item{shape, scale}{numeric. The non-negative distribution parameters.}
 
-\item{log}{logical. Should the logarithm of the density be returned?}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Multigam}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{n}{numeric. The sample size.}
+\item{log}{logical. Should the logarithm of the probability be
+returned?}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Gamma} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Gamma} instead.}
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{distr}{an object of class \code{Multigam}.}
 
 \item{type}{character, case ignored. The estimator type (mle, me, or same).}
 
 \item{...}{extra arguments.}
 
 \item{par0, method, lower, upper}{arguments passed to optim for the mle
-optimization.}
+optimization. See Details.}
 }
 \value{
 Each type of function returns a different type of object:
@@ -106,7 +110,20 @@ gamma random variables with possibly different shape parameters
 \details{
 The probability density function (PDF) of the multivariate gamma distribution
 is given by:
-\deqn{ f(x; \alpha, \beta) = \frac{\beta^{-\alpha_0}}{\prod_{i=1}^k\Gamma(\alpha_i)}, e^{-x_k/\beta} x_1^{\alpha_1-1}\prod_{i=1}^k (x_i - x_{i-1})^{(\alpha_i-1)} \quad x > 0. }
+\deqn{ f(x; \alpha, \beta) =
+\frac{\beta^{-\alpha_0}}{\prod_{i=1}^k\Gamma(\alpha_i)}, e^{-x_k/\beta}
+x_1^{\alpha_1-1}\prod_{i=1}^k (x_i - x_{i-1})^{(\alpha_i-1)} \quad x > 0. }
+
+The MLE of the multigamma distribution parameters is not available in closed
+form and has to be approximated numerically. This is done with \code{optim()}.
+Specifically, instead of solving a \eqn{(k+1)} optimization problem w.r.t
+\eqn{\alpha, \beta}, the optimization can be performed on the shape parameter
+sum \eqn{\alpha_0:=\sum_{i=1}^k\alpha \in(0,+\infty)^k}. The default method
+used is the L-BFGS-B method with lower bound \code{1e-5} and upper bound \code{Inf}.
+The \code{par0} argument can either be a numeric (satisfying
+\verb{lower <= par0 <= upper}) or a character specifying the closed-form estimator
+to be used as initialization for the algorithm (\code{"me"} or \code{"same"} - the
+default value).
 }
 \examples{
 # -----------------------------------------------------
@@ -116,18 +133,17 @@ is given by:
 # Create the distribution
 a <- c(0.5, 3, 5) ; b <- 5
 D <- Multigam(a, b)
-x <- c(0.3, 2, 10)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 2, 10)) # density function
 
 # alternative way to use the function
-df <- d(D) ; df(x) # df is a function itself
+df <- d(D) ; df(c(0.3, 2, 10)) # df is a function itself
+
+x <- r(D, 100) # random generator function
 
 # ------------------
 # Moments
@@ -160,7 +176,7 @@ e(D, x, type = "mle")
 mle("multigam", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vmultigam(a, b, type = "mle")
@@ -171,10 +187,12 @@ avar_mle(D)
 avar_me(D)
 avar_same(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \references{
 \itemize{
+\item Mathal, A. M., & Moschopoulos, P. G. (1992). A form of multivariate gamma
+distribution. Annals of the Institute of Statistical Mathematics, 44, 97-106.
 \item Oikonomidis, I. & Trevezas, S. (2025), Moment-Type Estimators for the
 Dirichlet and the Multivariate Gamma Distributions, arXiv,
 https://arxiv.org/abs/2311.15025

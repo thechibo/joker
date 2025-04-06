@@ -20,16 +20,26 @@ setClass("Stud",
 #' small sample sizes. It is defined by one parameter: the degrees of freedom
 #' \eqn{\nu > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Stud` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Stud` instead.
-#' @param df numeric. The distribution parameter.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Stud`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Stud`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param df numeric. The distribution degrees of freedom parameter.
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #'
 #' @details
 #' The probability density function (PDF) of the Student's t-distribution is:
-#' \deqn{ f(x; \nu) = \frac{\Gamma\left(\frac{\nu + 1}{2}\right)}{\sqrt{\nu\pi}\ \Gamma\left(\frac{\nu}{2}\right)}\left(1 + \frac{x^2}{\nu}\right)^{-\frac{\nu + 1}{2}} .}
+#' \deqn{ f(x; \nu) = \frac{\Gamma\left(\frac{\nu + 1}{2}\right)}{\sqrt{\nu\pi}\
+#' \Gamma\left(\frac{\nu}{2}\right)}\left(1 + \frac{x^2}{\nu}\right)^{-\frac{\nu
+#' + 1}{2}} .}
 #'
 #' @inherit Distributions return
 #'
@@ -46,17 +56,15 @@ setClass("Stud",
 #' # Create the distribution
 #' df <- 12
 #' D <- Stud(df)
-#' x <- c(-3, 0, 3)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(-3, 0, 3)) # density function
+#' p(D, c(-3, 0, 3)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' d1 <- d(D) ; d1(x) # d1 is a function itself
@@ -105,26 +113,28 @@ setValidity("Stud", function(object) {
 
 #' @rdname Stud
 setMethod("d", signature = c(distr = "Stud", x = "numeric"),
-          function(distr, x) {
-            dt(x, df = distr@df)
+          function(distr, x, log = FALSE) {
+            dt(x, df = distr@df, ncp = 0, log = log)
           })
 
 #' @rdname Stud
-setMethod("p", signature = c(distr = "Stud", x = "numeric"),
-          function(distr, x) {
-            pt(x, df = distr@df)
+setMethod("p", signature = c(distr = "Stud", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pt(q, df = distr@df, ncp = 0,
+               lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Stud
-setMethod("qn", signature = c(distr = "Stud", x = "numeric"),
-          function(distr, x) {
-            qt(x, df = distr@df)
+setMethod("qn", signature = c(distr = "Stud", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qt(p, df = distr@df, ncp = 0,
+               lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Stud
 setMethod("r", signature = c(distr = "Stud", n = "numeric"),
           function(distr, n) {
-            rt(n, df = distr@df)
+            rt(n, df = distr@df, ncp = 0)
           })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -11,20 +11,28 @@
 \usage{
 d(distr, x, ...)
 
-p(distr, x, ...)
+p(distr, q, ...)
 
-qn(distr, x, ...)
+qn(distr, p, ...)
 
 r(distr, n, ...)
 }
 \arguments{
-\item{distr}{a \code{Distribution} object.}
+\item{distr}{an object of class \code{Distribution} or one of its subclasses.}
 
-\item{x}{numeric. The point to evaluate the function.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Distribution}  or one of
+its subclasses. For the log-likelihood and the estimation functions, \code{x} is
+the sample of observations.}
 
 \item{...}{extra arguments.}
 
-\item{n}{numeric. The sample size.}
+\item{q}{numeric. Vector of quantiles.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
 }
 \value{
 Each type of function returns a different type of object:
@@ -85,17 +93,15 @@ section.
 # Create the distribution
 a <- 3 ; b <- 5
 D <- Beta(a, b)
-x <- c(0.3, 0.8, 0.5)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 0.8, 0.5)) # density function
+p(D, c(0.3, 0.8, 0.5)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -135,7 +141,7 @@ e(D, x, type = "mle")
 mle("beta", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vbeta(a, b, type = "mle")
@@ -146,7 +152,7 @@ avar_mle(D)
 avar_me(D)
 avar_same(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
 \link{moments}, \link{loglikelihood}, \link{estimation}, \link{Bern},

@@ -68,6 +68,12 @@ test_that("Bern moments work", {
   # Values
   expect_identical(mean(D), p)
   expect_identical(var(D), p * (1 - p))
+  expect_identical(median(Bern(0.3)), 0)
+  expect_identical(mode(Bern(0.3)), 0)
+
+  # Warnings
+  expect_warning(median(Bern(0.5)))
+  expect_warning(mode(Bern(0.5)))
 
 })
 
@@ -128,8 +134,8 @@ test_that("Bern avar works", {
   expect_true(is.numeric(vbern(p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vbern(p, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vbern(p, type = "me"), avar(D, type = "me"))
+  expect_identical(vbern(p, type = "mle"), v(D, type = "mle"))
+  expect_identical(vbern(p, type = "me"), v(D, type = "me"))
   expect_identical(vbern(p, type = "mle"), avar_mle(D))
   expect_identical(vbern(p, type = "me"), avar_me(D))
 

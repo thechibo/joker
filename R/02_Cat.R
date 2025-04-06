@@ -20,14 +20,18 @@ setClass("Cat",
 #' possible categories. It is a generalization of the Bernoulli distribution
 #' and a special case of the multinomial distribution with \eqn{n = 1}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Cat` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Cat` instead.
-#' @param prob numeric. The distribution parameter, a probability vector.
-#' @param dim numeric. The parameter dimension. See details.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Cat`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Cat`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param prob numeric. Probability vector of success for each category.
+#' @param dim numeric. The probability vector dimension. See Details.
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log logical. Should the logarithm of the probability be
+#' returned?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -62,15 +66,13 @@ setClass("Cat",
 #' # Create the distribution
 #' p <- c(0.1, 0.2, 0.7)
 #' D <- Cat(p)
-#' x <- 2
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' x <- r(D, n) # random generator function
+#' d(D, 2) # density function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -106,7 +108,7 @@ setClass("Cat",
 #' mle("cat", dim = 3, x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vcat(p, type = "mle")
@@ -115,7 +117,7 @@ setClass("Cat",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Cat <- function(prob = c(0.5, 0.5)) {
   new("Cat", prob = prob)
 }
@@ -136,32 +138,45 @@ setValidity("Cat", function(object) {
 
 #' @rdname Cat
 #' @export
-dcat <- function(x, prob) {
+dcat <- function(x, prob, log = FALSE) {
 
   if (any(prob < 0) || abs(sum(prob) - 1) > 1e-8) {
     stop("prob must be a valid probability vector")
   }
 
-  unlist(lapply(x, function(x) {
-    if (x %in% seq_along(prob)) {
-      return(prob[x])
-    } else {
-      return(0)
-    }
-  }))
+  if (any(x %% 1 != 0)) {
+    warning("non-integer x")
+  }
+
+  y <- unlist(lapply(x, function(x) {
+                if (x %in% seq_along(prob)) {
+                  return(prob[x])
+                } else {
+                  return(0)
+                }
+              }))
+
+  if (log) {
+    return(log(y))
+  } else {
+    return(y)
+  }
 
 }
 
 #' @rdname Cat
 #' @export
 rcat <- function(n, prob) {
+  if (length(n) > 1) {
+   n <- length(n)
+  }
   sample(seq_along(prob), n, prob = prob, replace = TRUE)
 }
 
 #' @rdname Cat
 setMethod("d", signature = c(distr = "Cat", x = "numeric"),
-          function(distr, x) {
-            dcat(x, prob = distr@prob)
+          function(distr, x, log = FALSE) {
+            dcat(x, prob = distr@prob, log = log)
           })
 
 #' @rdname Cat
@@ -221,7 +236,7 @@ setMethod("finf",
 
   k <- length(x@prob)
 
-  if (k == 1) {
+  if (k == 2) {
     y <- 1 / x@prob[-k]
   } else {
     y <- diag(1 / x@prob[-k])
@@ -261,9 +276,13 @@ setMethod("ll",
 #' @rdname Cat
 #' @export
 ecat <- function(x, type = "mle", ...) {
-
-  e(Cat(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Cat(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Cat
@@ -298,15 +317,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Cat
 #' @export
 vcat <- function(prob, type = "mle") {
-
-  avar(Cat(prob = prob), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Cat(prob)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Cat

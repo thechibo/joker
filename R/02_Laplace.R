@@ -20,13 +20,21 @@ setClass("Laplace",
 #' with sharp peaks and heavy tails. It is parameterized by a location parameter
 #' \eqn{\mu} and a scale parameter \eqn{b > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Laplace` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Laplace` instead.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Laplace`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Laplace`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
 #' @param mu,sigma numeric. The distribution parameters.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
@@ -45,17 +53,15 @@ setClass("Laplace",
 #' # Create the distribution
 #' m <- 3 ; s <- 5
 #' D <- Laplace(m, s)
-#' x <- c(0.3, 2, 10)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 2, 10)) # density function
+#' p(D, c(0.3, 2, 10)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -92,7 +98,7 @@ setClass("Laplace",
 #' mle("laplace", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vlaplace(m, s, type = "mle")
@@ -101,7 +107,7 @@ setClass("Laplace",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Laplace <- function(mu = 0, sigma = 1) {
   new("Laplace", mu = mu, sigma = sigma)
 }
@@ -125,50 +131,82 @@ setValidity("Laplace", function(object) {
 
 #' @rdname Laplace
 #' @export
-dlaplace <- function(x, mu, sigma) {
-  0.5 * dexp(abs(x - mu), rate = 1 / sigma)
+dlaplace <- function(x, mu, sigma, log = FALSE) {
+  y <- 0.5 * dexp(abs(x - mu), rate = 1 / sigma)
+  if (log) {
+    return(log(y))
+  } else {
+    return(y)
+  }
 }
 
-plaplace <- function(x, mu, sigma) {
-  unlist(lapply(x, function(x) {
+#' @rdname Laplace
+#' @export
+plaplace <- function(q, mu, sigma, lower.tail = TRUE, log.p = FALSE) {
+  y <- unlist(lapply(q, function(x) {
     if (x >= mu) {
       return(1 - 0.5 * exp((mu - x) / sigma))
     } else {
       return(0.5 * exp((x - mu) / sigma))
     }
   }))
+
+  if (!lower.tail) {
+    y <- 1 - y
+  }
+  if (log.p) {
+    return(log(y))
+  } else {
+    return(y)
+  }
+
 }
 
-qlaplace <- function(x, mu, sigma) {
-  unlist(lapply(x, function(x) {
+#' @rdname Laplace
+#' @export
+qlaplace <- function(p, mu, sigma, lower.tail = TRUE, log.p = FALSE) {
+
+  if (log.p) {
+    p <- exp(p)
+  }
+  if (!lower.tail) {
+    p <- 1 - p
+  }
+
+  unlist(lapply(p, function(x) {
     if (x >= 0.5) {
       return(mu + qexp(2 * (x - 0.5), rate = 1 / sigma))
     } else {
       return(mu - qexp(2 * x, rate = 1 / sigma, lower.tail = FALSE))
     }
   }))
+
 }
 
+#' @rdname Laplace
+#' @export
 rlaplace <- function(n, mu, sigma) {
   (2 * rbern(n, 0.5) - 1) * rexp(n, rate = 1 / sigma) + mu
 }
 
 #' @rdname Laplace
 setMethod("d", signature = c(distr = "Laplace", x = "numeric"),
-          function(distr, x) {
-            dlaplace(x, distr@mu, distr@sigma)
+          function(distr, x, log = FALSE) {
+            dlaplace(x, distr@mu, distr@sigma, log = log)
           })
 
 #' @rdname Laplace
-setMethod("p", signature = c(distr = "Laplace", x = "numeric"),
-          function(distr, x) {
-            plaplace(x, distr@mu, distr@sigma)
+setMethod("p", signature = c(distr = "Laplace", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            plaplace(q, distr@mu, distr@sigma,
+                     lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Laplace
-setMethod("qn", signature = c(distr = "Laplace", x = "numeric"),
-          function(distr, x) {
-            qlaplace(x, distr@mu, distr@sigma)
+setMethod("qn", signature = c(distr = "Laplace", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qlaplace(p, distr@mu, distr@sigma,
+                     lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Laplace
@@ -292,9 +330,13 @@ setMethod("ll",
 #' @rdname Laplace
 #' @export
 elaplace <- function(x, type = "mle", ...) {
-
-  e(Laplace(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Laplace(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Laplace
@@ -318,15 +360,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Laplace
 #' @export
 vlaplace <- function(mu, sigma, type = "mle") {
-
-  avar(Laplace(mu = mu, sigma = sigma), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Laplace(mu, sigma)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Laplace

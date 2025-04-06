@@ -135,6 +135,20 @@ test_that("Cauchy estim works", {
 
 })
 
+test_that("Cauchy avar works", {
+
+  # Preliminaries
+  D <- Cauchy(2, 1)
+  m <- D@location
+  g <- D@scale
+  set.seed(1)
+  n <- 100L
+  x <- r(D)(n)
+
+  expect_true(is.matrix(vcauchy(m, g)))
+
+})
+
 test_that("Cauchy small metrics work", {
 
   # Preliminaries

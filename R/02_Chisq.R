@@ -20,23 +20,33 @@ setClass("Chisq",
 #' confidence interval estimation. It is defined by the degrees of freedom
 #' parameter \eqn{k > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Chisq` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Chisq` instead.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Chisq`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Chisq`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
 #' @param df numeric. The distribution degrees of freedom parameter.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
 #' The probability density function (PDF) of the Chi-Square distribution is
-#' given by: \deqn{ f(x; k) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2 - 1} e^{-x/2}, \quad x > 0.}
+#' given by: \deqn{ f(x; k) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2 - 1} e^{-x/2},
+#' \quad x > 0.}
 #'
 #' @inherit Distributions return
 #'
 #' @seealso
-#' Functions from the `stats` package: [dchisq()], [pchisq()], [qchisq()], [rchisq()]
+#' Functions from the `stats` package: [dchisq()], [pchisq()], [qchisq()],
+#' [rchisq()]
 #'
 #' @export
 #'
@@ -48,17 +58,15 @@ setClass("Chisq",
 #' # Create the distribution
 #' df <- 4
 #' D <- Chisq(df)
-#' x <- c(0.3, 2, 20)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 2, 20)) # density function
+#' p(D, c(0.3, 2, 20)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' den <- d(D) ; den(x) # den is a function itself
@@ -96,7 +104,7 @@ setClass("Chisq",
 #' mle("chisq", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vchisq(df, type = "mle")
@@ -105,7 +113,7 @@ setClass("Chisq",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Chisq <- function(df = 1) {
   new("Chisq", df = df)
 }
@@ -126,20 +134,22 @@ setValidity("Chisq", function(object) {
 
 #' @rdname Chisq
 setMethod("d", signature = c(distr = "Chisq", x = "numeric"),
-          function(distr, x) {
-            dchisq(x, df = distr@df, ncp = 0)
+          function(distr, x, log = FALSE) {
+            dchisq(x, df = distr@df, ncp = 0, log = log)
           })
 
 #' @rdname Chisq
-setMethod("p", signature = c(distr = "Chisq", x = "numeric"),
-          function(distr, x) {
-            pchisq(x, df = distr@df, ncp = 0)
+setMethod("p", signature = c(distr = "Chisq", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pchisq(q, df = distr@df, ncp = 0,
+                   lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Chisq
-setMethod("qn", signature = c(distr = "Chisq", x = "numeric"),
-          function(distr, x) {
-            qchisq(x, df = distr@df, ncp = 0)
+setMethod("qn", signature = c(distr = "Chisq", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qchisq(p, df = distr@df, ncp = 0,
+                   lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Chisq
@@ -267,9 +277,13 @@ setMethod("ll",
 #' @rdname Chisq
 #' @export
 echisq <- function(x, type = "mle", ...) {
-
-  e(Chisq(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Chisq(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Chisq
@@ -291,15 +305,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Chisq
 #' @export
 vchisq <- function(df, type = "mle") {
-
-  avar(Chisq(df), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Chisq(df)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Chisq

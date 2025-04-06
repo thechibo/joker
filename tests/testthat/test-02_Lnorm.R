@@ -131,8 +131,8 @@ test_that("Lnorm avar works", {
   expect_true(is.numeric(vlnorm(meanlog, sdlog, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vlnorm(meanlog, sdlog, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vlnorm(meanlog, sdlog, type = "me"), avar(D, type = "me"))
+  expect_identical(vlnorm(meanlog, sdlog, type = "mle"), v(D, type = "mle"))
+  expect_identical(vlnorm(meanlog, sdlog, type = "me"), v(D, type = "me"))
   expect_identical(vlnorm(meanlog, sdlog, type = "mle"), avar_mle(D))
   expect_identical(vlnorm(meanlog, sdlog, type = "me"), avar_me(D))
 

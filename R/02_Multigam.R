@@ -20,26 +20,45 @@ setClass("Multigam",
 #' gamma random variables with possibly different shape parameters
 #' \eqn{\alpha_i > 0, i\in\[k \]} and the same scale \eqn{\beta > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Gamma` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Gamma` instead.
-#' @param shape,scale numeric. The distribution parameters.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Multigam`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Multigam`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param shape,scale numeric. The non-negative distribution parameters.
 #' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param log logical. Should the logarithm of the probability be
+#' returned?
 #' @param ... extra arguments.
-#' @param log logical. Should the logarithm of the density be returned?
 #' @param par0,method,lower,upper arguments passed to optim for the mle
-#' optimization.
+#' optimization. See Details.
 #'
 #' @details
 #' The probability density function (PDF) of the multivariate gamma distribution
 #' is given by:
-#' \deqn{ f(x; \alpha, \beta) = \frac{\beta^{-\alpha_0}}{\prod_{i=1}^k\Gamma(\alpha_i)}, e^{-x_k/\beta} x_1^{\alpha_1-1}\prod_{i=1}^k (x_i - x_{i-1})^{(\alpha_i-1)} \quad x > 0. }
+#' \deqn{ f(x; \alpha, \beta) =
+#' \frac{\beta^{-\alpha_0}}{\prod_{i=1}^k\Gamma(\alpha_i)}, e^{-x_k/\beta}
+#' x_1^{\alpha_1-1}\prod_{i=1}^k (x_i - x_{i-1})^{(\alpha_i-1)} \quad x > 0. }
+#'
+#' The MLE of the multigamma distribution parameters is not available in closed
+#' form and has to be approximated numerically. This is done with `optim()`.
+#' Specifically, instead of solving a \eqn{(k+1)} optimization problem w.r.t
+#' \eqn{\alpha, \beta}, the optimization can be performed on the shape parameter
+#' sum \eqn{\alpha_0:=\sum_{i=1}^k\alpha \in(0,+\infty)^k}. The default method
+#' used is the L-BFGS-B method with lower bound `1e-5` and upper bound `Inf`.
+#' The `par0` argument can either be a numeric (satisfying
+#' `lower <= par0 <= upper`) or a character specifying the closed-form estimator
+#' to be used as initialization for the algorithm (`"me"` or `"same"` - the
+#' default value).
 #'
 #' @inherit Distributions return
 #'
 #' @references
+#'
+#' - Mathal, A. M., & Moschopoulos, P. G. (1992). A form of multivariate gamma
+#' distribution. Annals of the Institute of Statistical Mathematics, 44, 97-106.
 #'
 #' - Oikonomidis, I. & Trevezas, S. (2025), Moment-Type Estimators for the
 #' Dirichlet and the Multivariate Gamma Distributions, arXiv,
@@ -55,18 +74,17 @@ setClass("Multigam",
 #' # Create the distribution
 #' a <- c(0.5, 3, 5) ; b <- 5
 #' D <- Multigam(a, b)
-#' x <- c(0.3, 2, 10)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 2, 10)) # density function
 #'
 #' # alternative way to use the function
-#' df <- d(D) ; df(x) # df is a function itself
+#' df <- d(D) ; df(c(0.3, 2, 10)) # df is a function itself
+#'
+#' x <- r(D, 100) # random generator function
 #'
 #' # ------------------
 #' # Moments
@@ -99,7 +117,7 @@ setClass("Multigam",
 #' mle("multigam", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vmultigam(a, b, type = "mle")
@@ -110,7 +128,7 @@ setClass("Multigam",
 #' avar_me(D)
 #' avar_same(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Multigam <- function(shape = 1, scale = 1) {
   new("Multigam", shape = shape, scale = scale)
 }
@@ -180,14 +198,14 @@ rmultigam <- function(n, shape, scale) {
 
 #' @rdname Multigam
 setMethod("d", signature = c(distr = "Multigam", x = "numeric"),
-          function(distr, x) {
-            dmultigam(x, shape = distr@shape, scale = distr@scale)
+          function(distr, x, log = FALSE) {
+            dmultigam(x, shape = distr@shape, scale = distr@scale, log = log)
           })
 
 #' @rdname Multigam
 setMethod("d", signature = c(distr = "Multigam", x = "matrix"),
-          function(distr, x) {
-            dmultigam(x, shape = distr@shape, scale = distr@scale)
+          function(distr, x, log = FALSE) {
+            dmultigam(x, shape = distr@shape, scale = distr@scale, log = log)
           })
 
 #' @rdname Multigam
@@ -306,9 +324,13 @@ setMethod("dlloptim",
 #' @rdname Multigam
 #' @export
 emultigam <- function(x, type = "mle", ...) {
-
-  e(Multigam(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Multigam(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Multigam
@@ -320,12 +342,19 @@ setMethod("mle",
                                 lower = 1e-5,
                                 upper = Inf) {
 
+  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+    par0 <- sum(unlist(emultigam(x, type = par0)$shape))
+  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
+    stop("par0 must either be a character ('me' or 'same')",
+         "or a numeric within the lower and upper bounds")
+  }
+
   k <- ncol(x)
   logz <- colMeans(log(fd(x)))
   xk <- mean(x[, k])
   tx <- c(logz, xk)
 
-  par <- optim(par = sum(do.call(par0, list(distr = distr, x = x))$shape),
+  par <- optim(par = par0,
                fn = lloptim,
                gr = dlloptim,
                tx = tx,
@@ -356,17 +385,6 @@ setMethod("me",
 
 })
 
-me2 <- function(distr, x) {
-
-  w <- gendir(x)
-  shape <- unname(me(Dir(), w))
-  xk <- mean(x[, ncol(x)])
-  scale <- xk / sum(shape)
-
-  list(shape = shape, scale = scale)
-
-}
-
 #' @rdname Multigam
 setMethod("same",
           signature  = c(distr = "Multigam", x = "matrix"),
@@ -380,27 +398,21 @@ setMethod("same",
 
 })
 
-same2 <- function(distr, x) {
-
-  w <- gendir(x)
-  shape <- unname(same(Dir(), w))
-  xk <- mean(x[, ncol(x)])
-  scale <- xk / sum(shape)
-
-  list(shape = shape, scale = scale)
-
-}
-
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Multigam
 #' @export
 vmultigam <- function(shape, scale, type = "mle") {
-
-  avar(Multigam(shape = shape, scale = scale), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  distr <- Multigam(shape, scale)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Multigam
@@ -463,26 +475,6 @@ setMethod("avar_me",
 
 })
 
-avar_me2 <- function(distr) {
-
-  # Preliminaries
-  a <- distr@shape
-  b <- distr@scale
-  k <- length(a)
-  a0 <- sum(a)
-
-  S11 <- avar_me(Dir(alpha = a))
-  S21 <- - matrix(colSums(S11) * b / a0, nrow = 1)
-
-  # Matrix D
-  D <- cbind(rbind(S11, S21), c(t(S21), (sum(S11) + a0) * (b / a0) ^ 2))
-  D <- as.matrix(nearPD(D))
-  rownames(D) <- c(paste0("shape", seq_along(a)), "scale")
-  colnames(D) <- c(paste0("shape", seq_along(a)), "scale")
-  D
-
-}
-
 #' @rdname Multigam
 setMethod("avar_same",
           signature  = c(distr = "Multigam"),
@@ -527,23 +519,3 @@ setMethod("avar_same",
   D
 
 })
-
-avar_same2 <- function(distr) {
-
-  # Preliminaries
-  a <- distr@shape
-  b <- distr@scale
-  k <- length(a)
-  a0 <- sum(a)
-
-  S11 <- avar_same(Dir(alpha = a))
-  S21 <- - matrix(colSums(S11) * b / a0, nrow = 1)
-
-  # Matrix D
-  D <- cbind(rbind(S11, S21), c(t(S21), (sum(S11) + a0) * (b / a0) ^ 2))
-  D <- as.matrix(nearPD(D))
-  rownames(D) <- c(paste0("shape", seq_along(a)), "scale")
-  colnames(D) <- c(paste0("shape", seq_along(a)), "scale")
-  D
-
-}

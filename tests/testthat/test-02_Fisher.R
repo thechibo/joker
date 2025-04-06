@@ -68,6 +68,7 @@ test_that("Fisher moments work", {
   expect_true(is.numeric(entro(D)))
 
   # Errors
+  expect_error(mean(Fisher(2, 2)))
   expect_error(mode(Fisher(2, 3)))
   expect_error(var(Fisher(4, 3)))
   expect_error(sd(Fisher(4, 3)))

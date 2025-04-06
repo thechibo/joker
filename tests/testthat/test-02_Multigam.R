@@ -28,6 +28,8 @@ test_that("Multigam dpqr work", {
   # Types
   expect_true(is.function(d(D)))
   expect_true(is.function(r(D)))
+  expect_true(is.numeric(d(D, x)))
+  expect_true(is.numeric(dmultigam(x, a, b, log = TRUE)))
 
   # Values
   expect_identical(d(D)(rep(0, length(a))), 0)
@@ -36,6 +38,11 @@ test_that("Multigam dpqr work", {
   # 2-Way Calls
   expect_identical(d(D)(x[1, ]), dmultigam(x[1, ], shape = a, scale = b))
   expect_identical(d(D)(x[1, ]), d(D, x[1, ]))
+
+  # Errors
+  expect_error(dmultigam(x, 1:3, -3))
+  expect_error(dmultigam(x, c(1, 2, -3), 3))
+  expect_error(dmultigam(x, 1:5, 3))
 
 })
 
@@ -97,7 +104,9 @@ test_that("Multigam likelihood works", {
   par1 <- c(a, b)
 
   par2 <- optim(par = unlist(same(D, x)),
-                fn = function(par, x, distr) { ll(Multigam(par[1:length(a)], par[length(a)+1]), x) },
+                fn = function(par, x, distr) {
+                  ll(Multigam(par[seq_along(a)], par[length(a) + 1]), x)
+                },
                 x = x,
                 method = method,
                 lower = lower,
@@ -151,9 +160,9 @@ test_that("Multigam avar works", {
   expect_true(is.numeric(vmultigam(a, b, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vmultigam(a, b, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vmultigam(a, b, type = "me"), avar(D, type = "me"))
-  expect_identical(vmultigam(a, b, type = "same"), avar(D, type = "same"))
+  expect_identical(vmultigam(a, b, type = "mle"), v(D, type = "mle"))
+  expect_identical(vmultigam(a, b, type = "me"), v(D, type = "me"))
+  expect_identical(vmultigam(a, b, type = "same"), v(D, type = "same"))
   expect_identical(vmultigam(a, b, type = "mle"), avar_mle(D))
   expect_identical(vmultigam(a, b, type = "me"), avar_me(D))
   expect_identical(vmultigam(a, b, type = "same"), avar_same(D))

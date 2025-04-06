@@ -90,6 +90,8 @@ test_that("Unif likelihood works", {
 
   # Types
   expect_true(is.numeric(llunif(x, a, b)))
+  expect_identical(ll(D, 1:4), 0)
+  expect_identical(ll(D, 3:6), 0)
 
   # 2-Way Calls
   expect_identical(llunif(x, a, b), ll(D, x))

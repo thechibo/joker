@@ -127,8 +127,8 @@ test_that("Norm avar works", {
   expect_true(is.numeric(vnorm(mu, sd, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vnorm(mu, sd, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vnorm(mu, sd, type = "me"), avar(D, type = "me"))
+  expect_identical(vnorm(mu, sd, type = "mle"), v(D, type = "mle"))
+  expect_identical(vnorm(mu, sd, type = "me"), v(D, type = "me"))
   expect_identical(vnorm(mu, sd, type = "mle"), avar_mle(D))
   expect_identical(vnorm(mu, sd, type = "me"), avar_me(D))
 

@@ -19,23 +19,33 @@ setClass("Norm",
 #' distribution characterized by two parameters: the mean \eqn{\mu} and the
 #' standard deviation \eqn{\sigma > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Norm` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Norm` instead.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Norm`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Norm`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
 #' @param mean,sd numeric. The distribution parameters.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
 #' The probability density function (PDF) of the Normal distribution is:
-#' \deqn{ f(x; \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{x - \mu}{\sigma}\right)^2} .}
+#' \deqn{ f(x; \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}
+#' \left(\frac{x - \mu}{\sigma}\right)^2} .}
 #'
 #' @inherit Distributions return
 #'
 #' @seealso
-#' Functions from the `stats` package: [dnorm()], [pnorm()], [qnorm()], [rnorm()]
+#' Functions from the `stats` package: [dnorm()], [pnorm()], [qnorm()],
+#' [rnorm()]
 #'
 #' @export
 #'
@@ -47,17 +57,15 @@ setClass("Norm",
 #' # Create the distribution
 #' m <- 3 ; s <- 5
 #' D <- Norm(m, s)
-#' x <- c(0.3, 2, 10)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 2, 10)) # density function
+#' p(D, c(0.3, 2, 10)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -94,7 +102,7 @@ setClass("Norm",
 #' mle("norm", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vnorm(m, s, type = "mle")
@@ -103,7 +111,7 @@ setClass("Norm",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Norm <- function(mean = 0, sd = 1) {
   new("Norm", mean = mean, sd = sd)
 }
@@ -127,20 +135,22 @@ setValidity("Norm", function(object) {
 
 #' @rdname Norm
 setMethod("d", signature = c(distr = "Norm", x = "numeric"),
-          function(distr, x) {
-            dnorm(x, mean = distr@mean, sd = distr@sd)
+          function(distr, x, log = FALSE) {
+            dnorm(x, mean = distr@mean, sd = distr@sd, log = log)
           })
 
 #' @rdname Norm
-setMethod("p", signature = c(distr = "Norm", x = "numeric"),
-          function(distr, x) {
-            pnorm(x, mean = distr@mean, sd = distr@sd)
+setMethod("p", signature = c(distr = "Norm", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pnorm(q, mean = distr@mean, sd = distr@sd,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Norm
-setMethod("qn", signature = c(distr = "Norm", x = "numeric"),
-          function(distr, x) {
-            qnorm(x, mean = distr@mean, sd = distr@sd)
+setMethod("qn", signature = c(distr = "Norm", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qnorm(p, mean = distr@mean, sd = distr@sd,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Norm
@@ -271,9 +281,13 @@ setMethod("ll",
 #' @rdname Norm
 #' @export
 enorm <- function(x, type = "mle", ...) {
-
-  e(Norm(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Norm(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Norm
@@ -295,15 +309,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Norm
 #' @export
 vnorm <- function(mean, sd, type = "mle") {
-
-  avar(Norm(mean = mean, sd = sd), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Norm(mean, sd)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Norm

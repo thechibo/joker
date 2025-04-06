@@ -73,6 +73,12 @@ test_that("Beta moments work", {
 
   # Values
   expect_identical(mean(D), a / (a + b))
+  expect_identical(mode(Beta(0.5, 2)), 0)
+  expect_identical(mode(Beta(2, 0.5)), 1)
+
+  # Warnings
+  expect_warning(mode(Beta(1, 1)))
+  expect_warning(mode(Beta(0.7, 0.8)))
 
 })
 
@@ -164,9 +170,9 @@ test_that("Beta avar works", {
   expect_true(is.numeric(vbeta(a, b, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vbeta(a, b, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vbeta(a, b, type = "me"), avar(D, type = "me"))
-  expect_identical(vbeta(a, b, type = "same"), avar(D, type = "same"))
+  expect_identical(vbeta(a, b, type = "mle"), v(D, type = "mle"))
+  expect_identical(vbeta(a, b, type = "me"), v(D, type = "me"))
+  expect_identical(vbeta(a, b, type = "same"), v(D, type = "same"))
   expect_identical(vbeta(a, b, type = "mle"), avar_mle(D))
   expect_identical(vbeta(a, b, type = "me"), avar_me(D))
   expect_identical(vbeta(a, b, type = "same"), avar_same(D))
@@ -178,6 +184,9 @@ test_that("Beta avar works", {
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.05)
   d <- test_avar("same", D)
   expect_equal(d$avar_true, d$avar_est, tolerance = 0.05)
+
+  # Test progress bar
+  expect_no_error(test_avar("mle", D))
 
 })
 

@@ -19,13 +19,21 @@ setClass("Exp",
 #' used to model the time between independent events that occur at a constant
 #' average rate. It is defined by the rate parameter \eqn{\lambda > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Exp` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Exp` instead.
-#' @param rate numeric. The distribution rate parameter.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Exp`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Exp`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param rate numeric. The distribution parameter.
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #'
 #' @details
@@ -47,17 +55,15 @@ setClass("Exp",
 #' # Create the distribution
 #' rate <- 5
 #' D <- Exp(rate)
-#' x <- c(0.3, 2, 10)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 2, 10)) # density function
+#' p(D, c(0.3, 2, 10)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -97,7 +103,7 @@ setClass("Exp",
 #' mle("exp", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vexp(rate, type = "mle")
@@ -106,7 +112,7 @@ setClass("Exp",
 #' avar_mle(D)
 #' avar_me(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Exp <- function(rate = 1) {
   new("Exp", rate = rate)
 }
@@ -127,20 +133,20 @@ setValidity("Exp", function(object) {
 
 #' @rdname Exp
 setMethod("d", signature = c(distr = "Exp", x = "numeric"),
-          function(distr, x) {
-            dexp(x, rate = distr@rate)
+          function(distr, x, log = FALSE) {
+            dexp(x, rate = distr@rate, log = log)
           })
 
 #' @rdname Exp
-setMethod("p", signature = c(distr = "Exp", x = "numeric"),
-          function(distr, x) {
-            pexp(x, rate = distr@rate)
+setMethod("p", signature = c(distr = "Exp", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pexp(q, rate = distr@rate, lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Exp
-setMethod("qn", signature = c(distr = "Exp", x = "numeric"),
-          function(distr, x) {
-            qexp(x, rate = distr@rate)
+setMethod("qn", signature = c(distr = "Exp", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qexp(p, rate = distr@rate, lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Exp
@@ -261,9 +267,13 @@ setMethod("ll",
 #' @rdname Exp
 #' @export
 eexp <- function(x, type = "mle", ...) {
-
-  e(Exp(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Exp(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Exp
@@ -285,15 +295,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Exp
 #' @export
 vexp <- function(rate, type = "mle") {
-
-  avar(Exp(rate = rate), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Exp(rate)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Exp

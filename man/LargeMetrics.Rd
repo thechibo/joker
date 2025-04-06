@@ -41,7 +41,7 @@ specifies the parameter that changes, and the second one is a numeric vector
 holding the values it takes.
 
 In case the parameter of interest is a vector, a third element named "pos"
-can be specified to indicate the exact paramater that changes. In the example
+can be specified to indicate the exact parameter that changes. In the example
 shown below, the evaluation will be performed for the Dirichlet distributions
 with shape parameters \verb{(0.5, 1)}, \verb{(0.6, 1)}, ..., \verb{(2, 1)}. Notice that the
 initial shape parameter value (\code{1}) is not utilized in the function.

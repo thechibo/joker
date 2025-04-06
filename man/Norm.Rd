@@ -27,11 +27,11 @@
 \usage{
 Norm(mean = 0, sd = 1)
 
-\S4method{d}{Norm,numeric}(distr, x)
+\S4method{d}{Norm,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Norm,numeric}(distr, x)
+\S4method{p}{Norm,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Norm,numeric}(distr, x)
+\S4method{qn}{Norm,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Norm,numeric}(distr, n)
 
@@ -72,14 +72,27 @@ vnorm(mean, sd, type = "mle")
 \arguments{
 \item{mean, sd}{numeric. The distribution parameters.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Norm} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Norm} instead.}
+\item{distr}{an object of class \code{Norm}.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Norm}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -108,7 +121,8 @@ standard deviation \eqn{\sigma > 0}.
 }
 \details{
 The probability density function (PDF) of the Normal distribution is:
-\deqn{ f(x; \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2} \left(\frac{x - \mu}{\sigma}\right)^2} .}
+\deqn{ f(x; \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}
+\left(\frac{x - \mu}{\sigma}\right)^2} .}
 }
 \examples{
 # -----------------------------------------------------
@@ -118,17 +132,15 @@ The probability density function (PDF) of the Normal distribution is:
 # Create the distribution
 m <- 3 ; s <- 5
 D <- Norm(m, s)
-x <- c(0.3, 2, 10)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 2, 10)) # density function
+p(D, c(0.3, 2, 10)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -165,7 +177,7 @@ e(D, x, type = "mle")
 mle("norm", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vnorm(m, s, type = "mle")
@@ -174,8 +186,9 @@ vnorm(m, s, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
-Functions from the \code{stats} package: \code{\link[=dnorm]{dnorm()}}, \code{\link[=pnorm]{pnorm()}}, \code{\link[=qnorm]{qnorm()}}, \code{\link[=rnorm]{rnorm()}}
+Functions from the \code{stats} package: \code{\link[=dnorm]{dnorm()}}, \code{\link[=pnorm]{pnorm()}}, \code{\link[=qnorm]{qnorm()}},
+\code{\link[=rnorm]{rnorm()}}
 }

@@ -3,6 +3,9 @@
 \name{Laplace}
 \alias{Laplace}
 \alias{dlaplace}
+\alias{plaplace}
+\alias{qlaplace}
+\alias{rlaplace}
 \alias{d,Laplace,numeric-method}
 \alias{p,Laplace,numeric-method}
 \alias{qn,Laplace,numeric-method}
@@ -28,13 +31,19 @@
 \usage{
 Laplace(mu = 0, sigma = 1)
 
-dlaplace(x, mu, sigma)
+dlaplace(x, mu, sigma, log = FALSE)
 
-\S4method{d}{Laplace,numeric}(distr, x)
+plaplace(q, mu, sigma, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{p}{Laplace,numeric}(distr, x)
+qlaplace(p, mu, sigma, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Laplace,numeric}(distr, x)
+rlaplace(n, mu, sigma)
+
+\S4method{d}{Laplace,numeric}(distr, x, log = FALSE)
+
+\S4method{p}{Laplace,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
+
+\S4method{qn}{Laplace,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Laplace,numeric}(distr, n)
 
@@ -75,14 +84,27 @@ vlaplace(mu, sigma, type = "mle")
 \arguments{
 \item{mu, sigma}{numeric. The distribution parameters.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Laplace} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Laplace} instead.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Laplace}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{n}{numeric. The sample size.}
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{distr}{an object of class \code{Laplace}.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -122,17 +144,15 @@ The probability density function (PDF) of the Laplace distribution is:
 # Create the distribution
 m <- 3 ; s <- 5
 D <- Laplace(m, s)
-x <- c(0.3, 2, 10)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 2, 10)) # density function
+p(D, c(0.3, 2, 10)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -169,7 +189,7 @@ e(D, x, type = "mle")
 mle("laplace", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vlaplace(m, s, type = "mle")
@@ -178,5 +198,5 @@ vlaplace(m, s, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }

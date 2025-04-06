@@ -60,6 +60,7 @@ test_that("Stud moments work", {
   expect_true(is.numeric(entro(D)))
 
   # Errors
+  expect_error(mean(Stud(1)))
   expect_error(var(Stud(2)))
   expect_error(sd(Stud(2)))
   expect_error(skew(Stud(2)))
@@ -72,6 +73,7 @@ test_that("Stud moments work", {
   expect_equal(skew(D1), skew(D2), tolerance = 0.01)
   expect_equal(kurt(D1), kurt(D2), tolerance = 0.01)
   expect_equal(entro(D1), entro(D2), tolerance = 0.01)
+  expect_true(is.infinite(kurt(Stud(3))))
 
 })
 

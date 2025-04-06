@@ -19,25 +19,47 @@ setClass("Cauchy",
 #' characterized by its location parameter \eqn{x_0} and scale parameter
 #' \eqn{\gamma > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Cauchy` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Cauchy` instead.
-#' @param location,scale numeric. The distribution parameters.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Cauchy`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Cauchy`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param location,scale numeric. Location and scale parameters.
+#' @param type character, case ignored. The estimator type (mle or me).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
 #' optimization.
 #'
 #' @details
 #' The probability density function (PDF) of the Cauchy distribution is given
-#' by: \deqn{ f(x; x_0, \gamma) = \frac{1}{\pi \gamma \left[1 + \left(\frac{x - x_0}{\gamma}\right)^2\right]}.}
+#' by: \deqn{ f(x; x_0, \gamma) = \frac{1}{\pi \gamma \left[1 + \left(\frac{x -
+#' x_0}{\gamma}\right)^2\right]}.}
+#'
+#' The MLE of the Cauchy distribution parameters is not available in closed form
+#' and has to be approximated numerically. This is done with `optim()`.
+#' The default method used is the L-BFGS-B method with lower bounds
+#' `c(-Inf, 1e-5)` and upper bounds `c(Inf, Inf)`. The `par0` argument can
+#' either be a numeric (both elements satisfying `lower <= par0 <= upper`)
+#' or a character specifying the closed-form estimator to be used as
+#' initialization for the algorithm (`"me"` - the default value).
+#'
+#' Note that the `me()` estimator for the Cauchy distribution is not a
+#' \emph{moment} estimator; it utilizes the sample median instead of the sample
+#' mean.
 #'
 #' @inherit Distributions return
 #'
 #' @seealso
-#' Functions from the `stats` package: [dcauchy()], [pcauchy()], [qcauchy()], [rcauchy()]
+#' Functions from the `stats` package: [dcauchy()], [pcauchy()], [qcauchy()],
+#' [rcauchy()]
 #'
 #' @export
 #'
@@ -49,17 +71,15 @@ setClass("Cauchy",
 #' # Create the distribution
 #' x0 <- 3 ; scale <- 5
 #' D <- Cauchy(x0, scale)
-#' x <- c(-5, 3, 10)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(-5, 3, 10)) # density function
+#' p(D, c(-5, 3, 10)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -90,12 +110,12 @@ setClass("Cauchy",
 #' mle("cauchy", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vcauchy(x0, scale, type = "mle")
 #' avar_mle(D)
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Cauchy <- function(location = 0, scale = 1) {
   new("Cauchy", location = location, scale = scale)
 }
@@ -119,20 +139,22 @@ setValidity("Cauchy", function(object) {
 
 #' @rdname Cauchy
 setMethod("d", signature = c(distr = "Cauchy", x = "numeric"),
-          function(distr, x) {
-          dcauchy(x, location = distr@location, scale = distr@scale)
+          function(distr, x, log = FALSE) {
+          dcauchy(x, location = distr@location, scale = distr@scale, log = log)
           })
 
 #' @rdname Cauchy
-setMethod("p", signature = c(distr = "Cauchy", x = "numeric"),
-          function(distr, x) {
-            pcauchy(x, location = distr@location, scale = distr@scale)
+setMethod("p", signature = c(distr = "Cauchy", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pcauchy(q, location = distr@location, scale = distr@scale,
+                    lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Cauchy
-setMethod("qn", signature = c(distr = "Cauchy", x = "numeric"),
-          function(distr, x) {
-            qcauchy(x, location = distr@location, scale = distr@scale)
+setMethod("qn", signature = c(distr = "Cauchy", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qcauchy(p, location = distr@location, scale = distr@scale,
+                    lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Cauchy
@@ -289,9 +311,13 @@ setMethod("dlloptim",
 #' @rdname Cauchy
 #' @export
 ecauchy <- function(x, type = "mle", ...) {
-
-  e(Cauchy(), x, type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Cauchy(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Cauchy
@@ -303,7 +329,14 @@ setMethod("mle",
                                 lower = c(-Inf, 1e-5),
                                 upper = c(Inf, Inf)) {
 
-  par <- optim(par = unlist(do.call(par0, list(distr = distr, x = x))),
+  if (is.character(par0) && tolower(par0) %in% c("me")) {
+    par0 <- unlist(ecauchy(x, type = par0))
+  } else if (!is.numeric(par0) || any(par0 < lower) || any(par0 > upper)) {
+    stop("par0 must either be a character ('me')",
+         "or a numeric within the lower and upper bounds")
+  }
+
+  par <- optim(par = par0,
                fn = lloptim,
                gr = dlloptim,
                tx = x,
@@ -331,15 +364,20 @@ setMethod("me",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Cauchy
 #' @export
 vcauchy <- function(location, scale, type = "mle") {
-
-  avar(Cauchy(location = location, scale = scale), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me")
+  distr <- Cauchy(location, scale)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Cauchy

@@ -27,11 +27,11 @@
 \usage{
 Lnorm(meanlog = 0, sdlog = 1)
 
-\S4method{d}{Lnorm,numeric}(distr, x)
+\S4method{d}{Lnorm,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Lnorm,numeric}(distr, x)
+\S4method{p}{Lnorm,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Lnorm,numeric}(distr, x)
+\S4method{qn}{Lnorm,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Lnorm,numeric}(distr, n)
 
@@ -72,14 +72,27 @@ vlnorm(meanlog, sdlog, type = "mle")
 \arguments{
 \item{meanlog, sdlog}{numeric. The distribution parameters.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Lnorm} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Lnorm} instead.}
+\item{distr}{an object of class \code{Lnorm}.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Lnorm}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -109,7 +122,8 @@ deviation of the underlying normal distribution.
 }
 \details{
 The probability density function (PDF) of the Lognormal distribution is:
-\deqn{ f(x; \mu, \sigma) = \frac{1}{x \sigma \sqrt{2\pi}} e^{-\frac{(\log x - \mu)^2}{2 \sigma^2}}, \quad x > 0 .}
+\deqn{ f(x; \mu, \sigma) = \frac{1}{x \sigma \sqrt{2\pi}} e^{-\frac{(\log x -
+\mu)^2}{2 \sigma^2}}, \quad x > 0 .}
 }
 \examples{
 # -----------------------------------------------------
@@ -119,17 +133,15 @@ The probability density function (PDF) of the Lognormal distribution is:
 # Create the distribution
 m <- 3 ; s <- 5
 D <- Lnorm(m, s)
-x <- c(0.3, 2, 10)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 2, 10)) # density function
+p(D, c(0.3, 2, 10)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -166,7 +178,7 @@ e(D, x, type = "mle")
 mle("lnorm", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vlnorm(m, s, type = "mle")
@@ -175,8 +187,9 @@ vlnorm(m, s, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
-Functions from the \code{stats} package: \code{\link[=dlnorm]{dlnorm()}}, \code{\link[=plnorm]{plnorm()}}, \code{\link[=qlnorm]{qlnorm()}}, \code{\link[=rlnorm]{rlnorm()}}
+Functions from the \code{stats} package: \code{\link[=dlnorm]{dlnorm()}}, \code{\link[=plnorm]{plnorm()}}, \code{\link[=qlnorm]{qlnorm()}},
+\code{\link[=rlnorm]{rlnorm()}}
 }

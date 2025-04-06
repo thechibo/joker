@@ -33,17 +33,17 @@ Bern(prob = 0.5)
 
 dbern(x, prob, log = FALSE)
 
-pbern(x, prob, lower.tail = TRUE, log.p = FALSE)
+pbern(q, prob, lower.tail = TRUE, log.p = FALSE)
 
-qbern(x, prob, lower.tail = TRUE, log.p = FALSE)
+qbern(p, prob, lower.tail = TRUE, log.p = FALSE)
 
 rbern(n, prob)
 
-\S4method{d}{Bern,numeric}(distr, x)
+\S4method{d}{Bern,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Bern,numeric}(distr, x)
+\S4method{p}{Bern,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Bern,numeric}(distr, x)
+\S4method{qn}{Bern,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Bern,numeric}(distr, n)
 
@@ -82,21 +82,29 @@ vbern(prob, type = "mle")
 \S4method{avar_me}{Bern}(distr)
 }
 \arguments{
-\item{prob}{numeric. The distribution parameter, within the (0, 1) interval.}
+\item{prob}{numeric. Probability of success.}
 
-\item{log, log.p}{logical. Should the logarithm of the probability be returned?}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Bern}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
+
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
 
 \item{lower.tail}{logical. If TRUE (default), probabilities are
 \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
 
-\item{n}{numeric. The sample size.}
+\item{p}{numeric. Vector of probabilities.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Bern} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Bern} instead.}
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{distr}{an object of class \code{Bern}.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -125,7 +133,8 @@ the value 1 with probability \eqn{p} and the value 0 with probability
 }
 \details{
 The probability mass function (PMF) of the Bernoulli distribution is given
-by: \deqn{ f(x; p) = p^x (1 - p)^{1 - x}, \quad p \in (0, 1), \quad x \in \{0, 1\}.}
+by: \deqn{ f(x; p) = p^x (1 - p)^{1 - x}, \quad p \in (0, 1), \quad x \in
+\{0, 1\}.}
 }
 \examples{
 # -----------------------------------------------------
@@ -135,17 +144,15 @@ by: \deqn{ f(x; p) = p^x (1 - p)^{1 - x}, \quad p \in (0, 1), \quad x \in \{0, 1
 # Create the distribution
 p <- 0.7
 D <- Bern(p)
-x <- c(0, 1)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0, 1)) # density function
+p(D, c(0, 1)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -185,7 +192,7 @@ e(D, x, type = "mle")
 mle("bern", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vbern(p, type = "mle")
@@ -194,8 +201,9 @@ vbern(p, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
-Functions from the \code{stats} package: \code{\link[=dbinom]{dbinom()}}, \code{\link[=pbinom]{pbinom()}}, \code{\link[=qbinom]{qbinom()}}, \code{\link[=rbinom]{rbinom()}}
+Functions from the \code{stats} package: \code{\link[=dbinom]{dbinom()}}, \code{\link[=pbinom]{pbinom()}}, \code{\link[=qbinom]{qbinom()}},
+\code{\link[=rbinom]{rbinom()}}
 }

@@ -23,15 +23,15 @@
 \alias{vnbinom}
 \alias{avar_mle,Nbinom-method}
 \alias{avar_me,Nbinom-method}
-\title{Nbinometric Distribution}
+\title{Negative Binomial Distribution}
 \usage{
 Nbinom(size = 1, prob = 0.5)
 
-\S4method{d}{Nbinom,numeric}(distr, x)
+\S4method{d}{Nbinom,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Nbinom,numeric}(distr, x)
+\S4method{p}{Nbinom,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Nbinom,numeric}(distr, x)
+\S4method{qn}{Nbinom,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Nbinom,numeric}(distr, n)
 
@@ -70,16 +70,31 @@ vnbinom(size, prob, type = "mle")
 \S4method{avar_me}{Nbinom}(distr)
 }
 \arguments{
-\item{size, prob}{numeric. The distribution parameter.}
+\item{size}{number of trials (zero or more).}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Nbinom} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Nbinom} instead.}
+\item{prob}{numeric. Probability of success on each trial.}
 
-\item{n}{numeric. The sample size.}
+\item{distr}{an object of class \code{Nbinom}.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Nbinom}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
+
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -110,7 +125,8 @@ parameters \eqn{r > 0} (number of successes) and \eqn{0 < p \leq 1}
 }
 \details{
 The probability mass function (PMF) of the negative binomial distribution is:
-\deqn{ P(X = k) = \binom{k + r - 1}{k} (1 - p)^k p^r, \quad k \in \mathbb{N}_0.}
+\deqn{ P(X = k) = \binom{k + r - 1}{k} (1 - p)^k p^r, \quad k \in
+\mathbb{N}_0.}
 }
 \examples{
 # -----------------------------------------------------
@@ -120,17 +136,15 @@ The probability mass function (PMF) of the negative binomial distribution is:
 # Create the distribution
 N <- 10 ; p <- 0.4
 D <- Nbinom(N, p)
-x <- 0:4
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, 0:4) # density function
+p(D, 0:4) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -168,7 +182,7 @@ me(D, x)
 e(D, x, type = "mle")
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vnbinom(N, p, type = "mle")
@@ -177,8 +191,9 @@ vnbinom(N, p, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
-Functions from the \code{stats} package: \code{\link[=dnbinom]{dnbinom()}}, \code{\link[=pnbinom]{pnbinom()}}, \code{\link[=qnbinom]{qnbinom()}}, \code{\link[=rnbinom]{rnbinom()}}
+Functions from the \code{stats} package: \code{\link[=dnbinom]{dnbinom()}}, \code{\link[=pnbinom]{pnbinom()}}, \code{\link[=qnbinom]{qnbinom()}},
+\code{\link[=rnbinom]{rnbinom()}}
 }

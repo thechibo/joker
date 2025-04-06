@@ -121,8 +121,8 @@ test_that("Pois avar works", {
   expect_true(is.numeric(vpois(lambda, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vpois(lambda, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vpois(lambda, type = "me"), avar(D, type = "me"))
+  expect_identical(vpois(lambda, type = "mle"), v(D, type = "mle"))
+  expect_identical(vpois(lambda, type = "me"), v(D, type = "me"))
   expect_identical(vpois(lambda, type = "mle"), avar_mle(D))
   expect_identical(vpois(lambda, type = "me"), avar_me(D))
 

@@ -120,8 +120,8 @@ test_that("Exp avar works", {
   expect_true(is.numeric(vexp(rate, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vexp(rate, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vexp(rate, type = "me"), avar(D, type = "me"))
+  expect_identical(vexp(rate, type = "mle"), v(D, type = "mle"))
+  expect_identical(vexp(rate, type = "me"), v(D, type = "me"))
   expect_identical(vexp(rate, type = "mle"), avar_mle(D))
   expect_identical(vexp(rate, type = "me"), avar_me(D))
 

@@ -12,13 +12,13 @@
 \alias{var,Dir-method}
 \alias{entro,Dir-method}
 \alias{finf,Dir-method}
-\alias{lldirichlet}
+\alias{lldir}
 \alias{ll,Dir,matrix-method}
-\alias{edirichlet}
+\alias{edir}
 \alias{mle,Dir,matrix-method}
 \alias{me,Dir,matrix-method}
 \alias{same,Dir,matrix-method}
-\alias{vdirichlet}
+\alias{vdir}
 \alias{avar_mle,Dir-method}
 \alias{avar_me,Dir-method}
 \alias{avar_same,Dir-method}
@@ -30,7 +30,7 @@ ddir(x, alpha, log = FALSE)
 
 rdir(n, alpha)
 
-\S4method{d}{Dir,numeric}(distr, x)
+\S4method{d}{Dir,numeric}(distr, x, log = FALSE)
 
 \S4method{d}{Dir,matrix}(distr, x)
 
@@ -46,11 +46,11 @@ rdir(n, alpha)
 
 \S4method{finf}{Dir}(x)
 
-lldirichlet(x, alpha)
+lldir(x, alpha)
 
 \S4method{ll}{Dir,matrix}(distr, x)
 
-edirichlet(x, type = "mle", ...)
+edir(x, type = "mle", ...)
 
 \S4method{mle}{Dir,matrix}(distr, x, par0 = "same", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
 
@@ -58,7 +58,7 @@ edirichlet(x, type = "mle", ...)
 
 \S4method{same}{Dir,matrix}(distr, x)
 
-vdirichlet(alpha, type = "mle")
+vdir(alpha, type = "mle")
 
 \S4method{avar_mle}{Dir}(distr)
 
@@ -67,16 +67,20 @@ vdirichlet(alpha, type = "mle")
 \S4method{avar_same}{Dir}(distr)
 }
 \arguments{
-\item{alpha}{numeric. The distribution parameter vector.}
+\item{alpha}{numeric. The non-negative distribution parameter vector.}
 
-\item{log}{logical. Should the logarithm of the density be returned?}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Dir}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{n}{numeric. The sample size.}
+\item{log}{logical. Should the logarithm of the probability be
+returned?}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Dir} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Dir} instead.}
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{distr}{an object of class \code{Dir}.}
 
 \item{type}{character, case ignored. The estimator type (mle, me, or same).}
 
@@ -112,9 +116,11 @@ parameterized by a vector \eqn{\boldsymbol{\alpha} =
 \details{
 The probability density function (PDF) of the Dirichlet distribution is given
 by:
-\deqn{ f(x_1, ..., x_k; \alpha_1, ..., \alpha_k) = \frac{1}{B(\boldsymbol{\alpha})} \prod_{i=1}^k x_i^{\alpha_i - 1}, }
+\deqn{ f(x_1, ..., x_k; \alpha_1, ..., \alpha_k) =
+\frac{1}{B(\boldsymbol{\alpha})} \prod_{i=1}^k x_i^{\alpha_i - 1}, }
 where \eqn{B(\boldsymbol{\alpha})} is the multivariate Beta function:
-\deqn{ B(\boldsymbol{\alpha}) = \frac{\prod_{i=1}^k \Gamma(\alpha_i)}{\Gamma\left(\sum_{i=1}^k \alpha_i\right)} }
+\deqn{ B(\boldsymbol{\alpha}) = \frac{\prod_{i=1}^k
+\Gamma(\alpha_i)}{\Gamma\left(\sum_{i=1}^k \alpha_i\right)} }
 and \eqn{\sum_{i=1}^k x_i = 1}, \eqn{x_i > 0}.
 }
 \examples{
@@ -125,15 +131,13 @@ and \eqn{\sum_{i=1}^k x_i = 1}, \eqn{x_i > 0}.
 # Create the distribution
 a <- c(0.5, 2, 5)
 D <- Dir(a)
-x <- c(0.3, 0.2, 0.5)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 0.2, 0.5)) # density function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -157,10 +161,10 @@ mom$mean # expectation
 # ------------------
 
 ll(D, x)
-lldirichlet(x, a)
+lldir(x, a)
 
-edirichlet(x, type = "mle")
-edirichlet(x, type = "me")
+edir(x, type = "mle")
+edir(x, type = "me")
 
 mle(D, x)
 me(D, x)
@@ -169,16 +173,16 @@ e(D, x, type = "mle")
 mle("dir", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
-vdirichlet(a, type = "mle")
-vdirichlet(a, type = "me")
+vdir(a, type = "mle")
+vdir(a, type = "me")
 
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \references{
 \itemize{

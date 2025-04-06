@@ -10,9 +10,15 @@
 #' A collection of S4 classes that provide a flexible and structured way to work
 #' with probability distributions.
 #'
-#' @param distr a `Distribution` object.
-#' @param x numeric. The point to evaluate the function.
-#' @param n numeric. The sample size.
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Distribution` or one of its subclasses.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Distribution`  or one of
+#' its subclasses. For the log-likelihood and the estimation functions, `x` is
+#' the sample of observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
 #' @param ... extra arguments.
 #'
 #' @details
@@ -73,12 +79,12 @@ setGeneric("d", function(distr, x, ...) {
 })
 
 #' @describeIn Distributions cumulative distribution function
-setGeneric("p", function(distr, x, ...) {
+setGeneric("p", function(distr, q, ...) {
   standardGeneric("p")
 })
 
 #' @describeIn Distributions generalized inverse distribution function
-setGeneric("qn", function(distr, x, ...)
+setGeneric("qn", function(distr, p, ...)
   standardGeneric("qn"))
 
 #' @describeIn Distributions random sample generator function
@@ -90,13 +96,13 @@ setGeneric("r", function(distr, n, ...) {
 #' @name DistrFunctionals
 #'
 #' @param distr a `Distribution` object.
-#' @param x,n missing. Arguments not supplied.
+#' @param x,q,p,n missing. Arguments not supplied.
 #' @param ... extra arguments.
 #'
 #' @details
-#' When `x` or `n` are missing, the methods return a function that takes as
-#' input the missing argument, allowing the user to work with the function
-#' object itself. See examples.
+#' When `x`, `q`, `p`, or `n` are missing, the methods return a function that
+#' takes as input the missing argument, allowing the user to work with the
+#' function object itself. See examples.
 #'
 #' @return
 #' When supplied with one argument, the `d()`, `p()`, `q()`, `r()` `ll()`
@@ -113,15 +119,15 @@ setMethod("d", signature = c(distr = "Distribution", x = "missing"),
           })
 
 #' @rdname DistrFunctionals
-setMethod("p", signature = c(distr = "Distribution", x = "missing"),
-          function(distr, x, ...) {
-            function(x) {p(distr, x, ...)}
+setMethod("p", signature = c(distr = "Distribution", q = "missing"),
+          function(distr, q, ...) {
+            function(q) {p(distr, q, ...)}
           })
 
 #' @rdname DistrFunctionals
-setMethod("qn", signature = c(distr = "Distribution", x = "missing"),
-          function(distr, x, ...) {
-            function(x) {qn(distr, x, ...)}
+setMethod("qn", signature = c(distr = "Distribution", p = "missing"),
+          function(distr, p, ...) {
+            function(p) {qn(distr, p, ...)}
           })
 
 #' @rdname DistrFunctionals
@@ -285,11 +291,9 @@ setGeneric("ll", signature = c("distr", "x"),
 setMethod("ll",
           signature  = c(distr = "Distribution", x = "missing"),
           definition = function(distr, x, ...) {
-
             function(x) {
               ll(distr, x, ...)
             }
-
           })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -313,9 +317,10 @@ setGeneric("dlloptim", signature = c("par", "tx", "distr"),
 #' This set of functions estimates the parameters of a random sample according
 #' to a specified family of distributions. See details.
 #'
-#' @param distr A `Distribution` object or a `character`. The distribution family assumed.
+#' @param distr A `Distribution` object or a `character`. The distribution
+#' family assumed.
 #' @param x numeric. A sample under estimation.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param type character, case ignored. The estimator type.
 #' @param ... extra arguments.
 #'
 #' @details
@@ -370,13 +375,15 @@ setGeneric("dlloptim", signature = c("par", "tx", "distr"),
 #'
 #' @inherit Distributions examples
 e <- function(distr, x, type = "mle", ...) {
-  type <- tolower(type)
-  if (type %in% c("mle", "me", "same")) {
-    return(do.call(type, list(distr = distr, x = x, ...)))
+  abbr <- get_class_abbr(distr)
+  if (abbr %in% c("binom", "nbinom")) {
+    args <- list(x = x, type = type, size = distr@size, ...)
+  } else if (abbr == "cat") {
+    args <- list(x = x, type = type, dim = length(distr@prob), ...)
   } else {
-    stop("Type must be one of mle, me, or same, case ignored. Instead got",
-         type)
+    args <- list(x = x, type = type, ...)
   }
+  do.call(paste0("e", abbr), args)
 }
 
 #' @describeIn estimation Maximum Likelihood Estimator
@@ -387,16 +394,16 @@ setGeneric("mle", signature = c("distr", "x"),
 setMethod("mle",
           signature  = c(distr = "Distribution", x = "missing"),
           definition = function(distr, x, ...) {
-            function(x) {mle(distr, x, ...)}
+            function(x) {
+              mle(distr, x, ...)
+            }
           })
 
 #' @rdname estimation
 setMethod("mle",
           signature  = c(distr = "character", x = "ANY"),
           definition = function(distr, x, ...) {
-
             mle(get_distr_class(distr), x, ...)
-
           })
 
 #' @describeIn estimation Moment Estimator
@@ -407,16 +414,16 @@ setGeneric("me", signature = c("distr", "x"),
 setMethod("me",
           signature  = c(distr = "Distribution", x = "missing"),
           definition = function(distr, x, ...) {
-            function(x) {me(distr, x, ...)}
+            function(x) {
+              me(distr, x, ...)
+            }
           })
 
 #' @rdname estimation
 setMethod("me",
           signature  = c(distr = "character", x = "ANY"),
           definition = function(distr, x, ...) {
-
             me(get_distr_class(distr), x, ...)
-
           })
 
 #' @describeIn estimation Score - Adjusted Moment Estimation
@@ -434,52 +441,45 @@ setMethod("same",
 setMethod("same",
           signature  = c(distr = "character", x = "ANY"),
           definition = function(distr, x, ...) {
-
             same(get_distr_class(distr), x, ...)
-
           })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#' @title Asymptotic Variance
-#' @name avar
+#' @title Estimator Variance
+#' @name variance
 #'
 #' @description
-#' These functions calculate the asymptotic variance (or variance - covariance
-#' matrix in the multidimensional case) of an estimator, given a specified
-#' family of distributions and the true parameter values.
+#' These functions calculate the variance (or variance - covariance matrix in
+#' the multidimensional case) of an estimator, given a specified family of
+#' distributions and the true parameter values.
 #'
 #' @param distr A `Distribution` object.
-#' @param type character, case ignored. The estimator type (`"mle"`, `"me"`, or `"same"`).
+#' @param type character, case ignored. The estimator type.
 #' @param ... extra arguments.
 #'
-#' @return A named matrix. The asymptotic covariance matrix of the estimator.
+#' @return numeric, or matrix for multidimensional cases.
 #'
 #' @export
 #'
 #' @seealso [avar_mle], [avar_me], [avar_same]
 #'
 #' @inherit estimation references examples
-avar <- function(distr, type, ...) {
-  type <- tolower(type)
-  if (type %in% c("mle", "me", "same")) {
-    return(do.call(paste0("avar_", type), list(distr = distr, ...)))
-  } else {
-    stop("Method must be one of mle, me, or same, case ignored. Instead got",
-         type)
-  }
+v <- function(distr, type, ...) {
+  do.call(paste0("v", get_class_abbr(distr)),
+          c(get_params(distr), list(type = type, ...)))
 }
 
-#' @describeIn avar Asymptotic Variance of the Maximum Likelihood Estimator
+#' @describeIn variance Asymptotic Variance of the Maximum Likelihood Estimator
 setGeneric("avar_mle", signature = c("distr"),
            function(distr, ...) { standardGeneric("avar_mle") })
 
-#' @describeIn avar Asymptotic Variance of the Moment Estimator
+#' @describeIn variance Asymptotic Variance of the Moment Estimator
 setGeneric("avar_me", signature = c("distr"),
            function(distr, ...) { standardGeneric("avar_me") })
 
-#' @describeIn avar Asymptotic Variance of the Score-Adjusted Moment Estimator
+#' @describeIn variance Asymptotic Variance of the Score-Adjusted Moment Estimator
 setGeneric("avar_same", signature = c("distr"),
            function(distr, ...) { standardGeneric("avar_same") })

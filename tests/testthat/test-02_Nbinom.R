@@ -144,8 +144,8 @@ test_that("Nbinom avar works", {
   expect_true(is.numeric(vnbinom(k, p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vnbinom(k, p, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vnbinom(k, p, type = "me"), avar(D, type = "me"))
+  expect_identical(vnbinom(k, p, type = "mle"), v(D, type = "mle"))
+  expect_identical(vnbinom(k, p, type = "me"), v(D, type = "me"))
   expect_identical(vnbinom(k, p, type = "mle"), avar_mle(D))
   expect_identical(vnbinom(k, p, type = "me"), avar_me(D))
 

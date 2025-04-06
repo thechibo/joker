@@ -26,11 +26,11 @@
 \usage{
 Cauchy(location = 0, scale = 1)
 
-\S4method{d}{Cauchy,numeric}(distr, x)
+\S4method{d}{Cauchy,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Cauchy,numeric}(distr, x)
+\S4method{p}{Cauchy,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Cauchy,numeric}(distr, x)
+\S4method{qn}{Cauchy,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Cauchy,numeric}(distr, n)
 
@@ -74,16 +74,29 @@ vcauchy(location, scale, type = "mle")
 \S4method{avar_mle}{Cauchy}(distr)
 }
 \arguments{
-\item{location, scale}{numeric. The distribution parameters.}
+\item{location, scale}{numeric. Location and scale parameters.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Cauchy} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Cauchy} instead.}
+\item{distr}{an object of class \code{Cauchy}.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Cauchy}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 
@@ -115,7 +128,20 @@ characterized by its location parameter \eqn{x_0} and scale parameter
 }
 \details{
 The probability density function (PDF) of the Cauchy distribution is given
-by: \deqn{ f(x; x_0, \gamma) = \frac{1}{\pi \gamma \left[1 + \left(\frac{x - x_0}{\gamma}\right)^2\right]}.}
+by: \deqn{ f(x; x_0, \gamma) = \frac{1}{\pi \gamma \left[1 + \left(\frac{x -
+x_0}{\gamma}\right)^2\right]}.}
+
+The MLE of the Cauchy distribution parameters is not available in closed form
+and has to be approximated numerically. This is done with \code{optim()}.
+The default method used is the L-BFGS-B method with lower bounds
+\code{c(-Inf, 1e-5)} and upper bounds \code{c(Inf, Inf)}. The \code{par0} argument can
+either be a numeric (both elements satisfying \verb{lower <= par0 <= upper})
+or a character specifying the closed-form estimator to be used as
+initialization for the algorithm (\code{"me"} - the default value).
+
+Note that the \code{me()} estimator for the Cauchy distribution is not a
+\emph{moment} estimator; it utilizes the sample median instead of the sample
+mean.
 }
 \examples{
 # -----------------------------------------------------
@@ -125,17 +151,15 @@ by: \deqn{ f(x; x_0, \gamma) = \frac{1}{\pi \gamma \left[1 + \left(\frac{x - x_0
 # Create the distribution
 x0 <- 3 ; scale <- 5
 D <- Cauchy(x0, scale)
-x <- c(-5, 3, 10)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(-5, 3, 10)) # density function
+p(D, c(-5, 3, 10)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -166,13 +190,14 @@ e(D, x, type = "mle")
 mle("cauchy", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vcauchy(x0, scale, type = "mle")
 avar_mle(D)
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
-Functions from the \code{stats} package: \code{\link[=dcauchy]{dcauchy()}}, \code{\link[=pcauchy]{pcauchy()}}, \code{\link[=qcauchy]{qcauchy()}}, \code{\link[=rcauchy]{rcauchy()}}
+Functions from the \code{stats} package: \code{\link[=dcauchy]{dcauchy()}}, \code{\link[=pcauchy]{pcauchy()}}, \code{\link[=qcauchy]{qcauchy()}},
+\code{\link[=rcauchy]{rcauchy()}}
 }

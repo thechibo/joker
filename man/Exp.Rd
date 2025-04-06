@@ -27,11 +27,11 @@
 \usage{
 Exp(rate = 1)
 
-\S4method{d}{Exp,numeric}(distr, x)
+\S4method{d}{Exp,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Exp,numeric}(distr, x)
+\S4method{p}{Exp,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Exp,numeric}(distr, x)
+\S4method{qn}{Exp,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Exp,numeric}(distr, n)
 
@@ -70,16 +70,29 @@ vexp(rate, type = "mle")
 \S4method{avar_me}{Exp}(distr)
 }
 \arguments{
-\item{rate}{numeric. The distribution rate parameter.}
+\item{rate}{numeric. The distribution parameter.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Exp} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Exp} instead.}
+\item{distr}{an object of class \code{Exp}.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Exp}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -118,17 +131,15 @@ given by: \deqn{ f(x; \lambda) = \lambda e^{-\lambda x}, \quad x \geq 0 .}
 # Create the distribution
 rate <- 5
 D <- Exp(rate)
-x <- c(0.3, 2, 10)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 2, 10)) # density function
+p(D, c(0.3, 2, 10)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -168,7 +179,7 @@ e(D, x, type = "mle")
 mle("exp", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vexp(rate, type = "mle")
@@ -177,7 +188,7 @@ vexp(rate, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
 Functions from the \code{stats} package: \code{\link[=dexp]{dexp()}}, \code{\link[=pexp]{pexp()}}, \code{\link[=qexp]{qexp()}}, \code{\link[=rexp]{rexp()}}

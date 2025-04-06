@@ -68,17 +68,15 @@ examples can be found in the package vignette.
 # Create the distribution
 a <- 3 ; b <- 5
 D <- Beta(a, b)
-x <- c(0.3, 0.8, 0.5)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 0.8, 0.5)) # density function
+p(D, c(0.3, 0.8, 0.5)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 df <- d(D) ; df(x) # df is a function itself
@@ -118,7 +116,7 @@ e(D, x, type = "mle")
 mle("beta", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vbeta(a, b, type = "mle")
@@ -129,7 +127,7 @@ avar_mle(D)
 avar_me(D)
 avar_same(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
 \link{Distributions}, \link{moments}, \link{estimation}

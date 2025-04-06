@@ -26,15 +26,26 @@ test_that("Dir dpqr work", {
   # Types
   expect_true(is.function(d(D)))
   expect_true(is.function(r(D)))
+  expect_true(is.numeric(d(D, x)))
 
   # Values
   expect_identical(d(D)(rep(0, 4)), 0)
   expect_identical(sum(x <= 1), 4L * n)
   expect_identical(sum(x >= 0), 4L * n)
+  expect_equal(ddir(x[1, ], a, log = TRUE),
+               log(ddir(x[1, ], a, log = FALSE)),
+               tolerance = 1e-8)
+
 
   # 2-Way Calls
   expect_identical(d(D)(1:4 / 10), ddir(1:4 / 10, a))
   expect_identical(d(D)(1:4 / 10), d(D, 1:4 / 10))
+
+  # Error
+  expect_error(ddir(x, c(1, 2)))
+  expect_error(ddir(x, c(1, 2, 3, -4)))
+  expect_error(rdir(-5, 1:4))
+  expect_error(rdir(5, c(1, 2, 3, -4)))
 
 })
 
@@ -64,10 +75,10 @@ test_that("Dir likelihood works", {
   x <- r(D)(n)
 
   # Types
-  expect_true(is.numeric(lldirichlet(x, a)))
+  expect_true(is.numeric(lldir(x, a)))
 
   # 2-Way Calls
-  expect_identical(lldirichlet(x, a), ll(D, x))
+  expect_identical(lldir(x, a), ll(D, x))
   expect_identical(ll(D)(x), ll(D, x))
 
   # ll and lloptim convergence to a0 comparison
@@ -107,14 +118,14 @@ test_that("Dir estim works", {
   x <- r(D)(n)
 
   # Types
-  expect_true(is.list(edirichlet(x, type = "mle")))
-  expect_true(is.list(edirichlet(x, type = "me")))
-  expect_true(is.list(edirichlet(x, type = "same")))
+  expect_true(is.list(edir(x, type = "mle")))
+  expect_true(is.list(edir(x, type = "me")))
+  expect_true(is.list(edir(x, type = "same")))
 
   # 2-Way Calls
-  expect_identical(edirichlet(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(edirichlet(x, type = "me"), e(D, x, type = "me"))
-  expect_identical(edirichlet(x, type = "same"), e(D, x, type = "same"))
+  expect_identical(edir(x, type = "mle"), e(D, x, type = "mle"))
+  expect_identical(edir(x, type = "me"), e(D, x, type = "me"))
+  expect_identical(edir(x, type = "same"), e(D, x, type = "same"))
 
   # Simulations
   d <- test_consistency("me", D)
@@ -134,17 +145,17 @@ test_that("Dir avar works", {
   D2 <- Beta(1, 2)
 
   # Types
-  expect_true(is.numeric(vdirichlet(a, type = "mle")))
-  expect_true(is.numeric(vdirichlet(a, type = "me")))
-  expect_true(is.numeric(vdirichlet(a, type = "same")))
+  expect_true(is.numeric(vdir(a, type = "mle")))
+  expect_true(is.numeric(vdir(a, type = "me")))
+  expect_true(is.numeric(vdir(a, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vdirichlet(a, type = "mle"), avar(D1, type = "mle"))
-  expect_identical(vdirichlet(a, type = "me"), avar(D1, type = "me"))
-  expect_identical(vdirichlet(a, type = "same"), avar(D1, type = "same"))
-  expect_identical(vdirichlet(a, type = "mle"), avar_mle(D1))
-  expect_identical(vdirichlet(a, type = "me"), avar_me(D1))
-  expect_identical(vdirichlet(a, type = "same"), avar_same(D1))
+  expect_identical(vdir(a, type = "mle"), v(D1, type = "mle"))
+  expect_identical(vdir(a, type = "me"), v(D1, type = "me"))
+  expect_identical(vdir(a, type = "same"), v(D1, type = "same"))
+  expect_identical(vdir(a, type = "mle"), avar_mle(D1))
+  expect_identical(vdir(a, type = "me"), avar_me(D1))
+  expect_identical(vdir(a, type = "same"), avar_same(D1))
 
   # Dirichlet - Beta comparison
   expect_equal(unname(avar_mle(D1)), unname(avar_mle(D2)), tolerance = 1e-4)

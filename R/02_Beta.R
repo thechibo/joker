@@ -19,24 +19,43 @@ setClass("Beta",
 #' support \eqn{S = [0,1]}, parameterized by two shape parameters,
 #' \eqn{\alpha > 0} and \eqn{\beta > 0}.
 #'
-#' @param n numeric. The sample size.
-#' @param distr,x If both arguments coexist, `distr` is an object of class
-#' `Beta` and `x` is a numeric vector, the sample of observations. For the
-#' moment functions that only take an `x` argument, `x` is an object of class
-#' `Beta` instead.
-#' @param shape1,shape2 numeric. The distribution parameters (positive real
-#' numbers).
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
+#' @param distr an object of class `Beta`.
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Beta`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param shape1,shape2 numeric. The non-negative distribution parameters.
 #' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
-#' optimization.
+#' optimization. See Details.
 #'
 #' @details
 #' The probability density function (PDF) of the Beta distribution is given by:
-#' \deqn{ f(x; \alpha, \beta) = \frac{x^{\alpha - 1} (1 - x)^{\beta - 1}}{B(\alpha, \beta)},
+#' \deqn{ f(x; \alpha, \beta) = \frac{x^{\alpha - 1} (1 - x)^{\beta -
+#' 1}}{B(\alpha, \beta)},
 #' \quad \alpha\in\mathbb{R}_+, \, \beta\in\mathbb{R}_+,}
-#' for \eqn{x \in S = [0, 1]}, where \eqn{B(\alpha, \beta)} is the Beta function:
+#' for \eqn{x \in S = [0, 1]}, where \eqn{B(\alpha, \beta)} is the Beta
+#' function:
 #' \deqn{ B(\alpha, \beta) = \int_0^1 t^{\alpha - 1} (1 - t)^{\beta - 1} dt.}
+#'
+#' The MLE of the beta distribution parameters is not available in closed form
+#' and has to be approximated numerically. This is done with `optim()`.
+#' Specifically, instead of solving a bivariate optimization problem w.r.t
+#' \eqn{(\alpha, \beta)}, the optimization can be performed on the parameter
+#' sum \eqn{\alpha_0:=\alpha + \beta \in(0,+\infty)}. The default method used
+#' is the L-BFGS-B method with lower bound `1e-5` and upper bound `Inf`. The
+#' `par0` argument can either be a numeric (satisfying `lower <= par0 <= upper`)
+#' or a character specifying the closed-form estimator to be used as
+#' initialization for the algorithm (`"me"` or `"same"` - the default value).
 #'
 #' @inherit Distributions return
 #'
@@ -50,7 +69,8 @@ setClass("Beta",
 #' arXiv preprint arXiv:2205.10799.
 #'
 #' @seealso
-#' Functions from the `stats` package: [dbeta()], [pbeta()], [qbeta()], [rbeta()]
+#' Functions from the `stats` package: [dbeta()], [pbeta()], [qbeta()],
+#' [rbeta()]
 #'
 #' @export
 #'
@@ -62,17 +82,15 @@ setClass("Beta",
 #' # Create the distribution
 #' a <- 3 ; b <- 5
 #' D <- Beta(a, b)
-#' x <- c(0.3, 0.8, 0.5)
-#' n <- 100
 #'
 #' # ------------------
 #' # dpqr Functions
 #' # ------------------
 #'
-#' d(D, x) # density function
-#' p(D, x) # distribution function
-#' qn(D, 0.8) # inverse distribution function
-#' x <- r(D, n) # random generator function
+#' d(D, c(0.3, 0.8, 0.5)) # density function
+#' p(D, c(0.3, 0.8, 0.5)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
 #'
 #' # alternative way to use the function
 #' df <- d(D) ; df(x) # df is a function itself
@@ -112,7 +130,7 @@ setClass("Beta",
 #' mle("beta", x) # the distr argument can be a character
 #'
 #' # ------------------
-#' # As. Variance
+#' # Estimator Variance
 #' # ------------------
 #'
 #' vbeta(a, b, type = "mle")
@@ -123,7 +141,7 @@ setClass("Beta",
 #' avar_me(D)
 #' avar_same(D)
 #'
-#' avar(D, type = "mle")
+#' v(D, type = "mle")
 Beta <- function(shape1 = 1, shape2 = 1) {
   new("Beta", shape1 = shape1, shape2 = shape2)
 }
@@ -151,22 +169,24 @@ setValidity("Beta", function(object) {
 #' @rdname Beta
 #' @export
 setMethod("d", signature = c(distr = "Beta", x = "numeric"),
-          function(distr, x) {
-            dbeta(x, shape1 = distr@shape1, shape2 = distr@shape2)
+          function(distr, x, log = FALSE) {
+            dbeta(x, shape1 = distr@shape1, shape2 = distr@shape2, log = log)
           })
 
 #' @rdname Beta
 #' @export
-setMethod("p", signature = c(distr = "Beta", x = "numeric"),
-          function(distr, x) {
-            pbeta(x, shape1 = distr@shape1, shape2 = distr@shape2)
+setMethod("p", signature = c(distr = "Beta", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pbeta(q, shape1 = distr@shape1, shape2 = distr@shape2,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Beta
 #' @export
-setMethod("qn", signature = c(distr = "Beta", x = "numeric"),
-          function(distr, x) {
-            qbeta(x, shape1 = distr@shape1, shape2 = distr@shape2)
+setMethod("qn", signature = c(distr = "Beta", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qbeta(p, shape1 = distr@shape1, shape2 = distr@shape2,
+                  lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Beta
@@ -212,10 +232,12 @@ setMethod("mode",
   if (a > 1 && b > 1) {
     return((a - 1) / (a + b - 2))
   } else if (a == 1 && b == 1) {
-    warning("In Beta(1, 1), all elements in the [0, 1] interval are modes. 0.5 is returned by default.")
+    warning("In Beta(1, 1), all elements in the [0, 1] interval are modes. 0.5
+            is returned by default.")
     return(0.5)
   } else if (a < 1 && b < 1) {
-    warning("In Beta(a, b) with a < 1 and b < 1, both 0 and 1 are modes. 1 is returned by default.")
+    warning("In Beta(a, b) with a < 1 and b < 1, both 0 and 1 are modes. 1 is
+            returned by default.")
     return(1)
   } else if (a <= 1) {
     return(0)
@@ -384,9 +406,13 @@ setMethod("dlloptim",
 #' @rdname Beta
 #' @export
 ebeta <- function(x, type = "mle", ...) {
-
-  e(Beta(), x = x, type = type, ...)
-
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  if (type %in% types) {
+    return(do.call(type, list(distr = Beta(), x = x, ...)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Beta
@@ -399,9 +425,16 @@ setMethod("mle",
                                 lower = 1e-5,
                                 upper = Inf) {
 
+  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+    par0 <- sum(unlist(ebeta(x, type = par0)))
+  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
+    stop("par0 must either be a character ('me' or 'same')",
+         "or a numeric within the lower and upper bounds")
+  }
+
   tx  <- c(mean(log(x)), mean(log(1 - x)))
 
-  par <- optim(par = sum(unlist(do.call(par0, list(distr = distr, x = x)))),
+  par <- optim(par = par0,
                fn = lloptim,
                gr = dlloptim,
                tx = tx,
@@ -450,15 +483,20 @@ setMethod("same",
 })
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
+## Variance               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' @rdname Beta
 #' @export
 vbeta <- function(shape1, shape2, type = "mle") {
-
-  avar(Beta(shape1 = shape1, shape2 = shape2), type = type)
-
+  type <- tolower(type)
+  types <- c("mle", "me", "same")
+  distr <- Beta(shape1, shape2)
+  if (type %in% types) {
+    return(do.call(paste0("avar_", type), list(distr = distr)))
+  } else {
+    error_est_type(type, types)
+  }
 }
 
 #' @rdname Beta

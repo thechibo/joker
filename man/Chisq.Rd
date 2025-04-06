@@ -27,11 +27,11 @@
 \usage{
 Chisq(df = 1)
 
-\S4method{d}{Chisq,numeric}(distr, x)
+\S4method{d}{Chisq,numeric}(distr, x, log = FALSE)
 
-\S4method{p}{Chisq,numeric}(distr, x)
+\S4method{p}{Chisq,numeric}(distr, q, lower.tail = TRUE, log.p = FALSE)
 
-\S4method{qn}{Chisq,numeric}(distr, x)
+\S4method{qn}{Chisq,numeric}(distr, p, lower.tail = TRUE, log.p = FALSE)
 
 \S4method{r}{Chisq,numeric}(distr, n)
 
@@ -72,14 +72,27 @@ vchisq(df, type = "mle")
 \arguments{
 \item{df}{numeric. The distribution degrees of freedom parameter.}
 
-\item{distr, x}{If both arguments coexist, \code{distr} is an object of class
-\code{Chisq} and \code{x} is a numeric vector, the sample of observations. For the
-moment functions that only take an \code{x} argument, \code{x} is an object of class
-\code{Chisq} instead.}
+\item{distr}{an object of class \code{Chisq}.}
 
-\item{n}{numeric. The sample size.}
+\item{x}{For the density function, \code{x} is a numeric vector of quantiles. For
+the moments functions, \code{x} is an object of class \code{Chisq}. For the
+log-likelihood and the estimation functions, \code{x} is the sample of
+observations.}
 
-\item{type}{character, case ignored. The estimator type (mle, me, or same).}
+\item{log, log.p}{logical. Should the logarithm of the probability be
+returned?}
+
+\item{q}{numeric. Vector of quantiles.}
+
+\item{lower.tail}{logical. If TRUE (default), probabilities are
+\eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.}
+
+\item{p}{numeric. Vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to
+be the number required.}
+
+\item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
 }
@@ -109,7 +122,8 @@ parameter \eqn{k > 0}.
 }
 \details{
 The probability density function (PDF) of the Chi-Square distribution is
-given by: \deqn{ f(x; k) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2 - 1} e^{-x/2}, \quad x > 0.}
+given by: \deqn{ f(x; k) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2 - 1} e^{-x/2},
+\quad x > 0.}
 }
 \examples{
 # -----------------------------------------------------
@@ -119,17 +133,15 @@ given by: \deqn{ f(x; k) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2 - 1} e^{-x/2}, \q
 # Create the distribution
 df <- 4
 D <- Chisq(df)
-x <- c(0.3, 2, 20)
-n <- 100
 
 # ------------------
 # dpqr Functions
 # ------------------
 
-d(D, x) # density function
-p(D, x) # distribution function
-qn(D, 0.8) # inverse distribution function
-x <- r(D, n) # random generator function
+d(D, c(0.3, 2, 20)) # density function
+p(D, c(0.3, 2, 20)) # distribution function
+qn(D, c(0.4, 0.8)) # inverse distribution function
+x <- r(D, 100) # random generator function
 
 # alternative way to use the function
 den <- d(D) ; den(x) # den is a function itself
@@ -167,7 +179,7 @@ e(D, x, type = "mle")
 mle("chisq", x) # the distr argument can be a character
 
 # ------------------
-# As. Variance
+# Estimator Variance
 # ------------------
 
 vchisq(df, type = "mle")
@@ -176,8 +188,9 @@ vchisq(df, type = "me")
 avar_mle(D)
 avar_me(D)
 
-avar(D, type = "mle")
+v(D, type = "mle")
 }
 \seealso{
-Functions from the \code{stats} package: \code{\link[=dchisq]{dchisq()}}, \code{\link[=pchisq]{pchisq()}}, \code{\link[=qchisq]{qchisq()}}, \code{\link[=rchisq]{rchisq()}}
+Functions from the \code{stats} package: \code{\link[=dchisq]{dchisq()}}, \code{\link[=pchisq]{pchisq()}}, \code{\link[=qchisq]{qchisq()}},
+\code{\link[=rchisq]{rchisq()}}
 }

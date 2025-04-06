@@ -120,8 +120,8 @@ test_that("Chisq avar works", {
   expect_true(is.numeric(vchisq(df, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vchisq(df, type = "mle"), avar(D, type = "mle"))
-  expect_identical(vchisq(df, type = "me"), avar(D, type = "me"))
+  expect_identical(vchisq(df, type = "mle"), v(D, type = "mle"))
+  expect_identical(vchisq(df, type = "me"), v(D, type = "me"))
   expect_identical(vchisq(df, type = "mle"), avar_mle(D))
   expect_identical(vchisq(df, type = "me"), avar_me(D))
 

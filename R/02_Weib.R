@@ -14,18 +14,128 @@ setClass("Weib",
 #' @title Weibull Distribution
 #' @name Weib
 #'
-#' @param x an object of class `Weib`. If the function also has a `distr`
-#' argument, `x` is a numeric vector, a sample of observations.
-#' @param n numeric. The sample size.
+#' @description
+#' The Weibull distribution is an absolute continuous probability distribution,
+#' parameterized by a shape parameter \eqn{k > 0} and a scale parameter
+#' \eqn{\lambda > 0}.
+#'
+#' @param n number of observations. If `length(n) > 1`, the length is taken to
+#' be the number required.
 #' @param distr an object of class `Weib`.
-#' @param shape,scale numeric. The distribution parameters.
-#' @param par0,method,lower,upper arguments passed to optim.
-#' @param type character, case ignored. The estimator type (mle, me, or same).
+#' @param x For the density function, `x` is a numeric vector of quantiles. For
+#' the moments functions, `x` is an object of class `Weib`. For the
+#' log-likelihood and the estimation functions, `x` is the sample of
+#' observations.
+#' @param p numeric. Vector of probabilities.
+#' @param q numeric. Vector of quantiles.
+#' @param shape,scale numeric. The non-negative distribution parameters.
+#' @param type character, case ignored. The estimator type (mle, me or lme).
+#' @param log,log.p logical. Should the logarithm of the probability be
+#' returned?
+#' @param lower.tail logical. If TRUE (default), probabilities are
+#' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
 #' @param ... extra arguments.
+#' @param par0,method,lower,upper arguments passed to optim for the mle and me
+#' optimization. See Details.
+#'
+#' @details
+#' The probability density function (PDF) of the Weibull distribution is:
+#' \deqn{ f(x; k, \lambda) = \frac{k}{\lambda}\left(\frac{x}{\lambda}
+#' \right)^{k - 1} \exp\left[-\left(\frac{x}{\lambda}\right)^k\right],
+#' \quad x \geq 0 .}
+#'
+#' For the parameter estimation, both the MLE and the ME cannot be explicitly
+#' derived. However, the L-moment estimator (`type = "lme"`) is available, and
+#' is used as initialization for the numerical approximation of the MLE and the
+#' ME.
+#'
+#' The MLE and ME of the Weibull distribution parameters is not available in
+#' closed form and has to be approximated numerically. The optimization can be
+#' performed on the shape parameter \eqn{k\in(0,+\infty)}.
+#'
+#' For the MLE, this is done with `optim()`. The default method used is the
+#' L-BFGS-B method with lower bound `1e-5` and upper bound `Inf`. The `par0`
+#' argument can either be a numeric (satisfying `lower <= par0 <= upper`) or a
+#' character specifying the closed-form estimator to be used as initialization
+#' for the algorithm (`"lme"` - the default value).
+#'
+#' For the ME, this is done with `uniroot()`. Again, the `par0` argument can
+#' either be a numeric (satisfying `lower <= par0 <= upper`) or a character
+#' specifying the closed-form estimator to be used as initialization for the
+#' algorithm (`"mle"` or `"lme"` - the default value). The lower and upper
+#' bounds are set by default to `0.5` and `Inf`, respectively. Note that the
+#' ME equations involve the \eqn{\Gamma(1 + 1 \ k)}, which can become unreliable
+#' for small values of `k`, hence the `0.5` lower bound. Specifying a lower
+#' bound below `0.5` will result in a warning and be ignored.
 #'
 #' @inherit Distributions return
 #'
+#' @importFrom stats uniroot
+#'
+#' @seealso
+#' Functions from the `stats` package: [dweibull()], [pweibull()], [qweibull()],
+#' [rweibull()]
+#'
+#' @references Kim, H. M., Jang, Y. H., Arnold, B. C., & Zhao, J. (2024).
+#' New efficient estimators for the Weibull distribution. Communications in
+#' Statistics-Theory and Methods, 53(13), 4576-4601.
+#'
 #' @export
+#'
+#' @examples
+#' # -----------------------------------------------------
+#' # Weibull Distribution Example
+#' # -----------------------------------------------------
+#'
+#' # Create the distribution
+#' a <- 3 ; b <- 5
+#' D <- Weib(a, b)
+#'
+#' # ------------------
+#' # dpqr Functions
+#' # ------------------
+#'
+#' d(D, c(0.3, 2, 10)) # density function
+#' p(D, c(0.3, 2, 10)) # distribution function
+#' qn(D, c(0.4, 0.8)) # inverse distribution function
+#' x <- r(D, 100) # random generator function
+#'
+#' # alternative way to use the function
+#' df <- d(D) ; df(x) # df is a function itself
+#'
+#' # ------------------
+#' # Moments
+#' # ------------------
+#'
+#' mean(D) # Expectation
+#' median(D) # Median
+#' mode(D) # Mode
+#' var(D) # Variance
+#' sd(D) # Standard Deviation
+#' skew(D) # Skewness
+#' kurt(D) # Excess Kurtosis
+#' entro(D) # Entropy
+#'
+#' # List of all available moments
+#' mom <- moments(D)
+#' mom$mean # expectation
+#'
+#' # ------------------
+#' # Point Estimation
+#' # ------------------
+#'
+#' ll(D, x)
+#' llweibull(x, a, b)
+#'
+#' eweibull(x, type = "mle")
+#' eweibull(x, type = "me")
+#' eweibull(x, type = "lme")
+#'
+#' mle(D, x)
+#' me(D, x)
+#' e(D, x, type = "mle")
+#'
+#' mle("weib", x) # the distr argument can be a character
 Weib <- function(shape = 1, scale = 1) {
   new("Weib", shape = shape, scale = scale)
 }
@@ -52,20 +162,22 @@ setValidity("Weib", function(object) {
 
 #' @rdname Weib
 setMethod("d", signature = c(distr = "Weib", x = "numeric"),
-          function(distr, x) {
-            dweibull(x, shape = distr@shape, scale = distr@scale)
+          function(distr, x, log = FALSE) {
+            dweibull(x, shape = distr@shape, scale = distr@scale, log = log)
           })
 
 #' @rdname Weib
-setMethod("p", signature = c(distr = "Weib", x = "numeric"),
-          function(distr, x) {
-            pweibull(x, shape = distr@shape, scale = distr@scale)
+setMethod("p", signature = c(distr = "Weib", q = "numeric"),
+          function(distr, q, lower.tail = TRUE, log.p = FALSE) {
+            pweibull(q, shape = distr@shape, scale = distr@scale,
+                     lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Weib
-setMethod("qn", signature = c(distr = "Weib", x = "numeric"),
-          function(distr, x) {
-            qweibull(x, shape = distr@shape, scale = distr@scale)
+setMethod("qn", signature = c(distr = "Weib", p = "numeric"),
+          function(distr, p, lower.tail = TRUE, log.p = FALSE) {
+            qweibull(p, shape = distr@shape, scale = distr@scale,
+                     lower.tail = lower.tail, log.p = log.p)
           })
 
 #' @rdname Weib
@@ -169,7 +281,7 @@ setMethod("entro",
 
 #' @rdname Weib
 #' @export
-llweib <- function(x, shape, scale) {
+llweibull <- function(x, shape, scale) {
   ll(distr = Weib(shape, scale), x)
 }
 
@@ -178,6 +290,11 @@ setMethod("ll",
           signature  = c(distr = "Weib", x = "numeric"),
           definition = function(distr, x) {
 
+  k <- distr@shape
+  l <- distr@scale
+  n <- length(x)
+
+  n * log(k) - n * k * log(l) + (k - 1) * sum(log(x)) - sum((x / l) ^ k)
 
 })
 
@@ -189,15 +306,17 @@ setMethod("lloptim",
           signature  = c(par = "numeric", tx = "numeric", distr = "Weib"),
           definition = function(par, tx, distr) {
 
+  log(par) - log(mean(tx ^ par)) + (par - 1) * mean(log(tx)) - 1
 
-          })
+})
 
 setMethod("dlloptim",
           signature  = c(par = "numeric", tx = "numeric", distr = "Weib"),
           definition = function(par, tx, distr) {
 
+  par ^ (-1) + mean(log(tx)) - par * mean(tx ^ (par - 1)) / mean(tx ^ par)
 
-          })
+})
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Estimation             ----
@@ -205,88 +324,91 @@ setMethod("dlloptim",
 
 #' @rdname Weib
 #' @export
-eweib <- function(x, type = "mle", ...) {
+eweibull <- function(x, type = "mle", ...) {
 
-  e(Weib(), x, type, ...)
+  type <- tolower(type)
+  types <- c("mle", "me")
 
+  if (type %in% types) {
+
+    return(do.call(type, list(distr = Weib(), x = x, ...)))
+
+  } else if (type == "lme") {
+
+    x <- sort(x, decreasing = TRUE)
+    n <- length(x)
+
+    m1 <- mean(x)
+    m2 <- 2 * sum(((n-1):0) * x) / (n * (n - 1)) - m1
+
+    a <- - log(2) / log(1 - m2 / m1)
+    b <- m1 / gamma(1 + 1 / a)
+
+    return(list(shape = a, scale = b))
+
+  } else {
+
+    error_est_type(type, types)
+
+  }
 }
 
 #' @rdname Weib
 setMethod("mle",
           signature  = c(distr = "Weib", x = "numeric"),
           definition = function(distr, x,
-                                par0 = "same",
+                                par0 = "lme",
                                 method = "L-BFGS-B",
                                 lower = 1e-5,
                                 upper = Inf) {
 
-            tx <- c(log(mean(x)), mean(log(x)))
+  if (is.character(par0) && tolower(par0) %in% c("lme")) {
+    par0 <- eweibull(x, type = par0)$shape
+  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
+    stop("par0 must either be a character ('lme')",
+         "or a numeric within the lower and upper bounds")
+  }
 
-            par <- optim(par = do.call(par0, list(distr = distr, x = x))[1],
-                         fn = lloptim,
-                         gr = dlloptim,
-                         tx = tx,
-                         distr = distr,
-                         method = method,
-                         lower = lower,
-                         upper = upper,
-                         control = list(fnscale = -1))$par
+  par <- optim(par = par0,
+               fn = lloptim,
+               gr = dlloptim,
+               tx = x,
+               distr = distr,
+               method = method,
+               lower = lower,
+               upper = upper,
+               control = list(fnscale = -1))$par
 
-            par <- c(par, mean(x) / par)
+  list(shape = par, scale = mean(x ^ par) ^ (1 / par))
 
-            names(par) <- c("shape", "scale")
-            par
-
-          })
+})
 
 #' @rdname Weib
 setMethod("me",
           signature  = c(distr = "Weib", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x,
+                                par0 = "lme",
+                                lower = 0.5,
+                                upper = Inf) {
+  if (lower < 0.5) {
+    warning("lower bound provided was l < 0.5.",
+    "Changed to l = 0.5 for numerical stability")
+  }
 
+  if (is.character(par0) && tolower(par0) %in% c("mle", "lme")) {
+    par0 <- eweibull(x, type = par0)$shape
+  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
+    stop("par0 must either be a character ('lme')",
+         "or a numeric within the lower and upper bounds")
+  }
 
-          })
+  shape <- uniroot(f = function(k) {
+                    log(gamma(1 + 2 / k) - gamma(1 + 1 / k) ^ 2) -
+                      2 * lgamma(1 + 1 / k) - 2 * (log(sd(x)) - log(mean(x)))
+                  },
+                  interval = c(max(1, par0 - 1), par0 + 1),
+                  extendInt = "yes")$root
 
-#' @rdname Weib
-setMethod("same",
-          signature  = c(distr = "Weib", x = "numeric"),
-          definition = function(distr, x) {
+  list(shape = shape, scale = mean(x) / gamma(1 + 1 / shape))
 
-
-          })
-
-## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Avar                   ----
-## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#' @rdname Weib
-#' @export
-vweib <- function(shape, scale, type = "mle") {
-
-  avar(Weib(shape = shape, scale = scale), type = type)
-
-}
-
-#' @rdname Weib
-setMethod("avar_mle",
-          signature  = c(distr = "Weib"),
-          definition = function(distr) {
-
-
-          })
-
-#' @rdname Weib
-setMethod("avar_me",
-          signature  = c(distr = "Weib"),
-          definition = function(distr) {
-
-
-          })
-
-#' @rdname Weib
-setMethod("avar_same",
-          signature  = c(distr = "Weib"),
-          definition = function(distr) {
-
-
-          })
+})

@@ -1,3 +1,11 @@
+# joker 0.13.0
+
+* Added log, log.p, and lower.tail arguments to dpqr functions. Changed their arguments to much the `stats` package syntax.
+* Added the Weibull distribution.
+* Complied with `goodpractice::gp()` and extended the codecov accordingly.
+* Changed `e<name>()` so that it can accept custom methods.
+* Changed `avar()` to `v()`.
+
 # joker 0.12.1
 
 * Updated readme and github actions.
