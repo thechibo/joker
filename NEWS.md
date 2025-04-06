@@ -1,3 +1,7 @@
+# joker 0.13.3
+
+* Removed docs/ from .gitignore to allow pkgdown site.
+
 # joker 0.13.2
 
 * Fixed bug in Dir `mle()`.
