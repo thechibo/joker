@@ -1,3 +1,8 @@
+# joker 0.13.4
+
+* Fix documentation bug in Multigam that caused checks to fail.
+* Set up CircleCI.
+
 # joker 0.13.3
 
 * Removed docs/ from .gitignore to allow pkgdown site.

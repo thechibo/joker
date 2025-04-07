@@ -18,7 +18,7 @@ setClass("Multigam",
 #' The multivariate gamma distribution is a multivariate absolute continuous
 #' probability distribution, defined as the cumulative sum of independent
 #' gamma random variables with possibly different shape parameters
-#' \eqn{\alpha_i > 0, i\in\[k \]} and the same scale \eqn{\beta > 0}.
+#' \eqn{\alpha_i > 0, i\in\{1, \dots, k\}} and the same scale \eqn{\beta > 0}.
 #'
 #' @param n number of observations. If `length(n) > 1`, the length is taken to
 #' be the number required.
