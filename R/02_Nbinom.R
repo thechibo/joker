@@ -37,6 +37,7 @@ setClass("Nbinom",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -304,22 +305,18 @@ setMethod("ll",
 #' @rdname Nbinom
 #' @export
 enbinom <- function(x, size, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Nbinom(size = size), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Nbinom(size = size)
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Nbinom
 setMethod("mle",
           signature  = c(distr = "Nbinom", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
+  x <- check_data(x, na.rm = na.rm)
   size <- distr@size
-
   list(prob = size / (size + mean(x)))
 
 })
@@ -327,9 +324,9 @@ setMethod("mle",
 #' @rdname Nbinom
 setMethod("me",
           signature  = c(distr = "Nbinom", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
-  mle(distr, x)
+  mle(distr, x, na.rm = na.rm)
 
 })
 
@@ -340,14 +337,9 @@ setMethod("me",
 #' @rdname Nbinom
 #' @export
 vnbinom <- function(size, prob, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Nbinom(size, prob)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Nbinom

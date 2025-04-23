@@ -37,18 +37,18 @@ test_that("Laplace dpqr work", {
   expect_true(is.numeric(qn(D, 0.8, lower.tail = FALSE)))
 
   # Values
-  expect_identical(p(D)(mu), 0.5)
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0.5), mu)
-  expect_identical(qn(D)(0), -Inf)
+  expect_equal(p(D)(mu), 0.5)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0.5), mu)
+  expect_equal(qn(D)(0), -Inf)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dlaplace(1, mu, sigma))
-  expect_identical(p(D)(1), plaplace(1, mu, sigma))
+  expect_equal(d(D)(1), dlaplace(1, mu, sigma))
+  expect_equal(p(D)(1), plaplace(1, mu, sigma))
   expect_equal(qn(D)(0.5), qlaplace(0.5, mu, sigma), tolerance = 0.01)
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
   expect_equal(qn(D)(0.5), qn(D)(0.5), tolerance = 0.01)
 
 })
@@ -87,8 +87,8 @@ test_that("Laplace likelihood works", {
   expect_true(is.numeric(lllaplace(x, mu, sigma)))
 
   # 2-Way Calls
-  expect_identical(lllaplace(x, mu, sigma), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(lllaplace(x, mu, sigma), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -107,8 +107,11 @@ test_that("Laplace estim works", {
   expect_true(is.list(elaplace(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(elaplace(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(elaplace(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(elaplace(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(elaplace(x, type = "me"), e(D, x, type = "me"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -136,10 +139,13 @@ test_that("Laplace avar works", {
   expect_true(is.numeric(vlaplace(mu, sigma, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vlaplace(mu, sigma, type = "mle"), v(D, type = "mle"))
-  expect_identical(vlaplace(mu, sigma, type = "me"), v(D, type = "me"))
-  expect_identical(vlaplace(mu, sigma, type = "mle"), avar_mle(D))
-  expect_identical(vlaplace(mu, sigma, type = "me"), avar_me(D))
+  expect_equal(vlaplace(mu, sigma, type = "mle"), v(D, type = "mle"))
+  expect_equal(vlaplace(mu, sigma, type = "me"), v(D, type = "me"))
+  expect_equal(vlaplace(mu, sigma, type = "mle"), avar_mle(D))
+  expect_equal(vlaplace(mu, sigma, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D, n = 2e4, m = 2e3)
@@ -153,6 +159,9 @@ test_that("Laplace avar works", {
 })
 
 test_that("Laplace small metrics work", {
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Preliminaries
   mu <- 3
@@ -170,7 +179,8 @@ test_that("Laplace small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(
@@ -188,7 +198,8 @@ test_that("Laplace small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

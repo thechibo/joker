@@ -20,6 +20,10 @@ setClass("Dir",
 #' parameterized by a vector \eqn{\boldsymbol{\alpha} =
 #' (\alpha_1, \alpha_2, ..., \alpha_k)} with \eqn{\alpha_i > 0}.
 #'
+#' @srrstats {G1.0} A list of publications is provided in references.
+#' @srrstats {G1.1} This is the first implementation the Dirichlet SAME in
+#' general. The MLE algorithm is considerably improved.
+#'
 #' @param n number of observations. If `length(n) > 1`, the length is taken to
 #' be the number required.
 #' @param distr an object of class `Dir`.
@@ -31,6 +35,7 @@ setClass("Dir",
 #' @param type character, case ignored. The estimator type (mle, me, or same).
 #' @param log logical. Should the logarithm of the probability be
 #' returned?
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
 #' optimization.
@@ -326,13 +331,9 @@ setMethod("dlloptim",
 #' @rdname Dir
 #' @export
 edir <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Dir(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
+  distr <- Dir()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Dir
@@ -342,13 +343,14 @@ setMethod("mle",
                                 par0 = "same",
                                 method = "L-BFGS-B",
                                 lower = 1e-5,
-                                upper = Inf) {
+                                upper = Inf, na.rm = FALSE) {
 
-  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+  x <- check_data(x, na.rm = na.rm)
+  par0 <- check_optim(par0, method, lower, upper,
+                      choices = c("me", "same"), len = 1)
+
+  if (is.character(par0)) {
     par0 <- sum(edir(x, type = par0)$alpha)
-  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
-    stop("par0 must either be a character ('me' or 'same')",
-         "or a numeric within the lower and upper bounds")
   }
 
   tx  <- colMeans(log(x))
@@ -370,7 +372,9 @@ setMethod("mle",
 #' @rdname Dir
 setMethod("me",
           signature  = c(distr = "Dir", x = "matrix"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   m  <- colMeans(x)
   m2  <- colMeans(x ^ 2)
@@ -384,7 +388,9 @@ setMethod("me",
 #' @rdname Dir
 setMethod("same",
           signature  = c(distr = "Dir", x = "matrix"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   m  <- colMeans(x)
   logm  <- colMeans(log(x))
@@ -401,14 +407,9 @@ setMethod("same",
 #' @rdname Dir
 #' @export
 vdir <- function(alpha, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
   distr <- Dir(alpha)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Dir

@@ -55,7 +55,8 @@ function object itself. See examples.
 # -----------------------------------------------------
 
 # Create the distribution
-a <- 3 ; b <- 5
+a <- 3
+b <- 5
 D <- Beta(a, b)
 
 # ------------------

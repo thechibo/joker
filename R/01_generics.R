@@ -314,6 +314,15 @@ setGeneric("dlloptim", signature = c("par", "tx", "distr"),
 #' @name estimation
 #' @aliases e mle me same
 #'
+#' @srrstats {G1.0} A list of publications is provided in references.
+#' @srrstats {G1.3} The statistical terminology used in the package is
+#' elementary and well-established in the literature. The abbreviations used for
+#' the estimation methods (MLE, ME, SAME) are described in the documentation.
+#' @srrstats {G2.8} The `e()` and `e<name>()` functions provide appropriate
+#' conversion or dispatch routines as part of initial pre-processing to ensure
+#' that all other sub-functions of the package receive inputs of a single
+#' defined class or type.
+#'
 #' @description
 #' This set of functions estimates the parameters of a random sample according
 #' to a specified family of distributions. See details.
@@ -332,7 +341,7 @@ setGeneric("dlloptim", signature = c("par", "tx", "distr"),
 #' In order to perform parameter estimation, a new `e<name>()` member is added
 #' to the `d()`, `p()`, `q()`, `r()` family, following the standard `stats` name
 #' convention. These functions take two arguments, the observations `x` (an
-#' atomic vector for univariate or a matrix for multivariate distibutions) and
+#' atomic vector for univariate or a matrix for multivariate distributions) and
 #' the `type` of estimation method to use (a character with possible values
 #' `"mle"`, `"me"`, and `"same"`.)
 #'
@@ -452,6 +461,11 @@ setMethod("same",
 #' @title Estimator Variance
 #' @name variance
 #' @aliases v avar_mle avar_me avar_same
+#'
+#' @srrstats {G2.8} The `v()` and `v<name>()` functions provide appropriate
+#' conversion or dispatch routines as part of initial pre-processing to ensure
+#' that all other sub-functions of the package receive inputs of a single
+#' defined class or type.
 #'
 #' @description
 #' These functions calculate the variance (or variance - covariance matrix in

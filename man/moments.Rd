@@ -93,7 +93,8 @@ argument was already named \code{x} and could not change.
 # -----------------------------------------------------
 
 # Create the distribution
-a <- 3 ; b <- 5
+a <- 3
+b <- 5
 D <- Beta(a, b)
 
 # ------------------

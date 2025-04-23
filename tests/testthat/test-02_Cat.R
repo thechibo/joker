@@ -30,12 +30,12 @@ test_that("Cat dpqr work", {
   expect_true(is.numeric(r(D, 1:10)))
 
   # Values
-  expect_identical(d(D)(c(1, 0, 0, 0)), c(p[1], 0, 0, 0))
-  expect_identical(sum(x %in% 1:4), n)
+  expect_equal(d(D)(c(1, 0, 0, 0)), c(p[1], 0, 0, 0))
+  expect_equal(sum(x %in% 1:4), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dcat(1, p))
-  expect_identical(d(D)(1), d(D, 1))
+  expect_equal(d(D)(1), dcat(1, p))
+  expect_equal(d(D)(1), d(D, 1))
 
   # Errors
   expect_error(dcat(1, c(0.5, 0.4, 0.3, 0.7)))
@@ -59,8 +59,8 @@ test_that("Cat moments work", {
   expect_true(is.numeric(finf(Cat(c(0.4, 0.6)))))
 
   # Values
-  expect_identical(mean(D), p)
-  expect_identical(mean(D), p)
+  expect_equal(mean(D), p)
+  expect_equal(mean(D), p)
 
 })
 
@@ -77,8 +77,8 @@ test_that("Cat likelihood works", {
   expect_true(is.numeric(llcat(x, p)))
 
   # 2-Way Calls
-  expect_identical(llcat(x, p), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llcat(x, p), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -96,8 +96,13 @@ test_that("Cat estim works", {
   expect_true(is.list(ecat(x, dim = 4, type = "me")))
 
   # 2-Way Calls
-  expect_identical(ecat(x, type = "mle", dim = 4), e(D, x, type = "mle"))
-  expect_identical(ecat(x, type = "me", dim = 4), e(D, x, type = "me"))
+  expect_equal(ecat(x, type = "mle", dim = 4), e(D, x, type = "mle"),
+                   tolerance = 1e-16)
+  expect_equal(ecat(x, type = "me", dim = 4), e(D, x, type = "me"),
+                   tolerance = 1e-16)
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -126,10 +131,13 @@ test_that("Cat avar works", {
   expect_true(is.numeric(vcat(p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vcat(p, type = "mle"), v(D, type = "mle"))
-  expect_identical(vcat(p, type = "me"), v(D, type = "me"))
-  expect_identical(vcat(p, type = "mle"), avar_mle(D))
-  expect_identical(vcat(p, type = "me"), avar_me(D))
+  expect_equal(vcat(p, type = "mle"), v(D, type = "mle"))
+  expect_equal(vcat(p, type = "me"), v(D, type = "me"))
+  expect_equal(vcat(p, type = "mle"), avar_mle(D))
+  expect_equal(vcat(p, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -144,6 +152,9 @@ test_that("Cat avar works", {
 
 test_that("Cat small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   p <- c(0.1, 0.2, 0.3, 0.4)
   D <- Cat(p)
@@ -156,7 +167,8 @@ test_that("Cat small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
 })

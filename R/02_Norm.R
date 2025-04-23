@@ -34,6 +34,7 @@ setClass("Norm",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -281,20 +282,17 @@ setMethod("ll",
 #' @rdname Norm
 #' @export
 enorm <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Norm(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Norm()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Norm
 setMethod("mle",
           signature  = c(distr = "Norm", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
+  x <- check_data(x, na.rm = na.rm)
   list(mean = mean(x), sd = bsd(x))
 
 })
@@ -302,9 +300,9 @@ setMethod("mle",
 #' @rdname Norm
 setMethod("me",
           signature  = c(distr = "Norm", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
-  mle(distr, x)
+  mle(distr, x, na.rm = na.rm)
 
 })
 
@@ -315,14 +313,9 @@ setMethod("me",
 #' @rdname Norm
 #' @export
 vnorm <- function(mean, sd, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Norm(mean, sd)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Norm

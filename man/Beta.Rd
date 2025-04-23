@@ -61,11 +61,19 @@ llbeta(x, shape1, shape2)
 
 ebeta(x, type = "mle", ...)
 
-\S4method{mle}{Beta,numeric}(distr, x, par0 = "same", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
+\S4method{mle}{Beta,numeric}(
+  distr,
+  x,
+  par0 = "same",
+  method = "L-BFGS-B",
+  lower = 1e-05,
+  upper = Inf,
+  na.rm = FALSE
+)
 
-\S4method{me}{Beta,numeric}(distr, x)
+\S4method{me}{Beta,numeric}(distr, x, na.rm = FALSE)
 
-\S4method{same}{Beta,numeric}(distr, x)
+\S4method{same}{Beta,numeric}(distr, x, na.rm = FALSE)
 
 vbeta(shape1, shape2, type = "mle")
 
@@ -104,6 +112,8 @@ be the number required.}
 
 \item{par0, method, lower, upper}{arguments passed to optim for the mle
 optimization. See Details.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:
@@ -153,7 +163,8 @@ initialization for the algorithm (\code{"me"} or \code{"same"} - the default val
 # -----------------------------------------------------
 
 # Create the distribution
-a <- 3 ; b <- 5
+a <- 3
+b <- 5
 D <- Beta(a, b)
 
 # ------------------

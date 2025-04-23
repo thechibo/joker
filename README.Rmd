@@ -14,6 +14,19 @@ knitr::opts_chunk$set(
 library(joker)
 ```
 
+```{r srr-tags, eval = FALSE, echo = FALSE}
+#' @srrstats {G1.2} A Life Cycle Statement describing current and anticipated future states of development is included in the CONTRIBUTING.md file as suggested by the `srr` development team.
+#' @srrstats {G1.4, G1.4a} All functions, exported and internal, are documented using [`roxygen2`](https://roxygen2.r-lib.org/)
+#' @srrstats {G1.5, G1.6} The package vignette includes all code necessary to reproduce results which form the basis of performance claims made as well as alternative implementations in other R packages.
+#' @srrstats {G3.0} All tests compare floating point numbers for approximate equality using tolerance. Please check the test files.
+#' @srrstats {G5.1} Only direct simulations (with `set.seed()`) are used in the
+#' package. No data sets are created. Users can reproduce these simulations and
+#' run examples.
+#' @srrstats {G5.2, G5.2a, G5.2b, G5.3} All warnings and errors are covered in the package tests, as verified by `goodpractice::gp()` and covr. The messages produced are fairly descriptive in order to guide the users and the developers. The `check_data()` function checks the data for missing and undefined values, and tests verifying that these values are appropriately handled are included in the test files.
+#' @srrstats {G5.10} Extended tests concerning estimator consistency and asymptotic variance are included and run under a common framework with other tests but can be switched on/off by the `JOKER_EXTENDED_TESTS="true"` environment variable.
+#' @srrstats {G5.12} The expected runtime of the basic and the extended tests are described in the `tests/README.md` file.
+```
+
 # joker <img src=`r file.path("man", "figures", "logo.png")` align="right" height="139" alt="logo"/>
 
 <!-- badges: start -->

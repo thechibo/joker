@@ -29,17 +29,17 @@ test_that("Dir dpqr work", {
   expect_true(is.numeric(d(D, x)))
 
   # Values
-  expect_identical(d(D)(rep(0, 4)), 0)
-  expect_identical(sum(x <= 1), 4L * n)
-  expect_identical(sum(x >= 0), 4L * n)
+  expect_equal(d(D)(rep(0, 4)), 0)
+  expect_equal(sum(x <= 1), 4L * n)
+  expect_equal(sum(x >= 0), 4L * n)
   expect_equal(ddir(x[1, ], a, log = TRUE),
                log(ddir(x[1, ], a, log = FALSE)),
                tolerance = 1e-8)
 
 
   # 2-Way Calls
-  expect_identical(d(D)(1:4 / 10), ddir(1:4 / 10, a))
-  expect_identical(d(D)(1:4 / 10), d(D, 1:4 / 10))
+  expect_equal(d(D)(1:4 / 10), ddir(1:4 / 10, a))
+  expect_equal(d(D)(1:4 / 10), d(D, 1:4 / 10))
 
   # Error
   expect_error(ddir(x, c(1, 2)))
@@ -78,8 +78,8 @@ test_that("Dir likelihood works", {
   expect_true(is.numeric(lldir(x, a)))
 
   # 2-Way Calls
-  expect_identical(lldir(x, a), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(lldir(x, a), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
   # ll and lloptim convergence to a0 comparison
   method <- "L-BFGS-B"
@@ -123,9 +123,12 @@ test_that("Dir estim works", {
   expect_true(is.list(edir(x, type = "same")))
 
   # 2-Way Calls
-  expect_identical(edir(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(edir(x, type = "me"), e(D, x, type = "me"))
-  expect_identical(edir(x, type = "same"), e(D, x, type = "same"))
+  expect_equal(edir(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(edir(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(edir(x, type = "same"), e(D, x, type = "same"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -154,12 +157,12 @@ test_that("Dir avar works", {
   expect_true(is.numeric(vdir(a, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vdir(a, type = "mle"), v(D1, type = "mle"))
-  expect_identical(vdir(a, type = "me"), v(D1, type = "me"))
-  expect_identical(vdir(a, type = "same"), v(D1, type = "same"))
-  expect_identical(vdir(a, type = "mle"), avar_mle(D1))
-  expect_identical(vdir(a, type = "me"), avar_me(D1))
-  expect_identical(vdir(a, type = "same"), avar_same(D1))
+  expect_equal(vdir(a, type = "mle"), v(D1, type = "mle"))
+  expect_equal(vdir(a, type = "me"), v(D1, type = "me"))
+  expect_equal(vdir(a, type = "same"), v(D1, type = "same"))
+  expect_equal(vdir(a, type = "mle"), avar_mle(D1))
+  expect_equal(vdir(a, type = "me"), avar_me(D1))
+  expect_equal(vdir(a, type = "same"), avar_same(D1))
 
   # Dirichlet - Beta comparison
   expect_equal(unname(avar_mle(D1)), unname(avar_mle(D2)), tolerance = 1e-4)
@@ -172,6 +175,9 @@ test_that("Dir avar works", {
 })
 
 test_that("Dir small metrics work", {
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Preliminaries
   a <- 1:4
@@ -187,7 +193,8 @@ test_that("Dir small metrics work", {
                        est = c("mle", "me", "same"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

@@ -1,3 +1,7 @@
+# joker 0.13.5
+
+* Created a custom progress bar to remove the `progress` package import.
+
 # joker 0.13.4
 
 * Fix documentation bug in Multigam that caused checks to fail.

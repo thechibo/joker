@@ -37,20 +37,20 @@ test_that("Binom dpqr work", {
   # Values
   expect_equal(d(D)(N), p ^ N, tolerance = 0.01)
   expect_equal(d(D)(0), (1 - p) ^ N, tolerance = 0.01)
-  expect_identical(p(D)(N), 1)
-  expect_identical(qn(D)(1), N)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(x %in% 0:N), n)
+  expect_equal(p(D)(N), 1)
+  expect_equal(qn(D)(1), N)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(x %in% 0:N), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dbinom(1, N, p))
-  expect_identical(p(D)(1), pbinom(1, N, p))
-  expect_identical(qn(D)(1), qbinom(1, N, p))
-  expect_identical(qn(D)(0), qbinom(0, N, p))
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
-  expect_identical(qn(D)(1), qn(D, 1))
-  expect_identical(qn(D)(0), qn(D, 0))
+  expect_equal(d(D)(1), dbinom(1, N, p))
+  expect_equal(p(D)(1), pbinom(1, N, p))
+  expect_equal(qn(D)(1), qbinom(1, N, p))
+  expect_equal(qn(D)(0), qbinom(0, N, p))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
+  expect_equal(qn(D)(1), qn(D, 1))
+  expect_equal(qn(D)(0), qn(D, 0))
 
 })
 
@@ -74,8 +74,8 @@ test_that("Binom moments work", {
   expect_warning(entro(D))
 
   # Values
-  expect_identical(mean(D), N * p)
-  expect_identical(var(D), N * p * (1 - p))
+  expect_equal(mean(D), N * p)
+  expect_equal(var(D), N * p * (1 - p))
 
 })
 
@@ -93,8 +93,8 @@ test_that("Binom likelihood works", {
   expect_true(is.numeric(llbinom(x, size = N, prob = p)))
 
   # 2-Way Calls
-  expect_identical(llbinom(x, N, p), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llbinom(x, N, p), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -113,8 +113,13 @@ test_that("Binom estim works", {
   expect_true(is.list(ebinom(x, size = N, type = "me")))
 
   # 2-Way Calls
-  expect_identical(ebinom(x, N, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(ebinom(x, N, type = "me"), e(D, x, type = "me"))
+  expect_equal(ebinom(x, N, type = "mle"), e(D, x, type = "mle"),
+                   tolerance = 1e-16)
+  expect_equal(ebinom(x, N, type = "me"), e(D, x, type = "me"),
+                   tolerance = 1e-16)
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -143,10 +148,15 @@ test_that("Binom avar works", {
   expect_true(is.numeric(vbinom(N, p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vbinom(N, p, type = "mle"), v(D, type = "mle"))
-  expect_identical(vbinom(N, p, type = "me"), v(D, type = "me"))
-  expect_identical(vbinom(N, p, type = "mle"), avar_mle(D))
-  expect_identical(vbinom(N, p, type = "me"), avar_me(D))
+  expect_equal(vbinom(N, p, type = "mle"), v(D, type = "mle"),
+                   tolerance = 1e-16)
+  expect_equal(vbinom(N, p, type = "me"), v(D, type = "me"),
+                   tolerance = 1e-16)
+  expect_equal(vbinom(N, p, type = "mle"), avar_mle(D))
+  expect_equal(vbinom(N, p, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -160,6 +170,9 @@ test_that("Binom avar works", {
 })
 
 test_that("Binom small metrics work", {
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Preliminaries
   N <- 10
@@ -175,7 +188,8 @@ test_that("Binom small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

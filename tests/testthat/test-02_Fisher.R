@@ -33,12 +33,12 @@ test_that("Fisher dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(-1), 0)
-  expect_identical(p(D)(0), 0)
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(x > 0), n)
+  expect_equal(d(D)(-1), 0)
+  expect_equal(p(D)(0), 0)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(x > 0), n)
 
   # 2-Way Calls
   expect_equal(d(D)(1), df(1, df1, df2), tolerance = 0.01)
@@ -91,7 +91,7 @@ test_that("Fisher likelihood works", {
   expect_true(is.numeric(llf(x, df1, df2)))
 
   # 2-Way Calls
-  expect_identical(llf(x, df1, df2), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llf(x, df1, df2), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })

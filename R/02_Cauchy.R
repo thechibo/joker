@@ -34,6 +34,7 @@ setClass("Cauchy",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
 #' optimization.
@@ -311,13 +312,9 @@ setMethod("dlloptim",
 #' @rdname Cauchy
 #' @export
 ecauchy <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Cauchy(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Cauchy()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Cauchy
@@ -327,13 +324,14 @@ setMethod("mle",
                                 par0 = "me",
                                 method = "L-BFGS-B",
                                 lower = c(-Inf, 1e-5),
-                                upper = c(Inf, Inf)) {
+                                upper = c(Inf, Inf), na.rm = FALSE) {
 
-  if (is.character(par0) && tolower(par0) %in% c("me")) {
+  x <- check_data(x, na.rm = na.rm)
+  par0 <- check_optim(par0, method, lower, upper,
+                      choices = c("me"), len = 2)
+
+  if (is.character(par0)) {
     par0 <- unlist(ecauchy(x, type = par0))
-  } else if (!is.numeric(par0) || any(par0 < lower) || any(par0 > upper)) {
-    stop("par0 must either be a character ('me')",
-         "or a numeric within the lower and upper bounds")
   }
 
   par <- optim(par = par0,
@@ -355,7 +353,9 @@ setMethod("mle",
 #' @export
 setMethod("me",
           signature  = c(distr = "Cauchy", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   x0 <- median(x)
 
@@ -370,14 +370,9 @@ setMethod("me",
 #' @rdname Cauchy
 #' @export
 vcauchy <- function(location, scale, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Cauchy(location, scale)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Cauchy

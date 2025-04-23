@@ -64,10 +64,11 @@ ecauchy(x, type = "mle", ...)
   par0 = "me",
   method = "L-BFGS-B",
   lower = c(-Inf, 1e-05),
-  upper = c(Inf, Inf)
+  upper = c(Inf, Inf),
+  na.rm = FALSE
 )
 
-\S4method{me}{Cauchy,numeric}(distr, x)
+\S4method{me}{Cauchy,numeric}(distr, x, na.rm = FALSE)
 
 vcauchy(location, scale, type = "mle")
 
@@ -102,6 +103,8 @@ be the number required.}
 
 \item{par0, method, lower, upper}{arguments passed to optim for the mle
 optimization.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

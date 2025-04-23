@@ -20,6 +20,10 @@ setClass("Multigam",
 #' gamma random variables with possibly different shape parameters
 #' \eqn{\alpha_i > 0, i\in\{1, \dots, k\}} and the same scale \eqn{\beta > 0}.
 #'
+#' @srrstats {G1.0} A list of publications is provided in references.
+#' @srrstats {G1.1} This is the first implementation the Multigam SAME in R. The
+#' MLE algorithm is considerably improved.
+#'
 #' @param n number of observations. If `length(n) > 1`, the length is taken to
 #' be the number required.
 #' @param distr an object of class `Multigam`.
@@ -31,6 +35,7 @@ setClass("Multigam",
 #' @param type character, case ignored. The estimator type (mle, me, or same).
 #' @param log logical. Should the logarithm of the probability be
 #' returned?
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
 #' optimization. See Details.
@@ -324,13 +329,9 @@ setMethod("dlloptim",
 #' @rdname Multigam
 #' @export
 emultigam <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Multigam(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
+  distr <- Multigam()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Multigam
@@ -340,13 +341,14 @@ setMethod("mle",
                                 par0 = "same",
                                 method = "L-BFGS-B",
                                 lower = 1e-5,
-                                upper = Inf) {
+                                upper = Inf, na.rm = FALSE) {
 
-  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+  x <- check_data(x, na.rm = na.rm)
+  par0 <- check_optim(par0, method, lower, upper,
+                      choices = c("me", "same"), len = 1)
+
+  if (is.character(par0)) {
     par0 <- sum(unlist(emultigam(x, type = par0)$shape))
-  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
-    stop("par0 must either be a character ('me' or 'same')",
-         "or a numeric within the lower and upper bounds")
   }
 
   k <- ncol(x)
@@ -374,7 +376,9 @@ setMethod("mle",
 #' @rdname Multigam
 setMethod("me",
           signature  = c(distr = "Multigam", x = "matrix"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   z <- fd(x)
   mz <- colMeans(z)
@@ -388,7 +392,9 @@ setMethod("me",
 #' @rdname Multigam
 setMethod("same",
           signature  = c(distr = "Multigam", x = "matrix"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   z <- fd(x)
   scale <- mean(diag(stats::cov(z, log(z))))
@@ -405,14 +411,9 @@ setMethod("same",
 #' @rdname Multigam
 #' @export
 vmultigam <- function(shape, scale, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
   distr <- Multigam(shape, scale)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Multigam

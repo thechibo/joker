@@ -35,6 +35,7 @@ setClass("Chisq",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -277,19 +278,17 @@ setMethod("ll",
 #' @rdname Chisq
 #' @export
 echisq <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Chisq(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Chisq()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Chisq
 setMethod("mle",
           signature  = c(distr = "Chisq", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   list(df = 2 * idigamma(mean(log(x)) - log(2)))
 
@@ -298,7 +297,9 @@ setMethod("mle",
 #' @rdname Chisq
 setMethod("me",
           signature  = c(distr = "Chisq", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   list(df = mean(x))
 
@@ -311,14 +312,9 @@ setMethod("me",
 #' @rdname Chisq
 #' @export
 vchisq <- function(df, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Chisq(df)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Chisq

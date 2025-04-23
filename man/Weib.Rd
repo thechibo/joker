@@ -53,9 +53,17 @@ llweibull(x, shape, scale)
 
 eweibull(x, type = "mle", ...)
 
-\S4method{mle}{Weib,numeric}(distr, x, par0 = "lme", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
+\S4method{mle}{Weib,numeric}(
+  distr,
+  x,
+  par0 = "lme",
+  method = "L-BFGS-B",
+  lower = 1e-05,
+  upper = Inf,
+  na.rm = FALSE
+)
 
-\S4method{me}{Weib,numeric}(distr, x, par0 = "lme", lower = 0.5, upper = Inf)
+\S4method{me}{Weib,numeric}(distr, x, par0 = "lme", lower = 0.5, upper = Inf, na.rm = FALSE)
 }
 \arguments{
 \item{shape, scale}{numeric. The non-negative distribution parameters.}
@@ -86,6 +94,8 @@ be the number required.}
 
 \item{par0, method, lower, upper}{arguments passed to optim for the mle and me
 optimization. See Details.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

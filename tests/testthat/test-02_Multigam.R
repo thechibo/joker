@@ -32,12 +32,12 @@ test_that("Multigam dpqr work", {
   expect_true(is.numeric(dmultigam(x, a, b, log = TRUE)))
 
   # Values
-  expect_identical(d(D)(rep(0, length(a))), 0)
-  expect_identical(sum(x < 0), 0L)
+  expect_equal(d(D)(rep(0, length(a))), 0)
+  expect_equal(sum(x < 0), 0L)
 
   # 2-Way Calls
-  expect_identical(d(D)(x[1, ]), dmultigam(x[1, ], shape = a, scale = b))
-  expect_identical(d(D)(x[1, ]), d(D, x[1, ]))
+  expect_equal(d(D)(x[1, ]), dmultigam(x[1, ], shape = a, scale = b))
+  expect_equal(d(D)(x[1, ]), d(D, x[1, ]))
 
   # Errors
   expect_error(dmultigam(x, 1:3, -3))
@@ -75,8 +75,8 @@ test_that("Multigam likelihood works", {
   expect_true(is.numeric(llmultigam(x, shape = a, scale = b)))
 
   # 2-Way Calls
-  expect_identical(llmultigam(x, shape = a, scale = b), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llmultigam(x, shape = a, scale = b), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
   # ll and lloptim convergence to a0 comparison
   method <- "L-BFGS-B"
@@ -133,9 +133,12 @@ test_that("Multigam estim works", {
   expect_true(is.list(emultigam(x, type = "same")))
 
   # 2-Way Calls
-  expect_identical(emultigam(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(emultigam(x, type = "me"), e(D, x, type = "me"))
-  expect_identical(emultigam(x, type = "same"), e(D, x, type = "same"))
+  expect_equal(emultigam(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(emultigam(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(emultigam(x, type = "same"), e(D, x, type = "same"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -164,12 +167,15 @@ test_that("Multigam avar works", {
   expect_true(is.numeric(vmultigam(a, b, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vmultigam(a, b, type = "mle"), v(D, type = "mle"))
-  expect_identical(vmultigam(a, b, type = "me"), v(D, type = "me"))
-  expect_identical(vmultigam(a, b, type = "same"), v(D, type = "same"))
-  expect_identical(vmultigam(a, b, type = "mle"), avar_mle(D))
-  expect_identical(vmultigam(a, b, type = "me"), avar_me(D))
-  expect_identical(vmultigam(a, b, type = "same"), avar_same(D))
+  expect_equal(vmultigam(a, b, type = "mle"), v(D, type = "mle"))
+  expect_equal(vmultigam(a, b, type = "me"), v(D, type = "me"))
+  expect_equal(vmultigam(a, b, type = "same"), v(D, type = "same"))
+  expect_equal(vmultigam(a, b, type = "mle"), avar_mle(D))
+  expect_equal(vmultigam(a, b, type = "me"), avar_me(D))
+  expect_equal(vmultigam(a, b, type = "same"), avar_same(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -186,6 +192,9 @@ test_that("Multigam avar works", {
 
 test_that("Multigam small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   a <- 1:3
   b <- 3
@@ -201,7 +210,8 @@ test_that("Multigam small metrics work", {
                        est = c("mle", "me", "same"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

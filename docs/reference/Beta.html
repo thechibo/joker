@@ -11,7 +11,7 @@ support \(S = [0,1]\), parameterized by two shape parameters,
 
     <a class="navbar-brand me-2" href="../index.html">joker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,13 +95,21 @@ support \(S = [0,1]\), parameterized by two shape parameters,
 <span><span class="fu">ebeta</span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="st">"mle"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'Beta,numeric'</span></span>
-<span><span class="fu"><a href="estimation.html">mle</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span>, par0 <span class="op">=</span> <span class="st">"same"</span>, method <span class="op">=</span> <span class="st">"L-BFGS-B"</span>, lower <span class="op">=</span> <span class="fl">1e-05</span>, upper <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
+<span><span class="fu"><a href="estimation.html">mle</a></span><span class="op">(</span></span>
+<span>  <span class="va">distr</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  par0 <span class="op">=</span> <span class="st">"same"</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"L-BFGS-B"</span>,</span>
+<span>  lower <span class="op">=</span> <span class="fl">1e-05</span>,</span>
+<span>  upper <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'Beta,numeric'</span></span>
-<span><span class="fu"><a href="estimation.html">me</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="estimation.html">me</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'Beta,numeric'</span></span>
-<span><span class="fu"><a href="estimation.html">same</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="estimation.html">same</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">vbeta</span><span class="op">(</span><span class="va">shape1</span>, <span class="va">shape2</span>, type <span class="op">=</span> <span class="st">"mle"</span><span class="op">)</span></span>
 <span></span>
@@ -169,6 +177,10 @@ be the number required.</p></dd>
 <dd><p>arguments passed to optim for the mle
 optimization. See Details.</p></dd>
 
+
+<dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
+<dd><p>logical. Should the <code>NA</code> values be removed?</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -227,7 +239,8 @@ arXiv preprint arXiv:2205.10799.</p></li>
 <span class="r-in"><span><span class="co"># -----------------------------------------------------</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create the distribution</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">3</span> ; <span class="va">b</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
 <span class="r-in"><span><span class="va">D</span> <span class="op">&lt;-</span> <span class="fu">Beta</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ------------------</span></span></span>

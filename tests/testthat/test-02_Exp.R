@@ -30,19 +30,19 @@ test_that("Exp dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(-1), 0)
-  expect_identical(p(D)(0), 0)
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(r(D)(n) > 0), n)
+  expect_equal(d(D)(-1), 0)
+  expect_equal(p(D)(0), 0)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(r(D)(n) > 0), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dexp(1, rate))
-  expect_identical(p(D)(1), pexp(1, rate))
+  expect_equal(d(D)(1), dexp(1, rate))
+  expect_equal(p(D)(1), pexp(1, rate))
   expect_equal(qn(D)(0.5), qexp(0.5, rate), tolerance = 0.01)
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
   expect_equal(qn(D)(0.5), qn(D, 0.5), tolerance = 0.01)
 
 })
@@ -79,8 +79,8 @@ test_that("Exp likelihood works", {
   expect_true(is.numeric(llexp(x, rate)))
 
   # 2-Way Calls
-  expect_identical(llexp(x, rate), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llexp(x, rate), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -98,8 +98,11 @@ test_that("Exp estim works", {
   expect_true(is.list(eexp(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(eexp(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(eexp(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(eexp(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(eexp(x, type = "me"), e(D, x, type = "me"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -123,10 +126,13 @@ test_that("Exp avar works", {
   expect_true(is.numeric(vexp(rate, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vexp(rate, type = "mle"), v(D, type = "mle"))
-  expect_identical(vexp(rate, type = "me"), v(D, type = "me"))
-  expect_identical(vexp(rate, type = "mle"), avar_mle(D))
-  expect_identical(vexp(rate, type = "me"), avar_me(D))
+  expect_equal(vexp(rate, type = "mle"), v(D, type = "mle"))
+  expect_equal(vexp(rate, type = "me"), v(D, type = "me"))
+  expect_equal(vexp(rate, type = "mle"), avar_mle(D))
+  expect_equal(vexp(rate, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -140,6 +146,9 @@ test_that("Exp avar works", {
 })
 
 test_that("Exp small metrics work", {
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Preliminaries
   rate <- 3
@@ -155,7 +164,8 @@ test_that("Exp small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

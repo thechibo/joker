@@ -61,11 +61,19 @@ llgamma(x, shape, scale)
 
 egamma(x, type = "mle", ...)
 
-\S4method{mle}{Gam,numeric}(distr, x, par0 = "same", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
+\S4method{mle}{Gam,numeric}(
+  distr,
+  x,
+  par0 = "same",
+  method = "L-BFGS-B",
+  lower = 1e-05,
+  upper = Inf,
+  na.rm = FALSE
+)
 
-\S4method{me}{Gam,numeric}(distr, x)
+\S4method{me}{Gam,numeric}(distr, x, na.rm = FALSE)
 
-\S4method{same}{Gam,numeric}(distr, x)
+\S4method{same}{Gam,numeric}(distr, x, na.rm = FALSE)
 
 vgamma(shape, scale, type = "mle")
 
@@ -104,6 +112,8 @@ be the number required.}
 
 \item{par0, method, lower, upper}{arguments passed to optim for the mle
 optimization. See Details.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

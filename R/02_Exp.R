@@ -34,6 +34,7 @@ setClass("Exp",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -267,20 +268,17 @@ setMethod("ll",
 #' @rdname Exp
 #' @export
 eexp <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Exp(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Exp()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Exp
 setMethod("mle",
           signature  = c(distr = "Exp", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
+  x <- check_data(x, na.rm = na.rm)
   list(rate = 1 / mean(x))
 
 })
@@ -288,9 +286,9 @@ setMethod("mle",
 #' @rdname Exp
 setMethod("me",
           signature  = c(distr = "Exp", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
-  mle(distr, x)
+  mle(distr, x, na.rm = na.rm)
 
 })
 
@@ -301,14 +299,9 @@ setMethod("me",
 #' @rdname Exp
 #' @export
 vexp <- function(rate, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Exp(rate)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Exp

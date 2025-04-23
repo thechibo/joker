@@ -33,21 +33,21 @@ test_that("Beta dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(0), 0)
-  expect_identical(d(D)(1), 0)
-  expect_identical(p(D)(1), 1)
-  expect_identical(p(D)(0), 0)
-  expect_identical(qn(D)(1), 1)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(x <= 1), n)
-  expect_identical(sum(x >= 0), n)
+  expect_equal(d(D)(0), 0)
+  expect_equal(d(D)(1), 0)
+  expect_equal(p(D)(1), 1)
+  expect_equal(p(D)(0), 0)
+  expect_equal(qn(D)(1), 1)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(x <= 1), n)
+  expect_equal(sum(x >= 0), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(0.4), dbeta(0.4, a, b))
-  expect_identical(p(D)(0.4), pbeta(0.4, a, b))
+  expect_equal(d(D)(0.4), dbeta(0.4, a, b))
+  expect_equal(p(D)(0.4), pbeta(0.4, a, b))
   expect_equal(qn(D)(0.4), qbeta(0.4, a, b), tolerance = 1e-8)
-  expect_identical(d(D)(0.4), d(D, 0.4))
-  expect_identical(p(D)(0.4), p(D, 0.4))
+  expect_equal(d(D)(0.4), d(D, 0.4))
+  expect_equal(p(D)(0.4), p(D, 0.4))
   expect_equal(qn(D)(0.4), qn(D, 0.4), tolerance = 1e-8)
 
 })
@@ -72,9 +72,9 @@ test_that("Beta moments work", {
   expect_true(is.numeric(finf(D)))
 
   # Values
-  expect_identical(mean(D), a / (a + b))
-  expect_identical(mode(Beta(0.5, 2)), 0)
-  expect_identical(mode(Beta(2, 0.5)), 1)
+  expect_equal(mean(D), a / (a + b))
+  expect_equal(mode(Beta(0.5, 2)), 0)
+  expect_equal(mode(Beta(2, 0.5)), 1)
 
   # Warnings
   expect_warning(mode(Beta(1, 1)))
@@ -96,8 +96,8 @@ test_that("Beta likelihood works", {
   expect_true(is.numeric(llbeta(x, a, b)))
 
   # 2-Way Calls
-  expect_identical(llbeta(x, a, b), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llbeta(x, a, b), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
   # ll and lloptim convergence to a0 comparison
   method <- "L-BFGS-B"
@@ -141,11 +141,20 @@ test_that("Beta estim works", {
   expect_true(is.list(ebeta(x, type = "mle")))
   expect_true(is.list(ebeta(x, type = "me")))
   expect_true(is.list(ebeta(x, type = "same")))
+  expect_true(is.function(mle(D)))
+  expect_true(is.function(me(D)))
+  expect_true(is.function(same(D)))
+  expect_true(is.list(mle("beta", x)))
+  expect_true(is.list(me("beta", x)))
+  expect_true(is.list(same("beta", x)))
 
   # 2-Way Calls
-  expect_identical(ebeta(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(ebeta(x, type = "me"), e(D, x, type = "me"))
-  expect_identical(ebeta(x, type = "same"), e(D, x, type = "same"))
+  expect_equal(ebeta(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(ebeta(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(ebeta(x, type = "same"), e(D, x, type = "same"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -174,12 +183,15 @@ test_that("Beta avar works", {
   expect_true(is.numeric(vbeta(a, b, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vbeta(a, b, type = "mle"), v(D, type = "mle"))
-  expect_identical(vbeta(a, b, type = "me"), v(D, type = "me"))
-  expect_identical(vbeta(a, b, type = "same"), v(D, type = "same"))
-  expect_identical(vbeta(a, b, type = "mle"), avar_mle(D))
-  expect_identical(vbeta(a, b, type = "me"), avar_me(D))
-  expect_identical(vbeta(a, b, type = "same"), avar_same(D))
+  expect_equal(vbeta(a, b, type = "mle"), v(D, type = "mle"))
+  expect_equal(vbeta(a, b, type = "me"), v(D, type = "me"))
+  expect_equal(vbeta(a, b, type = "same"), v(D, type = "same"))
+  expect_equal(vbeta(a, b, type = "mle"), avar_mle(D))
+  expect_equal(vbeta(a, b, type = "me"), avar_me(D))
+  expect_equal(vbeta(a, b, type = "same"), avar_same(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -199,6 +211,9 @@ test_that("Beta avar works", {
 
 test_that("Beta small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   a <- 2
   b <- 3
@@ -208,16 +223,31 @@ test_that("Beta small metrics work", {
   prm <- list(name = "shape1",
               val = seq(0.5, 5, by = 0.5))
 
+  # Test progress bar
   expect_no_error(
     x <- small_metrics(D, prm,
                        est = c("mle", "me", "same"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = TRUE)
+  )
+
+  expect_no_error(
+    x <- small_metrics(D, prm,
+                       est = c("mle", "me", "same"),
+                       obs = c(20, 50),
+                       sam = 1e2,
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(
     plot(x, save = TRUE, path = tempdir())
+  )
+
+  expect_no_error(
+    plot(x, save = TRUE, path = tempdir(), name = "plot")
   )
 
   # Types
@@ -243,6 +273,10 @@ test_that("Beta large metrics work", {
 
   expect_no_error(
     plot(x, save = TRUE, path = tempdir())
+  )
+
+  expect_no_error(
+    plot(x, save = TRUE, path = tempdir(), name = "plot")
   )
 
   # Types

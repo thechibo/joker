@@ -35,6 +35,7 @@ setClass("Lnorm",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -283,20 +284,17 @@ setMethod("ll",
 #' @rdname Lnorm
 #' @export
 elnorm <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Lnorm(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Lnorm()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Lnorm
 setMethod("mle",
           signature  = c(distr = "Lnorm", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
+  x <- check_data(x, na.rm = na.rm)
   list(meanlog = mean(log(x)), sdlog = bsd(log(x)))
 
 })
@@ -304,9 +302,9 @@ setMethod("mle",
 #' @rdname Lnorm
 setMethod("me",
           signature  = c(distr = "Lnorm", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
-  mle(distr, x)
+  mle(distr, x, na.rm = na.rm)
 
 })
 
@@ -317,14 +315,9 @@ setMethod("me",
 #' @rdname Lnorm
 #' @export
 vlnorm <- function(meanlog, sdlog, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Lnorm(meanlog, sdlog)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Lnorm

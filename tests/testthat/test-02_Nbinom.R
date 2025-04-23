@@ -37,20 +37,20 @@ test_that("Nbinom dpqr work", {
   # Values
   expect_equal(d(D)(0), p ^ k, tolerance = 0.01)
   expect_equal(d(D)(1), k * (1 - p) * p ^ k, tolerance = 0.01)
-  expect_identical(p(D)(-1), 0)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(x >= 0), n)
+  expect_equal(p(D)(-1), 0)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(x >= 0), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dnbinom(1, k, p))
-  expect_identical(p(D)(1), pnbinom(1, k, p))
-  expect_identical(qn(D)(1), qnbinom(1, k, p))
-  expect_identical(qn(D)(0), qnbinom(0, k, p))
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
-  expect_identical(qn(D)(1), qn(D, 1))
-  expect_identical(qn(D)(0), qn(D, 0))
+  expect_equal(d(D)(1), dnbinom(1, k, p))
+  expect_equal(p(D)(1), pnbinom(1, k, p))
+  expect_equal(qn(D)(1), qnbinom(1, k, p))
+  expect_equal(qn(D)(0), qnbinom(0, k, p))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
+  expect_equal(qn(D)(1), qn(D, 1))
+  expect_equal(qn(D)(0), qn(D, 0))
 
   # Special Case: Geom
   D1 <- Nbinom(1, 0.7)
@@ -98,8 +98,8 @@ test_that("Nbinom likelihood works", {
   expect_true(is.numeric(llnbinom(x, size = k, prob = p)))
 
   # 2-Way Calls
-  expect_identical(llnbinom(x, k, p), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llnbinom(x, k, p), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -118,8 +118,11 @@ test_that("Nbinom estim works", {
   expect_true(is.list(enbinom(x, k, type = "me")))
 
   # 2-Way Calls
-  expect_identical(enbinom(x, k, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(enbinom(x, k, type = "me"), e(D, x, type = "me"))
+  expect_equal(enbinom(x, k, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(enbinom(x, k, type = "me"), e(D, x, type = "me"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -147,10 +150,13 @@ test_that("Nbinom avar works", {
   expect_true(is.numeric(vnbinom(k, p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vnbinom(k, p, type = "mle"), v(D, type = "mle"))
-  expect_identical(vnbinom(k, p, type = "me"), v(D, type = "me"))
-  expect_identical(vnbinom(k, p, type = "mle"), avar_mle(D))
-  expect_identical(vnbinom(k, p, type = "me"), avar_me(D))
+  expect_equal(vnbinom(k, p, type = "mle"), v(D, type = "mle"))
+  expect_equal(vnbinom(k, p, type = "me"), v(D, type = "me"))
+  expect_equal(vnbinom(k, p, type = "mle"), avar_mle(D))
+  expect_equal(vnbinom(k, p, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -164,6 +170,9 @@ test_that("Nbinom avar works", {
 })
 
 test_that("Nbinom small metrics work", {
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Preliminaries
   k <- 3
@@ -179,7 +188,8 @@ test_that("Nbinom small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

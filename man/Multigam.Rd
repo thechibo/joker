@@ -46,11 +46,19 @@ llmultigam(x, shape, scale)
 
 emultigam(x, type = "mle", ...)
 
-\S4method{mle}{Multigam,matrix}(distr, x, par0 = "same", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
+\S4method{mle}{Multigam,matrix}(
+  distr,
+  x,
+  par0 = "same",
+  method = "L-BFGS-B",
+  lower = 1e-05,
+  upper = Inf,
+  na.rm = FALSE
+)
 
-\S4method{me}{Multigam,matrix}(distr, x)
+\S4method{me}{Multigam,matrix}(distr, x, na.rm = FALSE)
 
-\S4method{same}{Multigam,matrix}(distr, x)
+\S4method{same}{Multigam,matrix}(distr, x, na.rm = FALSE)
 
 vmultigam(shape, scale, type = "mle")
 
@@ -82,6 +90,8 @@ be the number required.}
 
 \item{par0, method, lower, upper}{arguments passed to optim for the mle
 optimization. See Details.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

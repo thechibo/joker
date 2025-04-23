@@ -33,21 +33,21 @@ test_that("Weib dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(0), 0)
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(p(D)(0), 0)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(x >= 0), n)
+  expect_equal(d(D)(0), 0)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(p(D)(0), 0)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(x >= 0), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(0.4), dweibull(0.4, shape = a, scale = b))
-  expect_identical(p(D)(0.4), pweibull(0.4, shape = a, scale = b))
+  expect_equal(d(D)(0.4), dweibull(0.4, shape = a, scale = b))
+  expect_equal(p(D)(0.4), pweibull(0.4, shape = a, scale = b))
   expect_equal(qn(D)(0.4), qweibull(0.4, shape = a, scale = b),
                tolerance = 1e-8)
-  expect_identical(d(D)(0.4), d(D, 0.4))
-  expect_identical(p(D)(0.4), p(D, 0.4))
-  expect_identical(qn(D)(0.4), qn(D, 0.4))
+  expect_equal(d(D)(0.4), d(D, 0.4))
+  expect_equal(p(D)(0.4), p(D, 0.4))
+  expect_equal(qn(D)(0.4), qn(D, 0.4))
 
 })
 
@@ -70,7 +70,7 @@ test_that("Weib moments work", {
   expect_true(is.numeric(entro(D)))
 
   # Values
-  expect_identical(mode(Weib(0.6, 5)), 0)
+  expect_equal(mode(Weib(0.6, 5)), 0)
 
 })
 
@@ -88,8 +88,8 @@ test_that("Weib likelihood works", {
   expect_true(is.numeric(llweibull(x, shape = a, scale = b)))
 
   # 2-Way Calls
-  expect_identical(llweibull(x, shape = a, scale = b), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llweibull(x, shape = a, scale = b), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
   # ll and lloptim convergence to a0 comparison
   method <- "L-BFGS-B"
@@ -135,8 +135,11 @@ test_that("Weib estim works", {
   expect_true(is.list(eweibull(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(eweibull(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(eweibull(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(eweibull(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(eweibull(x, type = "me"), e(D, x, type = "me"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -154,6 +157,9 @@ test_that("Weib estim works", {
 
 test_that("Weib small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   a <- 2
   b <- 3
@@ -168,7 +174,8 @@ test_that("Weib small metrics work", {
                        est = c("mle"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

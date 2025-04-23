@@ -13,7 +13,7 @@ and a special case of the multinomial distribution with \(n = 1\)."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">joker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,10 +84,10 @@ and a special case of the multinomial distribution with \(n = 1\).</p>
 <span><span class="fu">ecat</span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="st">"mle"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'Cat,numeric'</span></span>
-<span><span class="fu"><a href="estimation.html">mle</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span>, dim <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu"><a href="estimation.html">mle</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span>, dim <span class="op">=</span> <span class="cn">NULL</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'Cat,numeric'</span></span>
-<span><span class="fu"><a href="estimation.html">me</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span>, dim <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu"><a href="estimation.html">me</a></span><span class="op">(</span><span class="va">distr</span>, <span class="va">x</span>, dim <span class="op">=</span> <span class="cn">NULL</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">vcat</span><span class="op">(</span><span class="va">prob</span>, type <span class="op">=</span> <span class="st">"mle"</span><span class="op">)</span></span>
 <span></span>
@@ -137,6 +137,10 @@ be the number required.</p></dd>
 
 <dt id="arg-dim">dim<a class="anchor" aria-label="anchor" href="#arg-dim"></a></dt>
 <dd><p>numeric. The probability vector dimension. See Details.</p></dd>
+
+
+<dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
+<dd><p>logical. Should the <code>NA</code> values be removed?</p></dd>
 
 </dl></div>
     <div class="section level2">

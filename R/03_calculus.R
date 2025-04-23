@@ -6,15 +6,22 @@
 ## Calculus               ----
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#' @title Distribution Calculus
+#' @title Distributional Calculus
 #' @name calculus
+#'
+#' @description
+#' Arithmetic operators and functions for probability distribution objects.
+#' These methods define how standard operations like \code{+}, \code{-},
+#' \code{*}, and \code{/} behave when applied to random variables, returning the
+#' resulting distribution based on known properties of common distribution
+#' families.
 #'
 #' @param x,e1,e2 objects of subclass `Distribution`.
 #' @param na.rm logical. Should missing values be removed?
 #' @param ... extra arguments.
 #'
-#' @return All calculations return Distribution objects (specifically, objects
-#' of a class that is a subclass of `Distribution`), accordingly to the property
+#' @return All calculations return `Distribution` objects (specifically, objects
+#' of a class that is a subclass of `Distribution`), according to the property
 #' at hand.
 #'
 #' @examples
@@ -67,7 +74,7 @@ setMethod("-", signature = c(e1 = "numeric", e2 = "Norm"),
 #' @rdname calculus
 setMethod("-", signature = c(e1 = "Norm", e2 = "numeric"),
           function(e1, e2) {
-            Norm(mean = e1@mean - e2, sd = e2@sd)
+            Norm(mean = e1@mean - e2, sd = e1@sd)
           })
 
 #' @rdname calculus
@@ -92,8 +99,8 @@ setMethod("/", signature = c(e1 = "Norm", e2 = "numeric"),
 setMethod("sum", signature = c(x = "Norm", na.rm = "logical"),
           function(x, ..., na.rm = FALSE) {
             d <- list(x, ...)
-            m <- unlist(lapply(d, FUN = function(x) {x@mean}))
-            s <- unlist(lapply(d, FUN = function(x) {x@sd}))
+            m <- unlist(lapply(d, FUN = function(x) { x@mean }))
+            s <- unlist(lapply(d, FUN = function(x) { x@sd }))
             Norm(mean = sum(m), sd = sqrt(sum(s ^ 2)))
           })
 

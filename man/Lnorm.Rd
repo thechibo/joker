@@ -59,9 +59,9 @@ lllnorm(x, meanlog, sdlog)
 
 elnorm(x, type = "mle", ...)
 
-\S4method{mle}{Lnorm,numeric}(distr, x)
+\S4method{mle}{Lnorm,numeric}(distr, x, na.rm = FALSE)
 
-\S4method{me}{Lnorm,numeric}(distr, x)
+\S4method{me}{Lnorm,numeric}(distr, x, na.rm = FALSE)
 
 vlnorm(meanlog, sdlog, type = "mle")
 
@@ -95,6 +95,8 @@ be the number required.}
 \item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

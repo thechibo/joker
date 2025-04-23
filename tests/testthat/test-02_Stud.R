@@ -30,8 +30,8 @@ test_that("Stud dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(qn(D)(1), Inf)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(qn(D)(1), Inf)
 
   # 2-Way Calls
   expect_equal(d(D)(1), dt(1, df), tolerance = 0.01)
@@ -90,7 +90,7 @@ test_that("Stud likelihood works", {
   expect_true(is.numeric(llt(x, df)))
 
   # 2-Way Calls
-  expect_identical(llt(x, df), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llt(x, df), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })

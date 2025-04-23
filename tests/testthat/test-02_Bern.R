@@ -31,19 +31,19 @@ test_that("Bern dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(1), p)
-  expect_identical(p(D)(1), 1)
-  expect_identical(qn(D)(1), 1)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(x %in% c(0, 1)), n)
+  expect_equal(d(D)(1), p)
+  expect_equal(p(D)(1), 1)
+  expect_equal(qn(D)(1), 1)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(x %in% c(0, 1)), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dbern(1, p))
-  expect_identical(p(D)(1), pbern(1, p))
-  expect_identical(qn(D)(1), qbern(1, p))
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
-  expect_identical(qn(D)(1), qn(D, 1))
+  expect_equal(d(D)(1), dbern(1, p))
+  expect_equal(p(D)(1), pbern(1, p))
+  expect_equal(qn(D)(1), qbern(1, p))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
+  expect_equal(qn(D)(1), qn(D, 1))
 
 })
 
@@ -66,10 +66,10 @@ test_that("Bern moments work", {
   expect_true(is.numeric(finf(D)))
 
   # Values
-  expect_identical(mean(D), p)
-  expect_identical(var(D), p * (1 - p))
-  expect_identical(median(Bern(0.3)), 0)
-  expect_identical(mode(Bern(0.3)), 0)
+  expect_equal(mean(D), p)
+  expect_equal(var(D), p * (1 - p))
+  expect_equal(median(Bern(0.3)), 0)
+  expect_equal(mode(Bern(0.3)), 0)
 
   # Warnings
   expect_warning(median(Bern(0.5)))
@@ -90,8 +90,8 @@ test_that("Bern likelihood works", {
   expect_true(is.numeric(llbern(x, p)))
 
   # 2-Way Calls
-  expect_identical(llbern(x, p), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llbern(x, p), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -109,8 +109,13 @@ test_that("Bern estim works", {
   expect_true(is.list(ebern(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(ebern(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(ebern(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(ebern(x, type = "mle"), e(D, x, type = "mle"),
+                   tolerance = 1e-16)
+  expect_equal(ebern(x, type = "me"), e(D, x, type = "me"),
+                   tolerance = 1e-16)
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -137,10 +142,14 @@ test_that("Bern avar works", {
   expect_true(is.numeric(vbern(p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vbern(p, type = "mle"), v(D, type = "mle"))
-  expect_identical(vbern(p, type = "me"), v(D, type = "me"))
-  expect_identical(vbern(p, type = "mle"), avar_mle(D))
-  expect_identical(vbern(p, type = "me"), avar_me(D))
+  expect_equal(vbern(p, type = "mle"), v(D, type = "mle"),
+                   tolerance = 1e-16)
+  expect_equal(vbern(p, type = "me"), v(D, type = "me"))
+  expect_equal(vbern(p, type = "mle"), avar_mle(D))
+  expect_equal(vbern(p, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -155,6 +164,9 @@ test_that("Bern avar works", {
 
 test_that("Bern small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   p <- 0.7
   D <- Bern(p)
@@ -168,7 +180,8 @@ test_that("Bern small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

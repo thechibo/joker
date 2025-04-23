@@ -52,11 +52,19 @@ lldir(x, alpha)
 
 edir(x, type = "mle", ...)
 
-\S4method{mle}{Dir,matrix}(distr, x, par0 = "same", method = "L-BFGS-B", lower = 1e-05, upper = Inf)
+\S4method{mle}{Dir,matrix}(
+  distr,
+  x,
+  par0 = "same",
+  method = "L-BFGS-B",
+  lower = 1e-05,
+  upper = Inf,
+  na.rm = FALSE
+)
 
-\S4method{me}{Dir,matrix}(distr, x)
+\S4method{me}{Dir,matrix}(distr, x, na.rm = FALSE)
 
-\S4method{same}{Dir,matrix}(distr, x)
+\S4method{same}{Dir,matrix}(distr, x, na.rm = FALSE)
 
 vdir(alpha, type = "mle")
 
@@ -88,6 +96,8 @@ be the number required.}
 
 \item{par0, method, lower, upper}{arguments passed to optim for the mle
 optimization.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

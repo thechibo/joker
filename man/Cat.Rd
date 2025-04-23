@@ -47,9 +47,9 @@ llcat(x, prob)
 
 ecat(x, type = "mle", ...)
 
-\S4method{mle}{Cat,numeric}(distr, x, dim = NULL)
+\S4method{mle}{Cat,numeric}(distr, x, dim = NULL, na.rm = FALSE)
 
-\S4method{me}{Cat,numeric}(distr, x, dim = NULL)
+\S4method{me}{Cat,numeric}(distr, x, dim = NULL, na.rm = FALSE)
 
 vcat(prob, type = "mle")
 
@@ -78,6 +78,8 @@ be the number required.}
 \item{...}{extra arguments.}
 
 \item{dim}{numeric. The probability vector dimension. See Details.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

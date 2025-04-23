@@ -7,13 +7,13 @@
   "codeRepository": "https://thechibo.github.io/joker/",
   "issueTracker": "https://github.com/thechibo/joker/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.13.4",
+  "version": "0.13.5",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.1 (2024-06-14 ucrt)",
+  "runtimePlatform": "R version 4.4.3 (2025-02-28 ucrt)",
   "author": [
     {
       "@type": "Person",
@@ -154,27 +154,15 @@
     },
     "7": {
       "@type": "SoftwareApplication",
-      "identifier": "progress",
-      "name": "progress",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=progress"
-    },
-    "8": {
-      "@type": "SoftwareApplication",
       "identifier": "stats",
       "name": "stats"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "utils",
       "name": "utils"
     },
     "SystemRequirements": null
   },
-  "fileSize": "583.839KB"
+  "fileSize": "638.117KB"
 }

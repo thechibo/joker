@@ -35,6 +35,7 @@ setClass("Unif",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -258,20 +259,17 @@ setMethod("ll",
 #' @rdname Unif
 #' @export
 eunif <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Unif(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Unif()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Unif
 setMethod("mle",
           signature  = c(distr = "Unif", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
+  x <- check_data(x, na.rm = na.rm)
   list(min = min(x), max = max(x))
 
 })
@@ -279,7 +277,9 @@ setMethod("mle",
 #' @rdname Unif
 setMethod("me",
           signature  = c(distr = "Unif", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   m <- mean(x)
   s <- sqrt(3) * bsd(x)

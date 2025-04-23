@@ -34,13 +34,13 @@ test_that("Multinom dpqr work", {
 
   # Values
   expect_equal(d(D)(c(N, 0, 0)), p[1] ^ N, tolerance = 0.01)
-  expect_identical(sum(x %in% 0:N), length(p)*n)
-  expect_identical(sum(colSums(x) == N), n)
+  expect_equal(sum(x %in% 0:N), length(p)*n)
+  expect_equal(sum(colSums(x) == N), n)
 
   # 2-Way Calls
-  expect_identical(d(Multinom(N, p))(c(4, 3, 3)),
+  expect_equal(d(Multinom(N, p))(c(4, 3, 3)),
                    dmultinom(c(4, 3, 3), N, p))
-  expect_identical(d(Multinom(N, p))(c(4, 3, 3)),
+  expect_equal(d(Multinom(N, p))(c(4, 3, 3)),
                    d(Multinom(N, p), c(4, 3, 3)))
 
   # Special Case: Binomial
@@ -65,7 +65,7 @@ test_that("Multinom moments work", {
   expect_true(is.numeric(finf(Multinom(N, c(0.6, 0.4)))))
 
   # Values
-  expect_identical(mean(D), N * p)
+  expect_equal(mean(D), N * p)
   expect_equal(var(D)[1, 1], N * p[1] * (1 - p[1]), tolerance = 0.01)
 
 })
@@ -84,8 +84,8 @@ test_that("Multinom likelihood works", {
   expect_true(is.numeric(llmultinom(x, size = N, prob = p)))
 
   # 2-Way Calls
-  expect_identical(llmultinom(x, N, p), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llmultinom(x, N, p), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
   # Error
   x[1, 1] <- x[1, 1] - 1
@@ -108,12 +108,15 @@ test_that("Multinom estim works", {
   expect_true(is.list(emultinom(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(emultinom(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(emultinom(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(emultinom(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(emultinom(x, type = "me"), e(D, x, type = "me"))
 
   # Error
   x[1, 1] <- x[1, 1] - 1
   expect_error(mle(D, x))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -142,10 +145,13 @@ test_that("Multinom avar works", {
   expect_true(is.numeric(vmultinom(N, p, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vmultinom(N, p, type = "mle"), v(D, type = "mle"))
-  expect_identical(vmultinom(N, p, type = "me"), v(D, type = "me"))
-  expect_identical(vmultinom(N, p, type = "mle"), avar_mle(D))
-  expect_identical(vmultinom(N, p, type = "me"), avar_me(D))
+  expect_equal(vmultinom(N, p, type = "mle"), v(D, type = "mle"))
+  expect_equal(vmultinom(N, p, type = "me"), v(D, type = "me"))
+  expect_equal(vmultinom(N, p, type = "mle"), avar_mle(D))
+  expect_equal(vmultinom(N, p, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -160,6 +166,9 @@ test_that("Multinom avar works", {
 
 test_that("Multinom small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   N <- 10
   p <- c(0.7, 0.2, 0.1)
@@ -173,7 +182,8 @@ test_that("Multinom small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
 })

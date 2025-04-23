@@ -14,6 +14,7 @@ small_metrics(
   obs = c(20, 50, 100),
   sam = 10000,
   seed = 1,
+  bar = TRUE,
   ...
 )
 }
@@ -33,6 +34,8 @@ small_metrics(
 metrics.}
 
 \item{seed}{numeric. Passed to \code{set.seed()} for reproducibility.}
+
+\item{bar}{logical. Should a progress bar be printed?}
 
 \item{...}{extra arguments.}
 }

@@ -34,6 +34,7 @@ setClass("Geom",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -177,7 +178,7 @@ setMethod("median",
           definition = function(x) {
 
   y <- - 1 / log(1 - x@prob, base = 2)
-  if ((y %% 1) == 0 & x@prob != 0.5) {
+  if (is_whole(y) & x@prob != 0.5) {
     warning("The median of the Geom distribution is not uniquely defined in this
             case.")
   }
@@ -277,20 +278,17 @@ setMethod("ll",
 #' @rdname Geom
 #' @export
 egeom <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Geom(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Geom()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Geom
 setMethod("mle",
           signature  = c(distr = "Geom", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
+  x <- check_data(x, na.rm = na.rm)
   list(prob = 1 / (1 + mean(x)))
 
 })
@@ -298,9 +296,9 @@ setMethod("mle",
 #' @rdname Geom
 setMethod("me",
           signature  = c(distr = "Geom", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
 
-  mle(distr, x)
+  mle(distr, x, na.rm = na.rm)
 
 })
 
@@ -311,14 +309,9 @@ setMethod("me",
 #' @rdname Geom
 #' @export
 vgeom <- function(prob, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Geom(prob)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Geom

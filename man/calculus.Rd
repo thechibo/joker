@@ -13,7 +13,7 @@
 \alias{/,Norm,numeric-method}
 \alias{sum,Norm,logical-method}
 \alias{exp,Norm-method}
-\title{Distribution Calculus}
+\title{Distributional Calculus}
 \usage{
 \S4method{+}{Norm,Norm}(e1, e2)
 
@@ -45,12 +45,16 @@
 \item{na.rm}{logical. Should missing values be removed?}
 }
 \value{
-All calculations return Distribution objects (specifically, objects
-of a class that is a subclass of \code{Distribution}), accordingly to the property
+All calculations return \code{Distribution} objects (specifically, objects
+of a class that is a subclass of \code{Distribution}), according to the property
 at hand.
 }
 \description{
-Distribution Calculus
+Arithmetic operators and functions for probability distribution objects.
+These methods define how standard operations like \code{+}, \code{-},
+\code{*}, and \code{/} behave when applied to random variables, returning the
+resulting distribution based on known properties of common distribution
+families.
 }
 \examples{
 # -----------------------------------------------------

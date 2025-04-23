@@ -9,7 +9,7 @@ to a specified family of distributions. See details."><meta property="og:image" 
 
     <a class="navbar-brand me-2" href="../index.html">joker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,7 @@ estimation (MLE), moment estimation (ME), and score-adjusted estimation
 <p>In order to perform parameter estimation, a new <code>e&lt;name&gt;()</code> member is added
 to the <code><a href="distributions.html">d()</a></code>, <code><a href="distributions.html">p()</a></code>, <code><a href="distributions.html">q()</a></code>, <code><a href="distributions.html">r()</a></code> family, following the standard <code>stats</code> name
 convention. These functions take two arguments, the observations <code>x</code> (an
-atomic vector for univariate or a matrix for multivariate distibutions) and
+atomic vector for univariate or a matrix for multivariate distributions) and
 the <code>type</code> of estimation method to use (a character with possible values
 <code>"mle"</code>, <code>"me"</code>, and <code>"same"</code>.)</p>
 <p>Point estimation functions are available in two versions, the distribution
@@ -139,7 +139,8 @@ https://arxiv.org/abs/2311.15025</p></li>
 <span class="r-in"><span><span class="co"># -----------------------------------------------------</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create the distribution</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">3</span> ; <span class="va">b</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
 <span class="r-in"><span><span class="va">D</span> <span class="op">&lt;-</span> <span class="fu"><a href="Beta.html">Beta</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ------------------</span></span></span>

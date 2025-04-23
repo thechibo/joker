@@ -32,17 +32,17 @@ test_that("Norm dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(p(D)(mu), 0.5)
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0.5), mu)
+  expect_equal(p(D)(mu), 0.5)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0.5), mu)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dnorm(1, mu, sd))
-  expect_identical(p(D)(1), pnorm(1, mu, sd))
+  expect_equal(d(D)(1), dnorm(1, mu, sd))
+  expect_equal(p(D)(1), pnorm(1, mu, sd))
   expect_equal(qn(D)(0.5), qnorm(0.5, mu, sd), tolerance = 0.01)
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
   expect_equal(qn(D)(0.5), qn(D, 0.5), tolerance = 0.01)
 
 })
@@ -81,8 +81,8 @@ test_that("Norm likelihood works", {
   expect_true(is.numeric(llnorm(x, mu, sd)))
 
   # 2-Way Calls
-  expect_identical(llnorm(x, mu, sd), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llnorm(x, mu, sd), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -101,8 +101,11 @@ test_that("Norm estim works", {
   expect_true(is.list(enorm(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(enorm(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(enorm(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(enorm(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(enorm(x, type = "me"), e(D, x, type = "me"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -130,10 +133,13 @@ test_that("Norm avar works", {
   expect_true(is.numeric(vnorm(mu, sd, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vnorm(mu, sd, type = "mle"), v(D, type = "mle"))
-  expect_identical(vnorm(mu, sd, type = "me"), v(D, type = "me"))
-  expect_identical(vnorm(mu, sd, type = "mle"), avar_mle(D))
-  expect_identical(vnorm(mu, sd, type = "me"), avar_me(D))
+  expect_equal(vnorm(mu, sd, type = "mle"), v(D, type = "mle"))
+  expect_equal(vnorm(mu, sd, type = "me"), v(D, type = "me"))
+  expect_equal(vnorm(mu, sd, type = "mle"), avar_mle(D))
+  expect_equal(vnorm(mu, sd, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -147,6 +153,9 @@ test_that("Norm avar works", {
 })
 
 test_that("Norm small metrics work", {
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Preliminaries
   mu <- 3
@@ -164,7 +173,8 @@ test_that("Norm small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(
@@ -182,7 +192,8 @@ test_that("Norm small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

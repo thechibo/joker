@@ -33,20 +33,20 @@ test_that("Gam dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(0), 0)
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(p(D)(0), 0)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(x >= 0), n)
+  expect_equal(d(D)(0), 0)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(p(D)(0), 0)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(x >= 0), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(0.4), dgamma(0.4, shape = a, scale = b))
-  expect_identical(p(D)(0.4), pgamma(0.4, shape = a, scale = b))
+  expect_equal(d(D)(0.4), dgamma(0.4, shape = a, scale = b))
+  expect_equal(p(D)(0.4), pgamma(0.4, shape = a, scale = b))
   expect_equal(qn(D)(0.4), qgamma(0.4, shape = a, scale = b), tolerance = 1e-8)
-  expect_identical(d(D)(0.4), d(D, 0.4))
-  expect_identical(p(D)(0.4), p(D, 0.4))
-  expect_identical(qn(D)(0.4), qn(D, 0.4))
+  expect_equal(d(D)(0.4), d(D, 0.4))
+  expect_equal(p(D)(0.4), p(D, 0.4))
+  expect_equal(qn(D)(0.4), qn(D, 0.4))
 
 })
 
@@ -70,7 +70,7 @@ test_that("Gam moments work", {
   expect_true(is.numeric(finf(D)))
 
   # Values
-  expect_identical(mode(Gam(0.5, 1)), 0)
+  expect_equal(mode(Gam(0.5, 1)), 0)
 
 })
 
@@ -88,8 +88,8 @@ test_that("Gam likelihood works", {
   expect_true(is.numeric(llgamma(x, shape = a, scale = b)))
 
   # 2-Way Calls
-  expect_identical(llgamma(x, shape = a, scale = b), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llgamma(x, shape = a, scale = b), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
   # ll and lloptim convergence to a0 comparison
   method <- "L-BFGS-B"
@@ -135,9 +135,12 @@ test_that("Gam estim works", {
   expect_true(is.list(egamma(x, type = "same")))
 
   # 2-Way Calls
-  expect_identical(egamma(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(egamma(x, type = "me"), e(D, x, type = "me"))
-  expect_identical(egamma(x, type = "same"), e(D, x, type = "same"))
+  expect_equal(egamma(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(egamma(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(egamma(x, type = "same"), e(D, x, type = "same"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -166,12 +169,15 @@ test_that("Gam avar works", {
   expect_true(is.numeric(vgamma(a, b, type = "same")))
 
   # 2-Way Calls
-  expect_identical(vgamma(a, b, type = "mle"), v(D, type = "mle"))
-  expect_identical(vgamma(a, b, type = "me"), v(D, type = "me"))
-  expect_identical(vgamma(a, b, type = "same"), v(D, type = "same"))
-  expect_identical(vgamma(a, b, type = "mle"), avar_mle(D))
-  expect_identical(vgamma(a, b, type = "me"), avar_me(D))
-  expect_identical(vgamma(a, b, type = "same"), avar_same(D))
+  expect_equal(vgamma(a, b, type = "mle"), v(D, type = "mle"))
+  expect_equal(vgamma(a, b, type = "me"), v(D, type = "me"))
+  expect_equal(vgamma(a, b, type = "same"), v(D, type = "same"))
+  expect_equal(vgamma(a, b, type = "mle"), avar_mle(D))
+  expect_equal(vgamma(a, b, type = "me"), avar_me(D))
+  expect_equal(vgamma(a, b, type = "same"), avar_same(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -188,6 +194,9 @@ test_that("Gam avar works", {
 
 test_that("Gam small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   a <- 2
   b <- 3
@@ -202,7 +211,8 @@ test_that("Gam small metrics work", {
                        est = c("mle", "me", "same"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

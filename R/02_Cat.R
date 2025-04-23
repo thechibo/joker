@@ -32,6 +32,7 @@ setClass("Cat",
 #' @param type character, case ignored. The estimator type (mle or me).
 #' @param log logical. Should the logarithm of the probability be
 #' returned?
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -276,19 +277,17 @@ setMethod("ll",
 #' @rdname Cat
 #' @export
 ecat <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Cat(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
+  distr <- Cat()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Cat
 setMethod("mle",
           signature  = c(distr = "Cat", x = "numeric"),
-          definition = function(distr, x, dim = NULL) {
+          definition = function(distr, x, dim = NULL, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   if (is.null(dim)) {
     dim <- length(distr@prob)
@@ -310,9 +309,9 @@ setMethod("mle",
 #' @rdname Cat
 setMethod("me",
           signature  = c(distr = "Cat", x = "numeric"),
-          definition = function(distr, x, dim = NULL) {
+          definition = function(distr, x, dim = NULL, na.rm = FALSE) {
 
-  mle(distr, x, dim)
+  mle(distr, x, dim, na.rm = na.rm)
 
 })
 
@@ -323,14 +322,9 @@ setMethod("me",
 #' @rdname Cat
 #' @export
 vcat <- function(prob, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me")
+  type <- match.arg(tolower(type), choices = c("mle", "me"))
   distr <- Cat(prob)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Cat

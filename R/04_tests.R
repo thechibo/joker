@@ -1,3 +1,35 @@
+#' @title Estimation and Variance Tests
+#' @name tests
+#'
+#' @description
+#' This set of functions employs Monte Carlo simulations to check the
+#' consistency of the estimators (i.e. that the estimators are coded correctly)
+#' and their asymptotic normality (i.e. that their asymptotic variance is
+#' coded correctly).
+#'
+#' @srrstats {G5.6, G5.6a, G5.6b, G5.7} Parameter recovery tests are extensively
+#' used in the package tests, employing Monte Carlo simulations to check the
+#' consistency and asymptotic normality of the estimators.
+#'
+#' @param est character. The estimator to be tested.
+#' @param D0 An object of class `Distribution`.
+#' @param n integer. The sample size to be simulated.
+#' @param m integer. The number of samples to be simulated.
+#' @param seed integer. Passed to `set.seed()`.
+#' @param bar logical. Should a progress bar be printed?
+#' @param ... extra arguments passed to the estimator.
+#'
+#' @returns A list with the simulation and the expected results so that they
+#' can be compared in tests.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' D <- Beta(2, 3)
+#' test1 <- test_consistency("me", D)
+#' test2 <- test_avar("mle", D)
+#' }
 test_consistency <- function(est, D0, n = 1e4, seed = 1, ...) {
 
   # Random Sampling
@@ -10,6 +42,7 @@ test_consistency <- function(est, D0, n = 1e4, seed = 1, ...) {
 
 }
 
+#' @rdname tests
 test_avar <- function(est, D0, n = 1e4, m = 1e3, seed = 1, bar = FALSE, ...) {
 
   # Preliminaries
@@ -19,7 +52,7 @@ test_avar <- function(est, D0, n = 1e4, m = 1e3, seed = 1, bar = FALSE, ...) {
 
   # Loading bar
   if (bar) {
-    pb <- loading_bar(total = m)
+    start <- Sys.time()
   }
 
   # Estimation
@@ -27,7 +60,7 @@ test_avar <- function(est, D0, n = 1e4, m = 1e3, seed = 1, bar = FALSE, ...) {
 
     # Progress Bar
     if (bar) {
-      pb$tick()
+      progress_bar(i, m, start = start, message = "Computing:")
     }
 
     # CLT

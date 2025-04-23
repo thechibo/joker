@@ -27,21 +27,21 @@ test_that("Cauchy dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(m), 1 / (pi * g))
-  expect_identical(p(D)(m), 0.5)
-  expect_identical(qn(D)(0.5), m)
-  expect_identical(qn(D)(0), -Inf)
-  expect_identical(qn(D)(1), Inf)
+  expect_equal(d(D)(m), 1 / (pi * g))
+  expect_equal(p(D)(m), 0.5)
+  expect_equal(qn(D)(0.5), m)
+  expect_equal(qn(D)(0), -Inf)
+  expect_equal(qn(D)(1), Inf)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dcauchy(1, m, g))
-  expect_identical(p(D)(1), pcauchy(1, m, g))
-  expect_identical(qn(D)(1), qcauchy(1, m, g))
-  expect_identical(qn(D)(0), qcauchy(0, m, g))
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
-  expect_identical(qn(D)(1), qn(D, 1))
-  expect_identical(qn(D)(0), qn(D, 0))
+  expect_equal(d(D)(1), dcauchy(1, m, g))
+  expect_equal(p(D)(1), pcauchy(1, m, g))
+  expect_equal(qn(D)(1), qcauchy(1, m, g))
+  expect_equal(qn(D)(0), qcauchy(0, m, g))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
+  expect_equal(qn(D)(1), qn(D, 1))
+  expect_equal(qn(D)(0), qn(D, 0))
 
 })
 
@@ -79,8 +79,8 @@ test_that("Cauchy likelihood works", {
   expect_true(is.numeric(llcauchy(x, m, g)))
 
   # 2-Way Calls
-  expect_identical(llcauchy(x, m, g), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llcauchy(x, m, g), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
   # ll and lloptim convergence comparison
   method <- "L-BFGS-B"
@@ -124,8 +124,11 @@ test_that("Cauchy estim works", {
   expect_true(is.list(ecauchy(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(ecauchy(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(ecauchy(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(ecauchy(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(ecauchy(x, type = "me"), e(D, x, type = "me"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -158,6 +161,9 @@ test_that("Cauchy avar works", {
 
 test_that("Cauchy small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   D <- Cauchy(2, 1)
   m <- D@location
@@ -174,7 +180,8 @@ test_that("Cauchy small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

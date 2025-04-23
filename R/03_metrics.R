@@ -56,6 +56,7 @@ setValidity("SmallMetrics", function(object) {
 #' @param seed numeric. Passed to `set.seed()` for reproducibility.
 #' @param df data.frame. a data.frame with columns named "Row", "Col",
 #' "Parameter", "Estimator", and "Value".
+#' @param bar logical. Should a progress bar be printed?
 #' @param ... extra arguments.
 #'
 #' @details
@@ -127,6 +128,7 @@ small_metrics <- function(D,
                           obs = c(20, 50, 100),
                           sam = 1e4,
                           seed = 1,
+                          bar = TRUE,
                           ...) {
 
   if (class(D) %in% c("Cat", "Multinom")) {
@@ -142,10 +144,7 @@ small_metrics <- function(D,
   prm_name <- paste0(prm$name, prm$pos)
 
   # Univariate of Multivariate
-  if (distr %in% c("Dir")) {
-    setk <- set1of3
-    mar <- 3
-  } else if (distr %in% c("Multigam")) {
+  if (distr %in% c("Dir", "Multigam")) {
     setk <- set1of3
     mar <- 3
   } else {
@@ -165,7 +164,10 @@ small_metrics <- function(D,
   y <- array(dim = lengths(d), dimnames = d)
 
   # Loading bar
-  pb <- loading_bar(total = length(prm$val) * length(obs) * length(est))
+  if (bar) {
+    iter <- 0
+    start <- Sys.time()
+  }
 
   # For each value of prm
   for (i in seq_along(prm$val)) {
@@ -180,10 +182,14 @@ small_metrics <- function(D,
       for (k in est) {
 
         # Progress Bar
-        pb$tick()
+        if (bar) {
+          iter <- iter + 1
+          progress_bar(iter,
+                       total = length(prm$val) * length(obs) * length(est),
+                       start = start, message = "Computing:")
+        }
 
         # Estimate
-
         list_estim <- apply(setk(x, 1:obs[j]),
                             MARGIN = mar,
                             FUN = k,
@@ -386,6 +392,10 @@ large_metrics <- function(D,
 #' This function provides an easy way to illustrate objects of class
 #' `SmallMetrics` and `LargeMetrics`, using the `ggplot2` package. See details.
 #'
+#' @srrstats {G4.0} Plots that can be written to local files do parse parameters
+#' specifying file names to ensure appropriate file suffices are automatically
+#' generated where not provided.
+#'
 #' @param x An object of class `SmallMetrics` or `LargeMetrics`.
 #' @param y NULL.
 #' @param colors character. The colors to be used in the plot.
@@ -453,6 +463,9 @@ setMethod("plot",
 
   # Save the plot
   if (save) {
+    if (!grepl("\\.pdf$", name, ignore.case = TRUE)) {
+      name <- paste0(name, ".pdf")
+    }
     dir.create(path, showWarnings = FALSE, recursive = TRUE)
     pdf(file.path(path, name), width = width, height = height)
   }
@@ -519,6 +532,9 @@ setMethod("plot",
 
   # Save the plot
   if (save) {
+    if (!grepl("\\.pdf$", name, ignore.case = TRUE)) {
+      name <- paste0(name, ".pdf")
+    }
     dir.create(path, showWarnings = FALSE, recursive = TRUE)
     grDevices::pdf(file.path(path, name), width = width, height = height)
   }

@@ -18,6 +18,8 @@ setClass("Gam",
 #' The Gamma distribution is an absolute continuous probability distribution
 #' with two parameters: shape \eqn{\alpha > 0} and scale \eqn{\beta > 0}.
 #'
+#' @srrstats {G1.0} A list of publications is provided in references.
+#'
 #' @param n number of observations. If `length(n) > 1`, the length is taken to
 #' be the number required.
 #' @param distr an object of class `Gam`.
@@ -33,6 +35,7 @@ setClass("Gam",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
 #' optimization. See Details.
@@ -346,13 +349,9 @@ setMethod("dlloptim",
 #' @rdname Gam
 #' @export
 egamma <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Gam(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
+  distr <- Gam()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Gam
@@ -362,13 +361,14 @@ setMethod("mle",
                                 par0 = "same",
                                 method = "L-BFGS-B",
                                 lower = 1e-5,
-                                upper = Inf) {
+                                upper = Inf, na.rm = FALSE) {
 
-  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+  x <- check_data(x, na.rm = na.rm)
+  par0 <- check_optim(par0, method, lower, upper,
+                      choices = c("me", "same"), len = 1)
+
+  if (is.character(par0)) {
     par0 <- egamma(x, type = par0)$shape
-  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
-    stop("par0 must either be a character ('me' or 'same')",
-         "or a numeric within the lower and upper bounds")
   }
 
   tx <- c(log(mean(x)), mean(log(x)))
@@ -390,7 +390,9 @@ setMethod("mle",
 #' @rdname Gam
 setMethod("me",
           signature  = c(distr = "Gam", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   m  <- mean(x)
   m2 <- mean(x ^ 2)
@@ -403,7 +405,9 @@ setMethod("me",
 #' @rdname Gam
 setMethod("same",
           signature  = c(distr = "Gam", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   mx  <- mean(x)
   mlx <- mean(log(x))
@@ -421,14 +425,9 @@ setMethod("same",
 #' @rdname Gam
 #' @export
 vgamma <- function(shape, scale, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
   distr <- Gam(shape, scale)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Gam

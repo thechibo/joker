@@ -41,9 +41,9 @@ llmultinom(x, size, prob)
 
 emultinom(x, type = "mle", ...)
 
-\S4method{mle}{Multinom,matrix}(distr, x)
+\S4method{mle}{Multinom,matrix}(distr, x, na.rm = FALSE)
 
-\S4method{me}{Multinom,matrix}(distr, x)
+\S4method{me}{Multinom,matrix}(distr, x, na.rm = FALSE)
 
 vmultinom(size, prob, type = "mle")
 
@@ -72,6 +72,8 @@ be the number required.}
 \item{type}{character, case ignored. The estimator type (mle or me).}
 
 \item{...}{extra arguments.}
+
+\item{na.rm}{logical. Should the \code{NA} values be removed?}
 }
 \value{
 Each type of function returns a different type of object:

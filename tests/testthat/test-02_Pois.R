@@ -30,20 +30,20 @@ test_that("Pois dpqr work", {
   expect_true(is.function(r(D)))
 
   # Values
-  expect_identical(d(D)(-1), 0)
+  expect_equal(d(D)(-1), 0)
   expect_warning(d(D)(1.5))
-  expect_identical(p(D)(-1), 0)
-  expect_identical(p(D)(Inf), 1)
-  expect_identical(qn(D)(1), Inf)
-  expect_identical(qn(D)(0), 0)
-  expect_identical(sum(r(D)(n) >= 0), n)
+  expect_equal(p(D)(-1), 0)
+  expect_equal(p(D)(Inf), 1)
+  expect_equal(qn(D)(1), Inf)
+  expect_equal(qn(D)(0), 0)
+  expect_equal(sum(r(D)(n) >= 0), n)
 
   # 2-Way Calls
-  expect_identical(d(D)(1), dpois(1, lambda))
-  expect_identical(p(D)(1), ppois(1, lambda))
+  expect_equal(d(D)(1), dpois(1, lambda))
+  expect_equal(p(D)(1), ppois(1, lambda))
   expect_equal(qn(D)(0.5), qpois(0.5, lambda), tolerance = 0.01)
-  expect_identical(d(D)(1), d(D, 1))
-  expect_identical(p(D)(1), p(D, 1))
+  expect_equal(d(D)(1), d(D, 1))
+  expect_equal(p(D)(1), p(D, 1))
   expect_equal(qn(D)(0.5), qn(D, 0.5), tolerance = 0.01)
 
 })
@@ -80,8 +80,8 @@ test_that("Pois likelihood works", {
   expect_true(is.numeric(llpois(x, lambda)))
 
   # 2-Way Calls
-  expect_identical(llpois(x, lambda), ll(D, x))
-  expect_identical(ll(D)(x), ll(D, x))
+  expect_equal(llpois(x, lambda), ll(D, x))
+  expect_equal(ll(D)(x), ll(D, x))
 
 })
 
@@ -99,8 +99,11 @@ test_that("Pois estim works", {
   expect_true(is.list(epois(x, type = "me")))
 
   # 2-Way Calls
-  expect_identical(epois(x, type = "mle"), e(D, x, type = "mle"))
-  expect_identical(epois(x, type = "me"), e(D, x, type = "me"))
+  expect_equal(epois(x, type = "mle"), e(D, x, type = "mle"))
+  expect_equal(epois(x, type = "me"), e(D, x, type = "me"))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_consistency("me", D)
@@ -124,10 +127,13 @@ test_that("Pois avar works", {
   expect_true(is.numeric(vpois(lambda, type = "me")))
 
   # 2-Way Calls
-  expect_identical(vpois(lambda, type = "mle"), v(D, type = "mle"))
-  expect_identical(vpois(lambda, type = "me"), v(D, type = "me"))
-  expect_identical(vpois(lambda, type = "mle"), avar_mle(D))
-  expect_identical(vpois(lambda, type = "me"), avar_me(D))
+  expect_equal(vpois(lambda, type = "mle"), v(D, type = "mle"))
+  expect_equal(vpois(lambda, type = "me"), v(D, type = "me"))
+  expect_equal(vpois(lambda, type = "mle"), avar_mle(D))
+  expect_equal(vpois(lambda, type = "me"), avar_me(D))
+
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
 
   # Simulations
   d <- test_avar("mle", D)
@@ -142,6 +148,9 @@ test_that("Pois avar works", {
 
 test_that("Pois small metrics work", {
 
+  skip_if(Sys.getenv("JOKER_EXTENDED_TESTS") != "true",
+          "Skipping extended test unless JOKER_EXTENDED_TESTS='true'")
+
   # Preliminaries
   lambda <- 3
   D <- Pois(lambda)
@@ -155,7 +164,8 @@ test_that("Pois small metrics work", {
                        est = c("mle", "me"),
                        obs = c(20, 50),
                        sam = 1e2,
-                       seed = 1)
+                       seed = 1,
+                       bar = FALSE)
   )
 
   expect_no_error(

@@ -52,7 +52,7 @@ estimation (MLE), moment estimation (ME), and score-adjusted estimation
 In order to perform parameter estimation, a new \verb{e<name>()} member is added
 to the \code{d()}, \code{p()}, \code{q()}, \code{r()} family, following the standard \code{stats} name
 convention. These functions take two arguments, the observations \code{x} (an
-atomic vector for univariate or a matrix for multivariate distibutions) and
+atomic vector for univariate or a matrix for multivariate distributions) and
 the \code{type} of estimation method to use (a character with possible values
 \code{"mle"}, \code{"me"}, and \code{"same"}.)
 
@@ -76,7 +76,8 @@ covering all distributions and estimators.
 # -----------------------------------------------------
 
 # Create the distribution
-a <- 3 ; b <- 5
+a <- 3
+b <- 5
 D <- Beta(a, b)
 
 # ------------------

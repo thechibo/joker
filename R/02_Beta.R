@@ -19,6 +19,19 @@ setClass("Beta",
 #' support \eqn{S = [0,1]}, parameterized by two shape parameters,
 #' \eqn{\alpha > 0} and \eqn{\beta > 0}.
 #'
+#' @srrstats {G1.0} A list of publications is provided in references.
+#' @srrstats {G1.1} This is the first implementation the Beta SAME in R. The MLE
+#' algorithm is considerably improved.
+#' @srrstats {G2.3, G2.3a, G2.3b} The `e<name>()` and `v<name>()` functions use
+#' `match.arg()` and `tolower()` to only permit expected values.
+#' @srrstats {G2.8} The `e<name>()` and `v<name>()` functions provide
+#' appropriate conversion or dispatch routines as part of initial pre-processing
+#' to ensure that all other sub-functions of the package receive inputs of a
+#' single defined class or type.
+#' @srrstats {G2.13} All estimation algorithms pass data to the `check_data()`
+#' function that checks for missing data as well as other possible problems with
+#' the object provided before passing the data on to the main algorithm.
+#'
 #' @param n number of observations. If `length(n) > 1`, the length is taken to
 #' be the number required.
 #' @param distr an object of class `Beta`.
@@ -34,6 +47,7 @@ setClass("Beta",
 #' returned?
 #' @param lower.tail logical. If TRUE (default), probabilities are
 #' \eqn{P(X \leq x)}, otherwise \eqn{P(X > x)}.
+#' @param na.rm logical. Should the `NA` values be removed?
 #' @param ... extra arguments.
 #' @param par0,method,lower,upper arguments passed to optim for the mle
 #' optimization. See Details.
@@ -80,7 +94,8 @@ setClass("Beta",
 #' # -----------------------------------------------------
 #'
 #' # Create the distribution
-#' a <- 3 ; b <- 5
+#' a <- 3
+#' b <- 5
 #' D <- Beta(a, b)
 #'
 #' # ------------------
@@ -406,13 +421,9 @@ setMethod("dlloptim",
 #' @rdname Beta
 #' @export
 ebeta <- function(x, type = "mle", ...) {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
-  if (type %in% types) {
-    return(do.call(type, list(distr = Beta(), x = x, ...)))
-  } else {
-    error_est_type(type, types)
-  }
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
+  distr <- Beta()
+  do.call(type, list(distr = distr, x = x, ...))
 }
 
 #' @rdname Beta
@@ -423,13 +434,15 @@ setMethod("mle",
                                 par0 = "same",
                                 method = "L-BFGS-B",
                                 lower = 1e-5,
-                                upper = Inf) {
+                                upper = Inf,
+                                na.rm = FALSE) {
 
-  if (is.character(par0) && tolower(par0) %in% c("me", "same")) {
+  x <- check_data(x, na.rm = na.rm)
+  par0 <- check_optim(par0, method, lower, upper,
+                      choices = c("me", "same"), len = 1)
+
+  if (is.character(par0)) {
     par0 <- sum(unlist(ebeta(x, type = par0)))
-  } else if (!is.numeric(par0) || par0 < lower || par0 > upper) {
-    stop("par0 must either be a character ('me' or 'same')",
-         "or a numeric within the lower and upper bounds")
   }
 
   tx  <- c(mean(log(x)), mean(log(1 - x)))
@@ -454,7 +467,9 @@ setMethod("mle",
 #' @export
 setMethod("me",
           signature  = c(distr = "Beta", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   m  <- mean(x)
   m2 <- mean(x ^ 2)
@@ -468,7 +483,9 @@ setMethod("me",
 #' @export
 setMethod("same",
           signature  = c(distr = "Beta", x = "numeric"),
-          definition = function(distr, x) {
+          definition = function(distr, x, na.rm = FALSE) {
+
+  x <- check_data(x, na.rm = na.rm)
 
   mx <- mean(x)
   mlx <- mean(log(x))
@@ -489,14 +506,9 @@ setMethod("same",
 #' @rdname Beta
 #' @export
 vbeta <- function(shape1, shape2, type = "mle") {
-  type <- tolower(type)
-  types <- c("mle", "me", "same")
+  type <- match.arg(tolower(type), choices = c("mle", "me", "same"))
   distr <- Beta(shape1, shape2)
-  if (type %in% types) {
-    return(do.call(paste0("avar_", type), list(distr = distr)))
-  } else {
-    error_est_type(type, types)
-  }
+  do.call(paste0("avar_", type), list(distr = distr))
 }
 
 #' @rdname Beta
