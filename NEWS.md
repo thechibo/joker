@@ -1,3 +1,7 @@
+# joker 0.14.0
+
+* First CRAN-ready version.
+
 # joker 0.13.6
 
 * Fixed a bug in `small_metrics()` data checks.

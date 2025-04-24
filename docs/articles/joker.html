@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">joker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -520,17 +520,17 @@ and
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">small_metrics</span>(D, prm,</span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>             <span class="at">obs =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>),</span>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>             <span class="at">est =</span> <span class="fu">c</span>(<span class="st">"mle"</span>, <span class="st">"same"</span>, <span class="st">"me"</span>),</span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>             <span class="at">sam =</span> <span class="fl">1e2</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>             <span class="at">sam =</span> <span class="fl">1e3</span>,</span>
 <span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>             <span class="at">seed =</span> <span class="dv">1</span>)</span>
 <span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a></span>
 <span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="fu">head</span>(x<span class="sc">@</span>df)</span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="sc">&gt;</span>   Parameter Observations Estimator Metric     Value</span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>       <span class="fl">1.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.1390594</span></span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>       <span class="fl">1.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.1684557</span></span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span>       <span class="fl">2.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.2419830</span></span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>       <span class="fl">2.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.3105948</span></span>
-<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>       <span class="fl">3.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.2654124</span></span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>       <span class="fl">3.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.4010657</span></span></code></pre></div>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>       <span class="fl">1.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.1322510</span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>       <span class="fl">1.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.2486026</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span>       <span class="fl">2.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.3276922</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>       <span class="fl">2.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.5215973</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>       <span class="fl">3.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.5517199</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>       <span class="fl">3.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.5381523</span></span></code></pre></div>
 <p>The <code><a href="../reference/SmallMetrics.html">small_metrics()</a></code> function takes the following
 arguments:</p>
 <ul>
@@ -575,7 +575,7 @@ the vector should change:</p>
 <span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">small_metrics</span>(D, prm,</span>
 <span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>                   <span class="at">obs =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>),</span>
 <span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>                   <span class="at">est =</span> <span class="fu">c</span>(<span class="st">"mle"</span>, <span class="st">"same"</span>, <span class="st">"me"</span>),</span>
-<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>                   <span class="at">sam =</span> <span class="fl">1e2</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>                   <span class="at">sam =</span> <span class="fl">1e3</span>,</span>
 <span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>                   <span class="at">seed =</span> <span class="dv">1</span>)</span>
 <span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a></span>
 <span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="fu">class</span>(x)</span>
@@ -584,12 +584,12 @@ the vector should change:</p>
 <span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">1</span>] <span class="st">"joker"</span></span>
 <span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="fu">head</span>(x<span class="sc">@</span>df)</span>
 <span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="sc">&gt;</span>   Parameter Observations Estimator Metric      Value</span>
-<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>       <span class="fl">1.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.04439027</span></span>
-<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>       <span class="fl">1.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.10076876</span></span>
-<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span>       <span class="fl">2.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.13926634</span></span>
-<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>       <span class="fl">2.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.20017190</span></span>
-<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>       <span class="fl">3.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.34101551</span></span>
-<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>       <span class="fl">3.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.26037083</span></span></code></pre></div>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>       <span class="fl">1.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.07759434</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>       <span class="fl">1.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.11916042</span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span>       <span class="fl">2.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.17488071</span></span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>       <span class="fl">2.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.20523185</span></span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>       <span class="fl">3.0</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.32907679</span></span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>       <span class="fl">3.5</span>           <span class="dv">20</span>       mle   Bias <span class="fl">0.32915767</span></span></code></pre></div>
 <p>The <code><a href="../reference/LargeMetrics.html">large_metrics()</a></code> function design is almost identical,
 except that no <code>obs</code>, <code>sam</code>, and <code>seed</code>
 arguments are needed here. The following example illustrates the large

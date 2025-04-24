@@ -247,7 +247,7 @@ prm <- list(name = "shape1",
 x <- small_metrics(D, prm,
              obs = c(20, 50),
              est = c("mle", "same", "me"),
-             sam = 1e2,
+             sam = 1e3,
              seed = 1)
 
 head(x@df)
@@ -280,7 +280,7 @@ prm <- list(name = "alpha",
 x <- small_metrics(D, prm,
                    obs = c(20, 50),
                    est = c("mle", "same", "me"),
-                   sam = 1e2,
+                   sam = 1e3,
                    seed = 1)
 
 class(x)
