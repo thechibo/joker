@@ -2,7 +2,7 @@
 #'
 #' @srrstatsΝΑ {G2.4e, G2.5} No inputs are converted from `factor` to another
 #' type.
-#' @srrstats {G2.6} The S4 structure of the package ensures that unidimensional
+#' @srrstatsNA {G2.6} The S4 structure of the package ensures that unidimensional
 #' input is of an appropriate class.
 #' @srrstatsNA {G2.7, G2.8, G2.9, G2.10, G2.11, G2.12} The package does not use
 #' data.frames, tibbles, or similar structures. The package's S4 methods make
