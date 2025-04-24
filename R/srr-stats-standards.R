@@ -23,7 +23,7 @@
 #' included in the package tests.
 #'
 #' The following are TODO, not NA
-#' @srrstats {G5.4} Correctness tests are included in the
+#' @srrstatsNA {G5.4} Correctness tests are included in the
 #' package, testing that statistical algorithms produce expected results.
 #' some fixed test data sets (potentially
 #' through comparisons using binding frameworks such as
