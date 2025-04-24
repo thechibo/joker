@@ -1,6 +1,5 @@
 #' NA_standards
 #'
-#' @noRd
 #' @srrstatsΝΑ {G2.4e, G2.5} No inputs are converted from `factor` to another
 #' type.
 #' @srrstats {G2.6} The S4 structure of the package ensures that unidimensional
@@ -47,7 +46,8 @@
 #' clear warnings or errors when confronted with zero-length data, data of
 #' unsupported types, data with all-`NA` fields, or data outside the scope of
 #' an algorithm.
-#' @srrstatsNA {G5.9, G5.9a, G5.9b} Noise susceptibility tests are included in the
-#' package, verifying that trivial noise, seeds, and initial conditions do not
-#' meaningfully change results
-
+#' @srrstatsNA {G5.9, G5.9a, G5.9b} Noise susceptibility tests are included in
+#' the package, verifying that trivial noise, seeds, and initial conditions do
+#' not meaningfully change results
+#' @noRd
+NULL
