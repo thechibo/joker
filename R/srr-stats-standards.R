@@ -41,7 +41,8 @@
 #' is not possible.*
 #' @srrstatsNA {G5.5} *Correctness tests should be run with a fixed random
 #' seed*
-#' @srrstatsNA {G5.8, G5.8a, G5.8b, G5.8c} Edge condition tests are included in
+#' @srrstatsNA {G5.8, G5.8a, G5.8b, G5.8c, G5.8d} Edge condition tests are
+#' included in
 #' the package, testing that these conditions produce expected behavior such as
 #' clear warnings or errors when confronted with zero-length data, data of
 #' unsupported types, data with all-`NA` fields, or data outside the scope of
