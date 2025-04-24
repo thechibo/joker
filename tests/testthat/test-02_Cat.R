@@ -27,7 +27,7 @@ test_that("Cat dpqr work", {
   expect_true(is.function(d(D)))
   expect_true(is.function(r(D)))
   expect_true(is.numeric(d(D, x, log = TRUE)))
-  expect_true(is.numeric(r(D, 1:10)))
+  expect_true(is.numeric(r(D, 10)))
 
   # Values
   expect_equal(d(D)(c(1, 0, 0, 0)), c(p[1], 0, 0, 0))
@@ -41,6 +41,7 @@ test_that("Cat dpqr work", {
   expect_error(dcat(1, c(0.5, 0.4, 0.3, 0.7)))
   expect_error(dcat(1, c(0.5, 0.6, -0.1)))
   expect_warning(dcat(0.5, p))
+  expect_warning(r(D, 1:10))
 
 })
 

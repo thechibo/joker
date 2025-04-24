@@ -20,6 +20,9 @@ setClass("Cat",
 #' possible categories. It is a generalization of the Bernoulli distribution
 #' and a special case of the multinomial distribution with \eqn{n = 1}.
 #'
+#' @srrstats {G2.0, G2.0a, G2.1, G2.1a, G2.2} Assertions on the length and type
+#' of input is implemented.
+#'
 #' @param n number of observations. If `length(n) > 1`, the length is taken to
 #' be the number required.
 #' @param distr an object of class `Cat`.
@@ -169,8 +172,13 @@ dcat <- function(x, prob, log = FALSE) {
 #' @export
 rcat <- function(n, prob) {
   if (length(n) > 1) {
-   n <- length(n)
+    warning("n has length > 1. The object's length will be used as the sample
+            size")
+    n <- length(n)
+  } else if (!is.numeric(n) || n < 0) {
+    stop("n must be a positive numeric (which will be converted to integer)")
   }
+  n <- as.integer(n)
   sample(seq_along(prob), n, prob = prob, replace = TRUE)
 }
 

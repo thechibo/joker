@@ -1,3 +1,7 @@
+# joker 0.13.6
+
+* Fixed a bug in `small_metrics()` data checks.
+
 # joker 0.13.5
 
 * Created a custom progress bar to remove the `progress` package import.

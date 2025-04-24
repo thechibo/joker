@@ -12,9 +12,9 @@ setClass("SmallMetrics", slots = list(D = "Distribution",
 
 setValidity("SmallMetrics", function(object) {
   if(!all(names(object@df) %in% c("Parameter", "Observations", "Estimator",
-                                "Metric", "Value"))) {
-    stop("df must have columns 'Parameter, 'Observations', 'Estimator',
-                           'Metric', 'Value'")
+                        "Metric", "Value")) || length(names(object@df)) != 5) {
+    stop("df must have exactly 5 columns named 'Parameter, 'Observations',
+    'Estimator', 'Metric', 'Value'")
   }
   if(!("data.frame" %in% class(object@df))) {
     stop("df has to be a data.frame")
@@ -46,6 +46,11 @@ setValidity("SmallMetrics", function(object) {
 #' (bias, variance, and RMSE) characterizing the small (finite) sample behavior
 #' of an estimator. The function evaluates the metrics as a function of a single
 #' parameter, keeping the other ones constant. See Details.
+#'
+#' @srrstats {G2.0, G2.0a, G2.1, G2.1a, G2.2} Assertions on the length and type
+#' of input is implemented.
+#' @srrstats {G2.4, G2.4a, G2.4b, G2.4c, G2.4d} Explicit conversion to the
+#' appropriate data type.
 #'
 #' @param D A subclass of `Distribution`. The distribution family of interest.
 #' @param prm A list containing three elements (name, pos, val). See Details.
@@ -130,6 +135,43 @@ small_metrics <- function(D,
                           seed = 1,
                           bar = TRUE,
                           ...) {
+
+  # Data Check
+  if (!inherits(D, "Distribution")) {
+    stop("D must be of a Distribution subclass.")
+  }
+  if (!is.list(prm) || !all(c("name", "val") %in% names(prm))) {
+    stop("prm must be a list with elements 'name' and 'val'")
+  }
+  if (!is.character(prm$name)) {
+    stop("prm 'name' element must be a character")
+  }
+  if (!is.numeric(prm$val)) {
+    stop("prm 'val' element must be numeric")
+  }
+  if (!is.character(est) && !is.factor(est)) {
+    stop("est must be a character or factor")
+  }
+  # if (is.character(est)) {
+  #   warning("'est' passed as character. Converted to factor")
+  # }
+  if (!is.numeric(obs) && !is.factor(obs)) {
+    stop("obs must be numeric or factor")
+  }
+  # if (is.numeric(obs)) {
+  #   warning("'obs' passed as numeric. Converted to factor")
+  # }
+  if (!is.numeric(sam) || length(sam) > 1) {
+    stop("sam must be a numeric of length 1")
+  }
+  if (!is.numeric(sam) || length(sam) > 1) {
+    stop("seed must be a numeric of length 1")
+  }
+  if (!is.logical(bar)) {
+    stop("bar must be a logical")
+  }
+  sam <- as.integer(sam)
+  seed <- as.integer(seed)
 
   if (class(D) %in% c("Cat", "Multinom")) {
     stop("This function is not implemented for the Categorical and Multinomial
@@ -240,6 +282,11 @@ setClass("LargeMetrics", slots = list(D = "Distribution",
 #' function evaluates the metrics as a function of a single parameter, keeping
 #' the other ones constant. See Details.
 #'
+#' @srrstats {G2.0, G2.0a, G2.1, G2.1a, G2.2} Assertions on the length and type
+#' of input is implemented.
+#' @srrstats {G2.4, G2.4a, G2.4b, G2.4c, G2.4d} Explicit conversion to the
+#' appropriate data type.
+#'
 #' @param D A subclass of `Distribution`. The distribution family of interest.
 #' @param prm A list containing three elements (name, pos, val). See Details.
 #' @param est character. The estimator of interest. Can be a vector.
@@ -289,9 +336,11 @@ LargeMetrics <- function(D, est, df) {
 }
 
 setValidity("LargeMetrics", function(object) {
-  if(!all(names(object@df) %in% c("Row", "Col", "Parameter",
-                                  "Estimator", "Value"))) {
-    stop("df must have columns 'Row', 'Col', 'Parameter, 'Estimator', 'Value'")
+  if(!all(names(object@df) %in% c("Row", "Col", "Parameter", "Estimator",
+              "Value")) || !(length(names(object@df)) %in% c(3, 5))) {
+    stop("df must have exactly 3 columns named 'Parameter,
+         'Estimator', 'Value' if the parameter is unidimensional, or two extra
+         columns named 'Row', 'Col' if the parameter is multidimensional.")
   }
   if(!("data.frame" %in% class(object@df))) {
     stop("df has to be a data.frame")
@@ -303,7 +352,6 @@ setValidity("LargeMetrics", function(object) {
     if(!is.factor(object@df$Col)) {
       stop("Column 'Col' has to be factor")
     }
-
   }
   if(!is.numeric(object@df$Parameter)) {
     stop("Column 'Parameter' has to be numeric")
@@ -323,6 +371,26 @@ large_metrics <- function(D,
                           prm,
                           est = c("same", "me", "mle"),
                           ...) {
+
+  # Data Check
+  if (!inherits(D, "Distribution")) {
+    stop("D must be of a Distribution subclass.")
+  }
+  if (!is.list(prm) || !all(c("name", "val") %in% names(prm))) {
+    stop("prm must be a list with elements 'name' and 'val'")
+  }
+  if (!is.character(prm$name)) {
+    stop("prm 'name' element must be a character")
+  }
+  if (!is.numeric(prm$val)) {
+    stop("prm 'val' element must be numeric")
+  }
+  if (!is.character(est) && !is.factor(est)) {
+    stop("est must be a character or factor")
+  }
+  # if (is.character(est)) {
+  #   warning("'est' passed as character. Converted to factor")
+  # }
 
   if (class(D) %in% c("Cat", "Multinom")) {
     stop("This function is not implemented for the Categorical and Multinomial

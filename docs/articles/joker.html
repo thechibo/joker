@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Ioannis
 Oikonomidis</h4>
             
-            <h4 data-toc-skip class="date">2025-04-23</h4>
+            <h4 data-toc-skip class="date">2025-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/thechibo/joker/blob/HEAD/vignettes/joker.Rmd" class="external-link"><code>vignettes/joker.Rmd</code></a></small>
       <div class="d-none name"><code>joker.Rmd</code></div>
@@ -103,13 +103,19 @@ All of them are subclasses of the <code>Distribution</code>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>    Distribution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bernoulli"</span>, <span class="st">"Beta"</span>, <span class="st">"Binomial"</span>, <span class="st">"Categorical"</span>, <span class="st">"Cauchy"</span>, <span class="st">"Chi-Square"</span>, <span class="st">"Dirichlet"</span>, <span class="st">"Fisher"</span>, <span class="st">"Gamma"</span>, <span class="st">"Geometric"</span><span class="op">)</span>,</span>
-<span>    Class_Name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bern"</span>, <span class="st">"Beta"</span>, <span class="st">"Binom"</span>, <span class="st">"Cat"</span>, <span class="st">"Cauchy"</span>, <span class="st">"Chisq"</span>, <span class="st">"Dir"</span>, <span class="st">"Fisher"</span>, <span class="st">"Gam"</span>, <span class="st">"Geom"</span><span class="op">)</span>,</span>
-<span>    Distribution2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Laplace"</span>, <span class="st">"Log-Normal"</span>, <span class="st">"Multivariate Gamma"</span>, <span class="st">"Multinomial"</span>, <span class="st">"Negative Binomial"</span>, <span class="st">"Normal"</span>, <span class="st">"Poisson"</span>, <span class="st">"Student"</span>, <span class="st">"Uniform"</span>, <span class="st">"Weibull"</span><span class="op">)</span>,</span>
-<span>    Class_Name2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Laplace"</span>, <span class="st">"Lnorm"</span>, <span class="st">"Multigam"</span>, <span class="st">"Multinom"</span>, <span class="st">"Nbinom"</span>, <span class="st">"Norm"</span>, <span class="st">"Pois"</span>, <span class="st">"Stud"</span>, <span class="st">"Unif"</span>, <span class="st">"Weib"</span><span class="op">)</span></span>
+<span>    Distribution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bernoulli"</span>, <span class="st">"Beta"</span>, <span class="st">"Binomial"</span>, <span class="st">"Categorical"</span>, <span class="st">"Cauchy"</span>,</span>
+<span>                     <span class="st">"Chi-Square"</span>, <span class="st">"Dirichlet"</span>, <span class="st">"Fisher"</span>, <span class="st">"Gamma"</span>, <span class="st">"Geometric"</span><span class="op">)</span>,</span>
+<span>    Class_Name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bern"</span>, <span class="st">"Beta"</span>, <span class="st">"Binom"</span>, <span class="st">"Cat"</span>, <span class="st">"Cauchy"</span>, <span class="st">"Chisq"</span>, <span class="st">"Dir"</span>,</span>
+<span>                   <span class="st">"Fisher"</span>, <span class="st">"Gam"</span>, <span class="st">"Geom"</span><span class="op">)</span>,</span>
+<span>    Distribution2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Laplace"</span>, <span class="st">"Log-Normal"</span>, <span class="st">"Multivariate Gamma"</span>,</span>
+<span>                      <span class="st">"Multinomial"</span>, <span class="st">"Negative Binomial"</span>, <span class="st">"Normal"</span>, <span class="st">"Poisson"</span>,</span>
+<span>                      <span class="st">"Student"</span>, <span class="st">"Uniform"</span>, <span class="st">"Weibull"</span><span class="op">)</span>,</span>
+<span>    Class_Name2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Laplace"</span>, <span class="st">"Lnorm"</span>, <span class="st">"Multigam"</span>, <span class="st">"Multinom"</span>, <span class="st">"Nbinom"</span>,</span>
+<span>                    <span class="st">"Norm"</span>, <span class="st">"Pois"</span>, <span class="st">"Stud"</span>, <span class="st">"Unif"</span>, <span class="st">"Weib"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Distribution"</span>, <span class="st">"Class Name"</span>, <span class="st">"Distribution"</span>, <span class="st">"Class Name"</span><span class="op">)</span>,</span>
-<span>  caption <span class="op">=</span> <span class="st">"Overview of the distributions implemented in the `joker` package, along with their respective class names."</span></span>
+<span>  caption <span class="op">=</span> <span class="st">"Overview of the distributions implemented in the `joker` package, </span></span>
+<span><span class="st">  along with their respective class names."</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <caption>Overview of the distributions implemented in the

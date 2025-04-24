@@ -23,6 +23,10 @@ setClass("Dir",
 #' @srrstats {G1.0} A list of publications is provided in references.
 #' @srrstats {G1.1} This is the first implementation the Dirichlet SAME in
 #' general. The MLE algorithm is considerably improved.
+#' @srrstats {G2.0, G2.0a, G2.1, G2.1a, G2.2} Assertions on the length and type
+#' of input is implemented in the `ddir` and `rdir` functions.
+#' @srrstats {G2.4, G2.4a} Explicit conversion to the appropriate data type is
+#' implemented in the `rdir` function.
 #'
 #' @param n number of observations. If `length(n) > 1`, the length is taken to
 #' be the number required.
@@ -173,14 +177,19 @@ ddir <- function(x, alpha, log = FALSE) {
 #' @export
 rdir <- function(n, alpha) {
 
-  if (length(n) > 1 || !is.numeric(n) || n < 0) {
-    stop("n must be a positive integer")
+  if (length(n) > 1) {
+    warning("n has length > 1. The object's length will be used as the sample
+            size")
+    n <- length(n)
+  } else if (!is.numeric(n) || n < 0) {
+    stop("n must be a positive numeric (which will be converted to integer)")
   }
   if (any(alpha <= 0)) {
     stop("alpha must be positive")
   }
 
   k <- length(alpha)
+  n <- as.integer(n)
   m <- matrix(rgamma(n * k, shape = alpha), nrow = n, ncol = k, byrow = TRUE)
 
   m / rowSums(m)
