@@ -1,6 +1,6 @@
 #' NA_standards
 #'
-#' @srrstatsΝΑ {G2.4e, G2.5} No inputs are converted from `factor` to another
+#' @srrstatsNA {G2.4e, G2.5} No inputs are converted from `factor` to another
 #' type.
 #' @srrstatsNA {G2.6} The S4 structure of the package ensures that unidimensional
 #' input is of an appropriate class.
