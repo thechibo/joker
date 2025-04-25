@@ -32,18 +32,4 @@ an invisible \code{NULL}.
 Create a progress bar to be used with for loops that can possibly take a lot
 of time.
 }
-\examples{
-\dontrun{
-# Turn seconds into hh:mm:ss
-format_hms(7543)
-
-n <- 100
-start <- Sys.time()
-
-for (i in 1:n) {
-  Sys.sleep(0.1)  # Simulate time-consuming task
-  progress_bar(i, n, start, message = "Computing", width = 30)
-}
-}
-}
 \keyword{internal}

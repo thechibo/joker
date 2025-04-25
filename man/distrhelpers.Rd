@@ -64,18 +64,6 @@ distribution object. Used inside the \code{small_metrics()} and \code{large_metr
 functions.
 
 }}
-\examples{
-\dontrun{
-distr <- Beta(1, 2)
-get_moment_methods(distr)
-get_class_abbr(distr)
-get_distr_class("Gamma")
-s4_to_list(distr)
-get_params(distr, list = TRUE)
-get_params(distr, list = FALSE)
-get_unknown_params(distr)
-}
-}
 \seealso{
 \code{\link[=small_metrics]{small_metrics()}}, \code{\link[=large_metrics]{large_metrics()}}
 }

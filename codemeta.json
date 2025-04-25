@@ -7,7 +7,7 @@
   "codeRepository": "https://thechibo.github.io/joker/",
   "issueTracker": "https://github.com/thechibo/joker/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -164,5 +164,5 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "638.76KB"
+  "fileSize": "635.145KB"
 }

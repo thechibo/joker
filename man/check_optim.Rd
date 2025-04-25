@@ -26,9 +26,4 @@ argument, as well as \code{par} if it is numeric.}
 Checks that the arguments supplied by the user are appropriate to be passed
 to \code{optim()}. Used internally in parameter estimation.
 }
-\examples{
-\dontrun{
-check_optim("me", "L-BFGS-B", 1e-5, Inf, choices = c("me", "same"), len = 1)
-}
-}
 \keyword{internal}

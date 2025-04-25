@@ -28,7 +28,7 @@ solve the equation \eqn{\psi(x) = y}; more accurately, to find the minimum of
 bounds derived by Batir (2017). The function is vectorized.
 }
 \examples{
-\dontrun{
+\donttest{
 idigamma(2)
 }
 }
@@ -43,4 +43,3 @@ https://arxiv.org/abs/2311.15025
 \seealso{
 \code{\link[=optim]{optim()}}
 }
-\keyword{internal}

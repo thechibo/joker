@@ -1,3 +1,8 @@
+# joker 0.14.2
+
+* Changed a dontrun to donttest.
+* Removed examples for unexported functions.
+
 # joker 0.14.1
 
 * Fixed the 301 moved-permanently link of CircleCI.

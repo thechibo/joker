@@ -15,10 +15,4 @@ A 2x2 matrix, the inverse of \code{x}
 \description{
 Calculates the inverse of a 2x2 matrix.
 }
-\examples{
-\dontrun{
-x <- matrix(1:4, nrow = 2, ncol = 2)
-inv2x2(x)
-}
-}
 \keyword{internal}

@@ -31,15 +31,6 @@
 #' containing `NA` values and `na.rm = TRUE`.
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' check_data(r(Beta(2, 3), 20))
-#' check_data(c(1, 2, NA))
-#' check_data(c(1, 2, NA), na.rm = TRUE)
-#' check_data(c(1, 2, NaN))
-#' check_data(c(1, 2, Inf))
-#' }
 check_data <- function(x, na.rm = FALSE) {
 
   if (!is.logical(na.rm) || length(na.rm) > 1) {
@@ -87,11 +78,6 @@ check_data <- function(x, na.rm = FALSE) {
 #'
 #' @returns `par0`, possibly altered via `match.arg()` if it is a character.
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' check_optim("me", "L-BFGS-B", 1e-5, Inf, choices = c("me", "same"), len = 1)
-#' }
 check_optim <- function(par0, method, lower, upper, choices = NULL, len = 1) {
 
   if (length(lower) != len || length(upper) != len) {
@@ -149,20 +135,6 @@ check_optim <- function(par0, method, lower, upper, choices = NULL, len = 1) {
 #' @importFrom utils flush.console
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' # Turn seconds into hh:mm:ss
-#' format_hms(7543)
-#'
-#' n <- 100
-#' start <- Sys.time()
-#'
-#' for (i in 1:n) {
-#'   Sys.sleep(0.1)  # Simulate time-consuming task
-#'   progress_bar(i, n, start, message = "Computing", width = 30)
-#' }
-#' }
 progress_bar <- function(iter, total, start, message = NULL, width = 20) {
 
   percent <- iter / total
@@ -214,18 +186,6 @@ format_hms <- function(seconds) {
 #' @seealso [small_metrics()], [large_metrics()]
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' distr <- Beta(1, 2)
-#' get_moment_methods(distr)
-#' get_class_abbr(distr)
-#' get_distr_class("Gamma")
-#' s4_to_list(distr)
-#' get_params(distr, list = TRUE)
-#' get_params(distr, list = FALSE)
-#' get_unknown_params(distr)
-#' }
 NULL
 
 #' @describeIn distrhelpers Returns a character vector with the available moment
@@ -350,16 +310,6 @@ update_params <- function(distr, prm, i) {
 #' @returns data.frame.
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' x <- array(1:24, dim = c(2, 3, 4),
-#'            dimnames = list(paste0("A", 1:2),
-#'                            paste0("B", 1:3),
-#'                            paste0("C", 1:4)))
-#'
-#' array_to_df(x)
-#' }
 array_to_df <- function(x) {
 
   dn <- dimnames(x)
@@ -384,18 +334,6 @@ array_to_df <- function(x) {
 #' @returns A vector or matrix, subset of the original object.
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' x <- 1:12
-#' y <- matrix(1:12, nrow = 3, ncol = 4)
-#' z <- array(1:24, dim = c(3, 4, 2))
-#'
-#' set1of1(x)
-#' set1of2(y)
-#' set1of3(z)
-#' set2of3(z)
-#' }
 set1of1 <- function(x, i) {
   x
 }
@@ -427,13 +365,6 @@ set2of3 <- function(x, i) {
 #' the matrix.
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' x <- matrix(1:12, nrow = 3, ncol = 4)
-#' seqcol(x)
-#' seqrow(x)
-#' }
 seqcol <- function(x) {
   if (!is.matrix(x)) {
     stop("x is not a matrix.")
@@ -467,17 +398,6 @@ seqrow <- function(x) {
 #' `colVar()` return a numeric vector.
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' x <- r(Beta(2, 3), 20)
-#' y <- matrix(x, nrow = 2, ncol = 10)
-#'
-#' bvar(x)
-#' bsd(x)
-#' rowVar(y)
-#' rowCol(y)
-#' }
 NULL
 
 #' @describeIn stats Biased sample variance
@@ -566,10 +486,8 @@ setMethod("kurt",
 #'
 #' @seealso [optim()]
 #'
-#' @keywords internal
-#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' idigamma(2)
 #' }
 idigamma <- function(x, ...) {
@@ -606,13 +524,6 @@ idigamma <- function(x, ...) {
 #' @returns matrix
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' x <- matrix(1:4, nrow = 2, ncol = 2)
-#' Matrix(x)
-#' nearPD(x)
-#' }
 Matrix <- function(...) {
   Matrix::Matrix(...)
 }
@@ -632,12 +543,6 @@ nearPD <- function(x) {
 #' @returns A 2x2 matrix, the inverse of `x`
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' x <- matrix(1:4, nrow = 2, ncol = 2)
-#' inv2x2(x)
-#' }
 inv2x2 <- function(x) {
 
   if (!is.matrix(x) || any(dim(x) != 2)) {
@@ -674,16 +579,6 @@ inv2x2 <- function(x) {
 #' the checks that define the characteristic.
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' x<- matrix(1:9, nrow = 3, ncol = 3)
-#' is_symmetric(x)
-#' is_pd(x)
-#' is_pos(x)
-#' is_integer(x)
-#' is_natural(x)
-#' }
 NULL
 
 #' @describeIn isit Is the object an integer in the mathematical sense?
@@ -772,13 +667,6 @@ is_natural <- function(x) {
 #' @returns an atomic vector or matrix of the same dimensions as `x`.
 #'
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' set.seed(1)
-#' x <- r(Multigam(1:3, 1), 4)
-#' fd(x)
-#' }
 fd <- function(x) {
   if (!is_numatvec(x) && !is_nummat(x)) {
     stop("x must be a numeric atomic vector or matrix.")

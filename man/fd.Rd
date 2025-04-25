@@ -18,11 +18,4 @@ Calculates the forward difference of a vector or matrix.
 \details{
 The function is used internally in the \code{Multigam} distribution.
 }
-\examples{
-\dontrun{
-set.seed(1)
-x <- r(Multigam(1:3, 1), 4)
-fd(x)
-}
-}
 \keyword{internal}

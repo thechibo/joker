@@ -71,14 +71,4 @@ characteristics.
 \item \code{is_natural()}: Is the object a natural number in the mathematical sense?
 
 }}
-\examples{
-\dontrun{
-x<- matrix(1:9, nrow = 3, ncol = 3)
-is_symmetric(x)
-is_pd(x)
-is_pos(x)
-is_integer(x)
-is_natural(x)
-}
-}
 \keyword{internal}

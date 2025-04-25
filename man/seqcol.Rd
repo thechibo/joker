@@ -20,11 +20,4 @@ the matrix.
 This set of functions extent the \code{seq_along()} functions for \code{matrix}
 objects.
 }
-\examples{
-\dontrun{
-x <- matrix(1:12, nrow = 3, ncol = 4)
-seqcol(x)
-seqrow(x)
-}
-}
 \keyword{internal}

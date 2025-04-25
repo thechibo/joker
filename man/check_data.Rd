@@ -19,13 +19,4 @@ containing \code{NA} values and \code{na.rm = TRUE}.
 This function checks that the data argument supplied by the user for
 parameter estimation are of the appropriate type.
 }
-\examples{
-\dontrun{
-check_data(r(Beta(2, 3), 20))
-check_data(c(1, 2, NA))
-check_data(c(1, 2, NA), na.rm = TRUE)
-check_data(c(1, 2, NaN))
-check_data(c(1, 2, Inf))
-}
-}
 \keyword{internal}

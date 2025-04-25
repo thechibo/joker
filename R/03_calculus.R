@@ -24,6 +24,8 @@
 #' of a class that is a subclass of `Distribution`), according to the property
 #' at hand.
 #'
+#' @export
+#'
 #' @examples
 #' # -----------------------------------------------------
 #' # Distribution Calculus Example

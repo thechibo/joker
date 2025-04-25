@@ -1,7 +1,4 @@
-── R CMD check results ─────────────────── joker 0.14.1 ────
-Duration: 2m 46.7s
+── R CMD check results ─────────────────── joker 0.14.2 ────
+Duration: 5m 56.5s
 
-❯ checking for future file timestamps ... NOTE
-  unable to verify current time
-
-0 errors ✔ | 0 warnings ✔ | 1 note ✖
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔

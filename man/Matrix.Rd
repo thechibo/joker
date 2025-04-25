@@ -20,11 +20,4 @@ matrix
 \description{
 Simple wrappers of functions from the \code{Matrix} package.
 }
-\examples{
-\dontrun{
-x <- matrix(1:4, nrow = 2, ncol = 2)
-Matrix(x)
-nearPD(x)
-}
-}
 \keyword{internal}

@@ -49,15 +49,4 @@ package.
 \item \code{kurt(numeric)}: Sample kurtosis
 
 }}
-\examples{
-\dontrun{
-x <- r(Beta(2, 3), 20)
-y <- matrix(x, nrow = 2, ncol = 10)
-
-bvar(x)
-bsd(x)
-rowVar(y)
-rowCol(y)
-}
-}
 \keyword{internal}

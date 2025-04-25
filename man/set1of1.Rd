@@ -27,16 +27,4 @@ A vector or matrix, subset of the original object.
 A set of functions that allow to index a matrix or array. These functions are
 used internally when the dimension length of an object can vary.
 }
-\examples{
-\dontrun{
-x <- 1:12
-y <- matrix(1:12, nrow = 3, ncol = 4)
-z <- array(1:24, dim = c(3, 4, 2))
-
-set1of1(x)
-set1of2(y)
-set1of3(z)
-set2of3(z)
-}
-}
 \keyword{internal}

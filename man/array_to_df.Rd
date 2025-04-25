@@ -16,14 +16,4 @@ data.frame.
 This function turns an array to a data.frame. It is used by the
 \code{small_metrics()} and \code{large_metrics()} functions.
 }
-\examples{
-\dontrun{
-x <- array(1:24, dim = c(2, 3, 4),
-           dimnames = list(paste0("A", 1:2),
-                           paste0("B", 1:3),
-                           paste0("C", 1:4)))
-
-array_to_df(x)
-}
-}
 \keyword{internal}
