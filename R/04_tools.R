@@ -245,7 +245,7 @@ get_moment_methods <- function(x) {
 }
 
 #' @describeIn distrhelpers Turns the S4 class in the name (character) used in
-#' the d<name> notation.
+#' the usual `stats` dpqr syntax.
 get_class_abbr <- function(distr) {
 
   y <- tolower(class(distr)[1])

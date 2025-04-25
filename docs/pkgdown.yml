@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   joker: joker.html
-last_built: 2025-04-24T15:53Z
+last_built: 2025-04-25T09:31Z
 urls:
   reference: https://thechibo.github.io/joker/reference
   article: https://thechibo.github.io/joker/articles

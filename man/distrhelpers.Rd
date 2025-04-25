@@ -47,7 +47,7 @@ This set of functions help handle the distribution classes. See Details.
 methods for the distribution.
 
 \item \code{get_class_abbr()}: Turns the S4 class in the name (character) used in
-the d\if{html}{\out{<name>}} notation.
+the usual \code{stats} dpqr syntax.
 
 \item \code{get_distr_class()}: Turns the distribution name from a character to an
 S4 class.

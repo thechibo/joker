@@ -12,7 +12,7 @@ status](https://www.r-pkg.org/badges/version/joker)](https://CRAN.R-project.org/
 coverage](https://codecov.io/gh/thechibo/joker/graph/badge.svg)](https://app.codecov.io/gh/thechibo/joker)
 [![pkgcheck](https://github.com/thechibo/joker/workflows/pkgcheck/badge.svg)](https://github.com/thechibo/joker/actions?query=workflow%3Apkgcheck)
 [![CircleCI build
-status](https://circleci.com/gh/thechibo/joker.svg?style=svg)](https://circleci.com/gh/thechibo/joker)
+status](https://circleci.com/gh/thechibo/joker.svg?style=svg)](https://app.circleci.com/pipelines/github/thechibo/joker)
 <!-- badges: end -->
 
 ## Introduction
